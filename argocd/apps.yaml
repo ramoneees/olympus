@@ -1,0 +1,50 @@
+# ArgoCD Application — Gitea
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitea
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://dl.gitea.com/charts/
+      chart: gitea
+      targetRevision: "10.*"
+      helm:
+        valueFiles:
+          - $values/apps/gitea/values.yaml
+    - repoURL: https://git.ramoneees.com/ramoneees/olympus-gitops.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# ArgoCD Application — Gitea extra manifests (IngressRoute, etc.)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitea-config
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://git.ramoneees.com/ramoneees/olympus-gitops.git
+    targetRevision: main
+    path: apps/gitea
+    directory:
+      include: "ingress.yaml"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

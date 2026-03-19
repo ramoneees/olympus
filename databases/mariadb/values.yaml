@@ -1,0 +1,40 @@
+# MariaDB — shared instance for Nextcloud, Firefly III, Invoice Ninja
+# Chart: mariadb
+# Repo: https://charts.bitnami.com/bitnami
+#
+# Create databases after install:
+#   kubectl exec -it mariadb-0 -n databases -- mariadb -u root -p
+#   CREATE DATABASE nextcloud; CREATE USER 'nextcloud'@'%' IDENTIFIED BY '...'; GRANT ALL ON nextcloud.* TO 'nextcloud'@'%';
+#   (repeat for firefly, invoiceninja)
+
+auth:
+  existingSecret: mariadb-secret  # keys: mariadb-root-password
+
+architecture: standalone
+
+primary:
+  persistence:
+    enabled: true
+    storageClass: longhorn
+    size: 10Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  livenessProbe:
+    enabled: true
+  readinessProbe:
+    enabled: true
+
+metrics:
+  enabled: true
+  resources:
+    requests:
+      cpu: 25m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi

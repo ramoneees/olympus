@@ -1,0 +1,70 @@
+# ArgoCD Helm values
+# Chart: argo-cd
+# Repo: https://argoproj.github.io/argo-helm
+
+global:
+  domain: argocd.ramoneees.com
+
+configs:
+  params:
+    # Traefik handles TLS termination
+    server.insecure: true
+  cm:
+    # Allow status badges
+    statusbadge.enabled: "true"
+    # Reconciliation timeout
+    timeout.reconciliation: 180s
+
+server:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+controller:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+repoServer:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+redis:
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+applicationSet:
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+notifications:
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 50m
+      memory: 128Mi

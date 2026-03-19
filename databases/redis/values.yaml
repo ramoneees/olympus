@@ -1,0 +1,40 @@
+# Redis — shared instance for cache + Mnemosyne short-term memory
+# Chart: redis
+# Repo: https://charts.bitnami.com/bitnami
+#
+# Database allocation:
+#   0  — Gitea cache
+#   1  — Gitea sessions
+#   2  — Gitea queues
+#   3  — Authentik
+#   4  — Nextcloud
+#   5  — Mnemosyne short-term memory
+#   6-15 — available
+
+architecture: standalone
+
+auth:
+  enabled: false  # LAN-only, no auth needed for internal services
+
+master:
+  persistence:
+    enabled: true
+    storageClass: longhorn
+    size: 2Gi
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+metrics:
+  enabled: true
+  resources:
+    requests:
+      cpu: 25m
+      memory: 32Mi
+    limits:
+      cpu: 50m
+      memory: 64Mi

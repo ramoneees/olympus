@@ -1,0 +1,39 @@
+# DNS service — fixed IP matching existing router DHCP config
+# Requires a dedicated MetalLB pool (see metallb-pool.yaml)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adguard-dns
+  namespace: adguard
+  annotations:
+    metallb.universe.tf/address-pool: adguard-dns
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.50.71
+  ports:
+    - name: dns-tcp
+      port: 53
+      targetPort: 53
+      protocol: TCP
+    - name: dns-udp
+      port: 53
+      targetPort: 53
+      protocol: UDP
+  selector:
+    app: adguard-home
+---
+# Web UI — internal ClusterIP, exposed via Traefik IngressRoute
+apiVersion: v1
+kind: Service
+metadata:
+  name: adguard-http
+  namespace: adguard
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: adguard-home

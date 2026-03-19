@@ -1,0 +1,78 @@
+# Gitea Helm values
+# Chart: gitea
+# Repo: https://dl.gitea.com/charts/
+# Managed by ArgoCD
+
+image:
+  rootless: true
+
+gitea:
+  admin:
+    existingSecret: gitea-admin-secret  # Create manually: username + password keys
+  config:
+    server:
+      DOMAIN: git.ramoneees.com
+      ROOT_URL: https://git.ramoneees.com/
+      SSH_DOMAIN: git.ramoneees.com
+      SSH_PORT: 22
+    database:
+      DB_TYPE: postgres
+      HOST: postgresql.databases.svc.cluster.local:5432
+      NAME: gitea
+      USER: gitea
+      # Password via environment variable from secret
+    service:
+      DISABLE_REGISTRATION: true
+    packages:
+      ENABLED: true  # Built-in container registry — replaces standalone registry
+    actions:
+      ENABLED: true  # Gitea Actions — replaces Jenkins
+    mailer:
+      ENABLED: false
+    cache:
+      ADAPTER: redis
+      HOST: redis://redis-master.databases.svc.cluster.local:6379/0
+    session:
+      PROVIDER: redis
+      PROVIDER_CONFIG: redis://redis-master.databases.svc.cluster.local:6379/1
+    queue:
+      TYPE: redis
+      CONN_STR: redis://redis-master.databases.svc.cluster.local:6379/2
+
+  additionalConfigFromEnvs:
+    - name: GITEA__database__PASSWD
+      valueFrom:
+        secretKeyRef:
+          name: gitea-db-secret
+          key: password
+
+# Disable built-in PostgreSQL and Redis — we use shared instances
+postgresql:
+  enabled: false
+postgresql-ha:
+  enabled: false
+redis-cluster:
+  enabled: false
+
+persistence:
+  enabled: true
+  storageClass: longhorn
+  size: 10Gi
+  accessModes:
+    - ReadWriteOnce
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+service:
+  http:
+    type: ClusterIP
+    port: 3000
+  ssh:
+    type: LoadBalancer  # SSH access via MetalLB IP
+    port: 22

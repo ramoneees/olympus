@@ -1,0 +1,21 @@
+# Default TLS store — Traefik serves the wildcard cert for any unmatched SNI
+---
+apiVersion: traefik.io/v1alpha1
+kind: TLSStore
+metadata:
+  name: default
+  namespace: kube-system
+spec:
+  defaultCertificate:
+    secretName: wildcard-ramoneees-com-tls
+---
+# Redirect HTTP → HTTPS globally
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-https
+  namespace: kube-system
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true

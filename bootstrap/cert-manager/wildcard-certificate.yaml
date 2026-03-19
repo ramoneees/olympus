@@ -1,0 +1,17 @@
+# Wildcard certificate for all services
+# Referenced by Traefik IngressRoutes as tls.secretName
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-ramoneees-com
+  namespace: cert-manager
+spec:
+  secretName: wildcard-ramoneees-com-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - "ramoneees.com"
+    - "*.ramoneees.com"
+  # cert-manager will auto-renew 30 days before expiry

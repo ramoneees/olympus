@@ -1,0 +1,37 @@
+# Longhorn Helm values
+# Chart: longhorn
+# Repo: https://charts.longhorn.io
+# Managed by ArgoCD after bootstrap
+
+defaultSettings:
+  # 2 replicas across both nodes
+  defaultReplicaCount: 2
+  # Default storage class
+  defaultDataPath: /var/lib/longhorn
+  # Backup target — configure later for S3/NFS
+  backupTarget: ""
+  # Guaranteed engine manager CPU
+  guaranteedInstanceManagerCPU: 12
+  # Storage over-provisioning — conservative for 2-node cluster
+  storageOverProvisioningPercentage: 100
+  storageMinimalAvailablePercentage: 15
+
+persistence:
+  defaultClass: true
+  defaultFsType: ext4
+  defaultClassReplicaCount: 2
+  reclaimPolicy: Retain
+
+ingress:
+  enabled: false  # We use Traefik IngressRoute instead
+
+longhornUI:
+  replicas: 1
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 64Mi
+  limits:
+    cpu: 250m
+    memory: 256Mi
