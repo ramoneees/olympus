@@ -1,0 +1,65 @@
+# Authentik Helm values
+# Chart: authentik
+# Repo: https://charts.goauthentik.io
+
+authentik:
+  secret_key: ""  # Set via secret
+  postgresql:
+    host: postgresql.databases.svc.cluster.local
+    port: 5432
+    name: authentik
+    user: authentik
+    password: ""  # Set via secret
+  redis:
+    host: redis-master.databases.svc.cluster.local
+    db: 3
+  email:
+    host: ""
+    port: 587
+    use_tls: true
+
+server:
+  env:
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secret
+          key: secret-key
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secret
+          key: db-password
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+worker:
+  env:
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secret
+          key: secret-key
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secret
+          key: db-password
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      cpu: 300m
+      memory: 512Mi
+
+postgresql:
+  enabled: false
+
+redis:
+  enabled: false

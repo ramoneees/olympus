@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: cloudbeaver
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`db.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: cloudbeaver
+          port: 8978
+  tls:
+    secretName: wildcard-ramoneees-com-tls

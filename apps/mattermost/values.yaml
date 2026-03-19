@@ -1,0 +1,40 @@
+# Mattermost Team Edition
+# Chart: mattermost-team-edition
+# Repo: https://helm.mattermost.com
+
+image:
+  repository: mattermost/mattermost-team-edition
+  tag: latest
+
+persistence:
+  data:
+    enabled: true
+    storageClass: longhorn
+    size: 5Gi
+  plugins:
+    enabled: true
+    storageClass: longhorn
+    size: 1Gi
+
+mysql:
+  enabled: false
+
+externalDB:
+  enabled: true
+  externalDriverType: postgres
+  externalConnectionString: "postgres://mattermost:mm_Rj3wN8yT5kB6@postgresql.databases.svc.cluster.local:5432/mattermost?sslmode=disable"
+
+config:
+  ServiceSettings:
+    SiteURL: "https://chat.ramoneees.com"
+  SqlSettings:
+    DriverName: "postgres"
+    DataSource: "postgres://mattermost:mm_Rj3wN8yT5kB6@postgresql.databases.svc.cluster.local:5432/mattermost?sslmode=disable"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi

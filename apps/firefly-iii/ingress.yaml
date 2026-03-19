@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: firefly-iii
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`firefly.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: firefly-iii
+          port: 8080
+  tls:
+    secretName: wildcard-ramoneees-com-tls

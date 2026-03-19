@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: homebox
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`homebox.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: homebox
+          port: 7745
+  tls:
+    secretName: wildcard-ramoneees-com-tls

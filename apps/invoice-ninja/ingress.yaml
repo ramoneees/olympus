@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: invoice-ninja
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`invoice.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: invoice-ninja
+          port: 80
+  tls:
+    secretName: wildcard-ramoneees-com-tls

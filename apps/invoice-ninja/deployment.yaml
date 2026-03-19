@@ -1,0 +1,158 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: invoice-ninja
+  namespace: apps
+  labels:
+    app: invoice-ninja
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: invoice-ninja
+  template:
+    metadata:
+      labels:
+        app: invoice-ninja
+    spec:
+      containers:
+        - name: invoice-ninja
+          image: invoiceninja/invoiceninja:latest
+          ports:
+            - name: http
+              containerPort: 9000
+          env:
+            - name: APP_URL
+              value: "https://invoice.ramoneees.com"
+            - name: TRUSTED_PROXIES
+              value: "*"
+            - name: DB_HOST
+              value: "mariadb.databases.svc.cluster.local"
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_DATABASE
+              value: "invoiceninja"
+            - name: DB_USERNAME
+              value: "invoiceninja"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: invoice-ninja-secret
+                  key: db-password
+            - name: APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: invoice-ninja-secret
+                  key: app-key
+            - name: REQUIRE_HTTPS
+              value: "true"
+          volumeMounts:
+            - name: public
+              mountPath: /var/www/app/public
+            - name: storage
+              mountPath: /var/www/app/storage
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          readinessProbe:
+            tcpSocket:
+              port: 9000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - name: web
+              containerPort: 80
+          volumeMounts:
+            - name: public
+              mountPath: /var/www/app/public
+              readOnly: true
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+      volumes:
+        - name: public
+          persistentVolumeClaim:
+            claimName: invoice-ninja-public
+        - name: storage
+          persistentVolumeClaim:
+            claimName: invoice-ninja-storage
+        - name: nginx-config
+          configMap:
+            name: invoice-ninja-nginx
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: invoice-ninja-nginx
+  namespace: apps
+data:
+  default.conf: |
+    server {
+        listen 80 default_server;
+        root /var/www/app/public;
+        index index.php;
+        location / {
+            try_files $uri $uri/ /index.php?$query_string;
+        }
+        location ~ \.php$ {
+            fastcgi_pass 127.0.0.1:9000;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            include fastcgi_params;
+        }
+    }
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: invoice-ninja-public
+  namespace: apps
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: invoice-ninja-storage
+  namespace: apps
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: invoice-ninja
+  namespace: apps
+spec:
+  type: ClusterIP
+  selector:
+    app: invoice-ninja
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

@@ -1,0 +1,223 @@
+# ArgoCD Applications — Phase 4 Core Apps
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vaultwarden
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: apps/vaultwarden
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: authentik
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://charts.goauthentik.io
+      chart: authentik
+      targetRevision: "2024.*"
+      helm:
+        valueFiles:
+          - $values/apps/authentik/values.yaml
+    - repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: uptime-kuma
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: apps/uptime-kuma
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mattermost
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://helm.mattermost.com
+      chart: mattermost-team-edition
+      targetRevision: "6.*"
+      helm:
+        valueFiles:
+          - $values/apps/mattermost/values.yaml
+    - repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vikunja
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: apps/vikunja
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: firefly-iii
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: apps/firefly-iii
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: invoice-ninja
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: apps/invoice-ninja
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: homebox
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: apps/homebox
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cloudbeaver
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: apps/cloudbeaver
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mailhog
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: apps/mailhog
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

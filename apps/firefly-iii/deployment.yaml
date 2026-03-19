@@ -1,0 +1,104 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: firefly-iii
+  namespace: apps
+  labels:
+    app: firefly-iii
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: firefly-iii
+  template:
+    metadata:
+      labels:
+        app: firefly-iii
+    spec:
+      containers:
+        - name: firefly-iii
+          image: fireflyiii/core:latest
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: APP_URL
+              value: "https://firefly.ramoneees.com"
+            - name: TRUSTED_PROXIES
+              value: "**"
+            - name: DB_CONNECTION
+              value: "mysql"
+            - name: DB_HOST
+              value: "mariadb.databases.svc.cluster.local"
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_DATABASE
+              value: "firefly"
+            - name: DB_USERNAME
+              value: "firefly"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: firefly-secret
+                  key: db-password
+            - name: APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: firefly-secret
+                  key: app-key
+          volumeMounts:
+            - name: upload
+              mountPath: /var/www/html/storage/upload
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+      volumes:
+        - name: upload
+          persistentVolumeClaim:
+            claimName: firefly-upload
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: firefly-upload
+  namespace: apps
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: firefly-iii
+  namespace: apps
+spec:
+  type: ClusterIP
+  selector:
+    app: firefly-iii
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
