@@ -12,7 +12,7 @@ spec:
   project: default
   source:
     # Change to your Gitea repo URL after Gitea is running
-    repoURL: https://git.ramoneees.com/ramoneees/olympus.git
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
     targetRevision: main
     path: argocd
   destination:
