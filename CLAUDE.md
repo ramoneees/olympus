@@ -42,7 +42,7 @@ kubectl describe pod <pod>         # Pod events and status
 
 ## GitOps Workflow
 
-Edit YAML manifests → commit/push to Gitea (olympus-gitops repo) → ArgoCD auto-sync → cluster applies changes. No manual `kubectl apply` after bootstrap.
+Edit YAML manifests → commit/push to Gitea (olympus repo) → ArgoCD auto-sync → cluster applies changes. No manual `kubectl apply` after bootstrap.
 
 ## Conventions
 

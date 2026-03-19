@@ -14,7 +14,7 @@ spec:
       helm:
         valueFiles:
           - $values/apps/gitea/values.yaml
-    - repoURL: https://git.ramoneees.com/ramoneees/olympus-gitops.git
+    - repoURL: https://git.ramoneees.com/ramoneees/olympus.git
       targetRevision: main
       ref: values
   destination:
@@ -36,7 +36,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://git.ramoneees.com/ramoneees/olympus-gitops.git
+    repoURL: https://git.ramoneees.com/ramoneees/olympus.git
     targetRevision: main
     path: apps/gitea
     directory:

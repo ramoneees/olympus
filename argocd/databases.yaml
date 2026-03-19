@@ -14,7 +14,7 @@ spec:
       helm:
         valueFiles:
           - $values/databases/postgresql/values.yaml
-    - repoURL: https://git.ramoneees.com/ramoneees/olympus-gitops.git
+    - repoURL: https://git.ramoneees.com/ramoneees/olympus.git
       targetRevision: main
       ref: values
   destination:
@@ -41,7 +41,7 @@ spec:
       helm:
         valueFiles:
           - $values/databases/mariadb/values.yaml
-    - repoURL: https://git.ramoneees.com/ramoneees/olympus-gitops.git
+    - repoURL: https://git.ramoneees.com/ramoneees/olympus.git
       targetRevision: main
       ref: values
   destination:
@@ -68,7 +68,7 @@ spec:
       helm:
         valueFiles:
           - $values/databases/redis/values.yaml
-    - repoURL: https://git.ramoneees.com/ramoneees/olympus-gitops.git
+    - repoURL: https://git.ramoneees.com/ramoneees/olympus.git
       targetRevision: main
       ref: values
   destination:

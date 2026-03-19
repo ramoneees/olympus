@@ -23,7 +23,7 @@ spec:
       helm:
         valueFiles:
           - $values/infrastructure/longhorn/values.yaml
-    - repoURL: https://git.ramoneees.com/ramoneees/olympus-gitops.git
+    - repoURL: https://git.ramoneees.com/ramoneees/olympus.git
       targetRevision: main
       ref: values
   destination:
