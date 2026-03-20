@@ -22,7 +22,7 @@ mysql:
 externalDB:
   enabled: true
   externalDriverType: postgres
-  externalConnectionString: "postgres://mattermost:mm_Rj3wN8yT5kB6@postgresql.databases.svc.cluster.local:5432/mattermost?sslmode=disable"
+  externalConnectionString: "mattermost:mm_Rj3wN8yT5kB6@postgresql.databases.svc.cluster.local:5432/mattermost?sslmode=disable"
 
 config:
   MM_SERVICESETTINGS_SITEURL: "https://chat.ramoneees.com"
