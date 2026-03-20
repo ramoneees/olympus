@@ -15,3 +15,20 @@ spec:
           port: 8080
   tls:
     secretName: wildcard-ramoneees-com-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: firefly-iii-importer
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`firefly-import.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: firefly-iii-importer
+          port: 8080
+  tls:
+    secretName: wildcard-ramoneees-com-tls
