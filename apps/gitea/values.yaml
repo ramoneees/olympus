@@ -4,6 +4,9 @@
 # Managed by ArgoCD
 
 image:
+  registry: docker.gitea.com
+  repository: gitea
+  tag: "1.25.4-rootless"
   rootless: true
 
 gitea:

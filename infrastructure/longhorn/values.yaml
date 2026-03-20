@@ -4,22 +4,22 @@
 # Managed by ArgoCD after bootstrap
 
 defaultSettings:
-  # 2 replicas across both nodes
-  defaultReplicaCount: 2
+  # 1 replica — 2-node cluster has insufficient storage for 2 replicas
+  defaultReplicaCount: 1
   # Default storage class
   defaultDataPath: /var/lib/longhorn
   # Backup target — configure later for S3/NFS
   backupTarget: ""
   # Guaranteed engine manager CPU
   guaranteedInstanceManagerCPU: 12
-  # Storage over-provisioning — conservative for 2-node cluster
-  storageOverProvisioningPercentage: 100
-  storageMinimalAvailablePercentage: 15
+  # Storage over-provisioning — allow 200% for 2-node homelab
+  storageOverProvisioningPercentage: 200
+  storageMinimalAvailablePercentage: 10
 
 persistence:
   defaultClass: true
   defaultFsType: ext4
-  defaultClassReplicaCount: 2
+  defaultClassReplicaCount: 1
   reclaimPolicy: Retain
 
 ingress:
