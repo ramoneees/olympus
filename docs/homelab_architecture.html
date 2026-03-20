@@ -1,611 +1,783 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>OLYMPUS Homelab Architecture</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: system-ui, sans-serif; color: #1a1a1a; background: #fff; padding: 24px; font-size: 13px; }
-  @media (prefers-color-scheme: dark) {
-    body { background: #1a1a1a; color: #e0e0e0; }
-    .flow { background: #2a2a2a; }
-    .flow-step { background: #333; border-color: #555; color: #e0e0e0; }
-    .chip-neutral { background: #2a2a2a; border-color: #555; color: #ccc; }
-    .future-banner { border-color: #444; background: #222; }
-    .future-badge { background: #2a2a2a; border-color: #555; color: #aaa; }
-    .future-chip { background: #2a2a2a; border-color: #555; color: #aaa; }
-    .agent-box { background: #1e1a2e !important; border-color: #5a4aaa !important; }
-    .memory-box, .phase-box { border-color: #444; background: #222; }
-    .memory-sub, .phase-content { color: #aaa; }
-    .server-box { background: #1a1a1a; }
-    .ram-bar-bg { background: #333; }
-    .model-table td, .model-table th { border-color: #333; }
-    .model-table tr:nth-child(even) { background: #222; }
-    .meta { background: #222; border-color: #444; color: #aaa; }
-  }
+  <meta charset="UTF-8">
+  <title>OLYMPUS Agent Access Setup — Phase 4</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  /* Meta header */
-  .meta { background: #f5f5f5; border: 1px solid #ddd; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 11px; color: #666; }
-  .meta strong { color: #1a1a1a; }
+    body {
+      font-family: system-ui, sans-serif;
+      color: #1a1a1a;
+      background: #fff;
+      padding: 24px;
+      font-size: 13px;
+    }
 
-  .zone { border: 1px dashed #ccc; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
-  .zone-title { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
-  .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
-  .row:last-child { margin-bottom: 0; }
-  .chip { border-radius: 6px; padding: 6px 10px; font-size: 12px; border: 0.5px solid transparent; flex: 1; min-width: 130px; }
-  .chip-title { font-weight: 600; font-size: 12px; }
-  .chip-sub { font-size: 11px; opacity: 0.8; margin-top: 1px; }
-  .chip-done    { background: #e6f4ee; border-color: #7fc9a4; color: #1a6640; }
-  .chip-next    { background: #e6f0fb; border-color: #7fb3e8; color: #1a4f8a; }
-  .chip-helm    { background: #fef6e6; border-color: #f0c060; color: #7a5010; }
-  .chip-gpu     { background: #fde8e8; border-color: #e88080; color: #7a1a1a; }
-  .chip-future  { background: #f5f5f5; border: 1px dashed #bbb; color: #666; }
-  .chip-neutral { background: #f5f5f5; border-color: #ddd; color: #333; }
-  .chip-new     { background: #e6f0fb; border: 1.5px dashed #378ADD; color: #185FA5; }
-  .chip-agent   { background: #f0eeff; border-color: #b0a0ee; color: #3a2a8a; }
-  .chip-comms   { background: #f0f8ff; border-color: #90c8f0; color: #1a5080; }
-  .chip-phase2  { background: #fff8f0; border: 1px dashed #e8a020; color: #8a5010; }
-  .chip-glm     { background: #fff0f8; border-color: #e090c0; color: #8a1060; }
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #1a1a1a;
+        color: #e0e0e0;
+      }
 
-  .server-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-  .server-box  { border: 1px solid #ccc; border-radius: 12px; padding: 12px; }
-  .server-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
-  .server-sub   { font-size: 11px; color: #888; margin-bottom: 6px; }
-  .s1 { border-color: #1D9E75 !important; }
-  .s1 .server-title { color: #0F6E56; }
-  .s2 { border-color: #7F77DD !important; }
-  .s2 .server-title { color: #534AB7; }
+      .service-box {
+        background: #222;
+        border-color: #444;
+      }
 
-  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #666; }
-  .legend-dot  { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+      .step {
+        background: #2a2a2a;
+        border-color: #444;
+      }
 
-  .flow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 10px 12px; background: #f5f5f5; border-radius: 8px; font-size: 12px; margin-bottom: 8px; }
-  .flow-arrow { color: #aaa; font-size: 14px; }
-  .flow-step  { background: #fff; border: 0.5px solid #ddd; border-radius: 4px; padding: 3px 8px; font-size: 11px; white-space: nowrap; }
-  .flow-step-done  { background: #e6f4ee; border-color: #7fc9a4; color: #1a6640; }
-  .flow-step-agent { background: #f0eeff; border-color: #b0a0ee; color: #3a2a8a; font-weight: 600; }
-  .flow-step-comms { background: #f0f8ff; border-color: #90c8f0; color: #1a5080; font-weight: 600; }
-  .flow-step-glm   { background: #fff0f8; border-color: #e090c0; color: #8a1060; font-weight: 600; }
+      .step code {
+        background: #333;
+        color: #e0e0e0;
+      }
 
-  .future-banner { border: 1px dashed #ccc; border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 14px; }
-  .future-badge  { font-size: 10px; font-weight: 600; background: #f5f5f5; border: 0.5px solid #ccc; color: #666; border-radius: 4px; padding: 3px 8px; white-space: nowrap; margin-top: 2px; }
-  .future-title  { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-  .future-sub    { font-size: 12px; color: #666; line-height: 1.6; }
-  .future-chips  { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-  .future-chip   { font-size: 11px; background: #f5f5f5; border: 0.5px dashed #ccc; border-radius: 4px; padding: 3px 10px; color: #666; }
+      .agent-chip {
+        background: #2a2a2a;
+      }
 
-  .section-label { font-size: 10px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin: 10px 0 6px; }
+      table td,
+      table th {
+        border-color: #333;
+      }
 
-  h1 { font-size: 22px; font-weight: 700; margin-bottom: 2px; }
-  .subtitle { font-size: 12px; color: #888; margin-bottom: 16px; }
+      tr:nth-child(even) {
+        background: #222;
+      }
 
-  .agent-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-  .agent-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
-  .agent-box { border: 1px solid #c0b0f0; border-radius: 10px; padding: 10px 12px; background: #faf9ff; }
-  .agent-icon { font-size: 18px; margin-bottom: 4px; }
-  .agent-name { font-size: 13px; font-weight: 700; color: #3a2a8a; margin-bottom: 1px; }
-  .agent-role { font-size: 11px; color: #7a6aaa; margin-bottom: 6px; }
-  .agent-tools { font-size: 11px; color: #555; line-height: 1.6; margin-bottom: 6px; }
-  .tag-local { display: inline-block; font-size: 10px; background: #fde8e8; border: 0.5px solid #e88080; border-radius: 3px; padding: 2px 6px; color: #7a1a1a; margin-top: 2px; }
-  .tag-cloud { display: inline-block; font-size: 10px; background: #fef6e6; border: 0.5px solid #f0c060; border-radius: 3px; padding: 2px 6px; color: #7a5010; margin-top: 2px; margin-left: 4px; }
-  .tag-glm { display: inline-block; font-size: 10px; background: #fff0f8; border: 0.5px solid #e090c0; border-radius: 3px; padding: 2px 6px; color: #8a1060; margin-top: 2px; margin-left: 4px; }
-  .tag-private { display: inline-block; font-size: 10px; background: #e6f4ee; border: 0.5px solid #7fc9a4; border-radius: 3px; padding: 2px 6px; color: #1a6640; margin-top: 2px; }
+      .secret-box {
+        background: #1e2a1e;
+        border-color: #3a6a3a;
+      }
+    }
 
-  .memory-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .memory-box { border: 1px solid #ddd; border-radius: 8px; padding: 10px; }
-  .memory-title { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
-  .memory-sub { font-size: 11px; color: #666; line-height: 1.5; }
+    h1 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
 
-  .feedback-flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 12px; background: #faf9ff; border-radius: 8px; border: 1px solid #c0b0f0; font-size: 12px; margin-bottom: 8px; }
+    .subtitle {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 20px;
+    }
 
-  .ram-gauge { margin: 8px 0 12px; }
-  .ram-label { font-size: 11px; color: #888; margin-bottom: 4px; display: flex; justify-content: space-between; }
-  .ram-bar-bg { background: #eee; border-radius: 4px; height: 8px; overflow: hidden; }
-  .ram-bar-fill { height: 8px; border-radius: 4px; }
+    .service-box {
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
 
-  .phase-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-  .phase-box { border-radius: 8px; padding: 10px 12px; border: 1px solid #ddd; background: #fafafa; }
-  .phase-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-  .phase-content { font-size: 12px; color: #555; line-height: 1.6; }
-  .phase-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-  .phase-chip { font-size: 10px; border-radius: 3px; padding: 2px 7px; border: 0.5px solid; }
+    .service-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
 
-  .model-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
-  .model-table th { font-size: 11px; font-weight: 600; color: #888; text-align: left; padding: 6px 8px; border-bottom: 2px solid #eee; }
-  .model-table td { padding: 7px 8px; border-bottom: 0.5px solid #f0f0f0; vertical-align: top; line-height: 1.5; }
-  .model-table tr:nth-child(even) { background: #fafafa; }
-  .badge-local { display: inline-block; font-size: 10px; background: #fde8e8; border: 0.5px solid #e88080; border-radius: 3px; padding: 1px 5px; color: #7a1a1a; }
-  .badge-cloud { display: inline-block; font-size: 10px; background: #fff0f8; border: 0.5px solid #e090c0; border-radius: 3px; padding: 1px 5px; color: #8a1060; }
-  .badge-private { display: inline-block; font-size: 10px; background: #e6f4ee; border: 0.5px solid #7fc9a4; border-radius: 3px; padding: 1px 5px; color: #1a6640; }
+    .service-icon {
+      font-size: 20px;
+    }
 
-  .migrate-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
-  .migrate-table th { font-size: 11px; font-weight: 600; color: #888; text-align: left; padding: 5px 8px; border-bottom: 2px solid #eee; }
-  .migrate-table td { padding: 6px 8px; border-bottom: 0.5px solid #f0f0f0; vertical-align: top; }
-  .badge-migrate  { display: inline-block; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 3px; background: #e6f4ee; color: #1a6640; border: 0.5px solid #7fc9a4; }
-  .badge-replace  { display: inline-block; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 3px; background: #fde8e8; color: #7a1a1a; border: 0.5px solid #e88080; }
-  .badge-drop     { display: inline-block; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 3px; background: #f5f5f5; color: #888; border: 0.5px solid #ccc; }
-</style>
+    .service-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .service-url {
+      font-size: 11px;
+      color: #888;
+      font-family: monospace;
+    }
+
+    .agent-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .agent-chip {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 0.5px solid;
+    }
+
+    .agent-plutus {
+      background: #e6f4ee;
+      border-color: #7fc9a4;
+      color: #1a6640;
+    }
+
+    .agent-hermes {
+      background: #fff8e6;
+      border-color: #f0d060;
+      color: #7a5010;
+    }
+
+    .agent-athena {
+      background: #f0eeff;
+      border-color: #b0a0ee;
+      color: #3a2a8a;
+    }
+
+    .agent-prometheus {
+      background: #fde8e8;
+      border-color: #e88080;
+      color: #7a1a1a;
+    }
+
+    .agent-heph {
+      background: #e6f0fb;
+      border-color: #7fb3e8;
+      color: #1a4f8a;
+    }
+
+    .agent-themis {
+      background: #fff0f8;
+      border-color: #e090c0;
+      color: #8a1060;
+    }
+
+    .agent-mnemosyne {
+      background: #f5f5f5;
+      border-color: #bbb;
+      color: #555;
+    }
+
+    .step {
+      background: #f9f9f9;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+
+    .step-title {
+      font-weight: 600;
+      font-size: 12px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      background: #1a1a1a;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 10px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step p {
+      font-size: 12px;
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 6px;
+    }
+
+    .step p:last-child {
+      margin-bottom: 0;
+    }
+
+    .step code {
+      font-family: monospace;
+      font-size: 11px;
+      background: #f0f0f0;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    .step pre {
+      font-family: monospace;
+      font-size: 11px;
+      background: #f0f0f0;
+      padding: 8px 10px;
+      border-radius: 6px;
+      overflow-x: auto;
+      line-height: 1.6;
+      margin-top: 6px;
+    }
+
+    .secret-box {
+      background: #f0fbf0;
+      border: 1px solid #7fc9a4;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-top: 10px;
+    }
+
+    .secret-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #1a6640;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .secret-item {
+      font-family: monospace;
+      font-size: 11px;
+      color: #555;
+      line-height: 1.8;
+    }
+
+    .note {
+      font-size: 11px;
+      color: #888;
+      font-style: italic;
+      margin-top: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 12px;
+    }
+
+    th {
+      font-size: 11px;
+      font-weight: 600;
+      color: #888;
+      text-align: left;
+      padding: 6px 8px;
+      border-bottom: 2px solid #eee;
+    }
+
+    td {
+      padding: 6px 8px;
+      border-bottom: 0.5px solid #f0f0f0;
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    .badge-done {
+      display: inline-block;
+      font-size: 10px;
+      background: #e6f4ee;
+      border: 0.5px solid #7fc9a4;
+      border-radius: 3px;
+      padding: 1px 6px;
+      color: #1a6640;
+      font-weight: 600;
+    }
+
+    .badge-todo {
+      display: inline-block;
+      font-size: 10px;
+      background: #fef6e6;
+      border: 0.5px solid #f0c060;
+      border-radius: 3px;
+      padding: 1px 6px;
+      color: #7a5010;
+      font-weight: 600;
+    }
+
+    .badge-warn {
+      display: inline-block;
+      font-size: 10px;
+      background: #fde8e8;
+      border: 0.5px solid #e88080;
+      border-radius: 3px;
+      padding: 1px 6px;
+      color: #7a1a1a;
+      font-weight: 600;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin: 24px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #eee;
+    }
+
+    .litellm-note {
+      background: #f0f4ff;
+      border: 1px solid #b0c0ee;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+  </style>
 </head>
+
 <body>
 
-<h1>🏛️ OLYMPUS Homelab Architecture</h1>
-<div class="subtitle">ramoneees · k3s cluster · OLYMPUS multi-agent system</div>
+  <h1>🔑 OLYMPUS Agent Access Setup</h1>
+  <div class="subtitle">Phase 4 services · what each agent needs to interact · March 2026</div>
 
-<!-- Meta -->
-<div class="meta">
-  <div><strong>Version:</strong> 1.0.0</div>
-  <div><strong>Last updated:</strong> March 2026</div>
-  <div><strong>Cluster:</strong> k3s v1.34.5+k3s1 · homeserver (192.168.50.70) + olympus</div>
-  <div><strong>Domain:</strong> ramoneees.com · Cloudflare DNS · WireGuard VPN</div>
-  <div><strong>GPU now:</strong> RTX 2080 8GB · <strong>GPU planned:</strong> dual RTX 5060 Ti 16GB</div>
-  <div><strong>Next step:</strong> MetalLB → cert-manager → Longhorn → ArgoCD + Gitea</div>
-</div>
-
-<div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:#1D9E75"></div>Done ✓</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#378ADD"></div>Next up</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#BA7517"></div>Helm · pending</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#E24B4A"></div>GPU · olympus node</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#7F77DD"></div>OLYMPUS agents</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#e090c0"></div>GLM-5-Turbo cloud</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#f5f5f5; border:1px dashed #bbb"></div>Future phase</div>
-</div>
-
-<!-- ── OLYMPUS ── -->
-<div class="zone" style="border-color:#7F77DD; border-width:1.5px">
-  <div class="zone-title" style="color:#534AB7">🏛️ OLYMPUS — multi-agent system (OpenClaw orchestrated)</div>
-
-  <div class="feedback-flow" style="margin-bottom:10px; border-color:#90c8f0; background:#f0f8ff">
-    <div class="flow-step flow-step-comms">You · Mattermost</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step flow-step-glm">Hermes · GLM-5-Turbo</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">Agent executes</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step flow-step-glm">Themis · reviews</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step flow-step-comms">Mattermost · response</div>
+  <div class="litellm-note">
+    <strong>Pattern for all services:</strong> Every API key, token, and credential gets stored as a <strong>Kubernetes
+      Secret</strong> in the relevant namespace, then referenced in the LiteLLM config and each agent's environment.
+    Never hardcode credentials in manifests. The agents call services via their internal cluster DNS
+    (<code>http://service.namespace.svc.cluster.local</code>) or via Traefik subdomains when needed.
   </div>
 
-  <div class="feedback-flow" style="margin-bottom:12px">
-    <div class="flow-step">Hermes delegates subtask</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">Vikunja task created</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">Agent executes</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step flow-step-glm">Themis reviews</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">Pass → consolidate</div>
-    <div class="flow-arrow">↺</div>
-    <div class="flow-step">Fail → retry</div>
+  <!-- ── VIKUNJA ── -->
+  <div class="service-box" style="border-color:#1D9E75">
+    <div class="service-header">
+      <div class="service-icon">📋</div>
+      <div>
+        <div class="service-title" style="color:#0F6E56">Vikunja — Task Backbone</div>
+        <div class="service-url">tasks.ramoneees.com</div>
+      </div>
+    </div>
+    <div class="agent-row">
+      <span class="agent-chip agent-hermes">Hermes · creates + delegates tasks</span>
+      <span class="agent-chip agent-plutus">Plutus · logs financial tasks</span>
+      <span class="agent-chip agent-heph">Hephaestus · updates task status</span>
+      <span class="agent-chip agent-prometheus">Prometheus · infra tasks</span>
+      <span class="agent-chip agent-themis">Themis · reads audit trail</span>
+      <span class="agent-chip agent-mnemosyne">Mnemosyne · episodic memory</span>
+    </div>
+
+    <div class="step">
+      <div class="step-title"><span class="step-num">1</span> Create a dedicated OLYMPUS service account</div>
+      <p>In Vikunja → Settings → API Tokens → Create Token. Name it <code>olympus-agent</code>. Set permissions:
+        <strong>Tasks: Read/Write, Projects: Read/Write, Labels: Read/Write</strong>. No expiry or set long expiry.</p>
+    </div>
+    <div class="step">
+      <div class="step-title"><span class="step-num">2</span> Create one project per agent</div>
+      <p>Create projects: <code>Hermes</code>, <code>Hephaestus</code>, <code>Prometheus</code>, <code>Athena</code>,
+        <code>Plutus</code>, <code>Themis</code>, <code>OLYMPUS-Audit</code>. Note each project ID (visible in URL).
+        Agents will create tasks scoped to their own project.</p>
+    </div>
+    <div class="step">
+      <div class="step-title"><span class="step-num">3</span> Create task labels</div>
+      <p>Create labels: <code>delegated</code>, <code>in-progress</code>, <code>pending-review</code>,
+        <code>approved</code>, <code>rejected</code>, <code>financial</code>, <code>infra</code>, <code>code</code>.
+        Agents use these for workflow state.</p>
+    </div>
+
+    <div class="secret-box">
+      <div class="secret-title">Kubernetes Secret — namespace: apps</div>
+      <div class="secret-item">VIKUNJA_API_URL=https://tasks.ramoneees.com/api/v1</div>
+      <div class="secret-item">VIKUNJA_API_TOKEN=&lt;token from step 1&gt;</div>
+      <div class="secret-item">VIKUNJA_PROJECT_HERMES=&lt;project id&gt;</div>
+      <div class="secret-item">VIKUNJA_PROJECT_PLUTUS=&lt;project id&gt;</div>
+      <div class="secret-item">VIKUNJA_PROJECT_HEPHAESTUS=&lt;project id&gt;</div>
+      <div class="secret-item">VIKUNJA_PROJECT_PROMETHEUS=&lt;project id&gt;</div>
+    </div>
   </div>
 
-  <!-- Model routing table -->
-  <div class="section-label">Model routing — all via LiteLLM proxy</div>
-  <table class="model-table">
-    <tr><th>Agent</th><th>Now · RTX 2080 8GB</th><th>Phase 1 · 5060 Ti 16GB</th><th>Phase 2 · dual 5060 Ti 32GB</th><th>Privacy</th></tr>
+  <!-- ── FIREFLY III ── -->
+  <div class="service-box" style="border-color:#BA7517">
+    <div class="service-header">
+      <div class="service-icon">💰</div>
+      <div>
+        <div class="service-title" style="color:#7a5010">Firefly III — Finance</div>
+        <div class="service-url">firefly.ramoneees.com</div>
+      </div>
+    </div>
+    <div class="agent-row">
+      <span class="agent-chip agent-plutus">Plutus · primary — read/write transactions</span>
+      <span class="agent-chip agent-hermes">Hermes · receives financial alerts</span>
+      <span class="agent-chip agent-themis">Themis · read-only audit</span>
+    </div>
+
+    <div class="step">
+      <div class="step-title"><span class="step-num">1</span> Create a Personal Access Token for Plutus</div>
+      <p>Firefly III → Profile → OAuth → Personal Access Tokens → Create New. Name: <code>plutus-agent</code>. This
+        gives full API access — Plutus needs read + write for transactions, budgets, categories, and accounts.</p>
+      <p class="note">⚠️ This token must be stored ONLY in the local-only Kubernetes Secret. Never in LiteLLM config or
+        any cloud-accessible store. Plutus is strictly local.</p>
+    </div>
+    <div class="step">
+      <div class="step-title"><span class="step-num">2</span> Create a read-only token for Themis</div>
+      <p>Same process, name: <code>themis-readonly</code>. Themis only needs GET access for audit and reporting.</p>
+    </div>
+    <div class="step">
+      <div class="step-title"><span class="step-num">3</span> Configure webhooks for Hermes</div>
+      <p>Firefly III → Webhooks → Create. Trigger: <strong>After transaction creation</strong>. URL:
+        <code>http://n8n.apps.svc.cluster.local:5678/webhook/firefly-transaction</code>. This lets Hermes get notified
+        of new transactions automatically via n8n.</p>
+    </div>
+    <div class="step">
+      <div class="step-title"><span class="step-num">4</span> Note your account IDs and budget IDs</div>
+      <p>Plutus needs to know your account IDs to create transactions correctly. Run: <code>GET /api/v1/accounts</code>
+        and note the IDs for your main accounts. Add them to the Plutus system prompt context.</p>
+    </div>
+
+    <div class="secret-box">
+      <div class="secret-title">Kubernetes Secret — namespace: apps · LOCAL NODE ONLY (olympus)</div>
+      <div class="secret-item">FIREFLY_API_URL=https://firefly.ramoneees.com/api/v1</div>
+      <div class="secret-item">FIREFLY_PLUTUS_TOKEN=&lt;personal access token&gt;</div>
+      <div class="secret-item">FIREFLY_THEMIS_TOKEN=&lt;readonly token&gt;</div>
+    </div>
+  </div>
+
+  <!-- ── INVOICE NINJA ── -->
+  <div class="service-box" style="border-color:#BA7517">
+    <div class="service-header">
+      <div class="service-icon">🧾</div>
+      <div>
+        <div class="service-title" style="color:#7a5010">Invoice Ninja — Invoicing</div>
+        <div class="service-url">invoice.ramoneees.com</div>
+      </div>
+    </div>
+    <div class="agent-row">
+      <span class="agent-chip agent-plutus">Plutus · primary — invoices + clients + payments</span>
+      <span class="agent-chip agent-hermes">Hermes · invoice status notifications</span>
+    </div>
+
+    <div class="step">
+      <div class="step-title"><span class="step-num">1</span> Generate API token</div>
+      <p>Invoice Ninja → Settings → API Tokens → Add Token. Name: <code>plutus-agent</code>. Copy the token — it's only
+        shown once.</p>
+    </div>
+    <div class="step">
+      <div class="step-title"><span class="step-num">2</span> Note your company token</div>
+      <p>Also needed for API calls: Settings → API Tokens → your company X-API-TOKEN header value. Invoice Ninja
+        requires both the API token and company token in headers.</p>
+    </div>
+    <div class="step">
+      <div class="step-title"><span class="step-num">3</span> Set up webhook for payment events</div>
+      <p>Settings → Webhooks → Create. Event: <strong>Invoice Paid</strong>. URL:
+        <code>http://n8n.apps.svc.cluster.local:5678/webhook/invoice-paid</code>. Hermes gets notified automatically.
+      </p>
+    </div>
+
+    <div class="secret-box">
+      <div class="secret-title">Kubernetes Secret — namespace: apps · LOCAL ONLY</div>
+      <div class="secret-item">INVOICE_NINJA_URL=https://invoice.ramoneees.com/api/v1</div>
+      <div class="secret-item">INVOICE_NINJA_API_TOKEN=&lt;api token&gt;</div>
+      <div class="secret-item">INVOICE_NINJA_COMPANY_TOKEN=&lt;company token&gt;</div>
+    </div>
+  </div>
+
+  <!-- ── MATTERMOST ── -->
+  <div class="service-box" style="border-color:#378ADD">
+    <div class="service-header">
+      <div class="service-icon">💬</div>
+      <div>
+        <div class="service-title" style="color:#185FA5">Mattermost — Communications</div>
+        <div class="service-url">chat.ramoneees.com</div>
+      </div>
+    </div>
+    <div class="agent-row">
+      <span class="agent-chip agent-hermes">Hermes · posts responses + notifications</span>
+      <span class="agent-chip agent-plutus">Plutus · financial alerts only</span>
+      <span class="agent-chip agent-prometheus">Prometheus · infra alerts</span>
+      <span class="agent-chip agent-heph">Hephaestus · PR notifications</span>
+    </div>
+
+    <div class="step">
+      <div class="step-title"><span class="step-num">1</span> Create a bot account for Hermes</div>
+      <p>Mattermost → System Console → Integrations → Bot Accounts → Add Bot Account. Username: <code>hermes</code>.
+        Display name: <code>🪽 Hermes</code>. Role: Member. Copy the bot access token.</p>
+    </div>
+    <div class="step">
+      <div class="step-title"><span class="step-num">2</span> Create dedicated channels</div>
+      <p>Create channels: <code>olympus-general</code>, <code>olympus-alerts</code>, <code>olympus-finance</code>
+        (private), <code>olympus-infra</code>, <code>olympus-code</code>, <code>olympus-log</code>. Note the channel IDs
+        (visible in channel URL).</p>
+      <p class="note">⚠️ Make <code>olympus-finance</code> private — Plutus financial alerts should not be visible to
+        all team members.</p>
+    </div>
+    <div class="step">
+      <div class="step-title"><span class="step-num">3</span> Create incoming webhooks per channel</div>
+      <p>Integrations → Incoming Webhooks → Add. Create one per channel. These give each agent a direct POST URL to send
+        messages without bot auth complexity for one-way notifications.</p>
+    </div>
+    <div class="step">
+      <div class="step-title"><span class="step-num">4</span> Enable slash commands or outgoing webhook for you → Hermes
+      </div>
+      <p>Integrations → Outgoing Webhooks → Add. Channel: <code>olympus-general</code>. Trigger words:
+        <code>@hermes</code>. Callback URL:
+        <code>http://openclaw.olympus.svc.cluster.local:18789/webhook/mattermost</code>. This routes your messages to
+        OpenClaw/Hermes.</p>
+    </div>
+
+    <div class="secret-box">
+      <div class="secret-title">Kubernetes Secret — namespace: apps</div>
+      <div class="secret-item">MATTERMOST_URL=https://chat.ramoneees.com</div>
+      <div class="secret-item">MATTERMOST_BOT_TOKEN=&lt;hermes bot token&gt;</div>
+      <div class="secret-item">MATTERMOST_CHANNEL_GENERAL=&lt;channel id&gt;</div>
+      <div class="secret-item">MATTERMOST_CHANNEL_ALERTS=&lt;channel id&gt;</div>
+      <div class="secret-item">MATTERMOST_CHANNEL_FINANCE=&lt;channel id&gt;</div>
+      <div class="secret-item">MATTERMOST_CHANNEL_INFRA=&lt;channel id&gt;</div>
+      <div class="secret-item">MATTERMOST_WEBHOOK_GENERAL=&lt;incoming webhook url&gt;</div>
+      <div class="secret-item">MATTERMOST_WEBHOOK_ALERTS=&lt;incoming webhook url&gt;</div>
+    </div>
+  </div>
+
+  <!-- ── AUTHENTIK ── -->
+  <div class="service-box" style="border-color:#7F77DD">
+    <div class="service-header">
+      <div class="service-icon">🔐</div>
+      <div>
+        <div class="service-title" style="color:#534AB7">Authentik — SSO</div>
+        <div class="service-url">auth.ramoneees.com</div>
+      </div>
+    </div>
+    <div class="agent-row">
+      <span class="agent-chip agent-hermes">Hermes · user/session management</span>
+      <span class="agent-chip agent-prometheus">Prometheus · monitors auth events</span>
+    </div>
+
+    <div class="step">
+      <div class="step-title"><span class="step-num">1</span> Create a service account token</div>
+      <p>Authentik → Admin → Directory → Service Accounts → Create. Name: <code>olympus-agent</code>. Generate a token.
+        This allows Prometheus to read audit logs and Hermes to manage sessions if needed.</p>
+    </div>
+    <div class="step">
+      <div class="step-title"><span class="step-num">2</span> Connect all Phase 4 services to Authentik SSO</div>
+      <p>For each running service, create an OAuth2/OIDC provider in Authentik and configure the service to use it.
+        Priority: Vikunja → Gitea → Mattermost → Uptime Kuma. This gives you one login for everything.</p>
+    </div>
+    <div class="step">
+      <div class="step-title"><span class="step-num">3</span> Set up event webhook for Prometheus monitoring</div>
+      <p>Authentik → System → Event Rules → Create. Send login failures and suspicious events to n8n → Prometheus →
+        Mattermost #olympus-alerts.</p>
+    </div>
+
+    <div class="secret-box">
+      <div class="secret-title">Kubernetes Secret — namespace: infrastructure</div>
+      <div class="secret-item">AUTHENTIK_URL=https://auth.ramoneees.com</div>
+      <div class="secret-item">AUTHENTIK_TOKEN=&lt;service account token&gt;</div>
+    </div>
+  </div>
+
+  <!-- ── UPTIME KUMA ── -->
+  <div class="service-box" style="border-color:#1D9E75">
+    <div class="service-header">
+      <div class="service-icon">📡</div>
+      <div>
+        <div class="service-title" style="color:#0F6E56">Uptime Kuma — Monitoring</div>
+        <div class="service-url">status.ramoneees.com</div>
+      </div>
+    </div>
+    <div class="agent-row">
+      <span class="agent-chip agent-prometheus">Prometheus · reads monitor status</span>
+      <span class="agent-chip agent-hermes">Hermes · receives downtime alerts</span>
+    </div>
+
+    <div class="step">
+      <div class="step-title"><span class="step-num">1</span> Enable API access</div>
+      <p>Uptime Kuma → Settings → API Keys → Add API Key. Name: <code>prometheus-agent</code>. Prometheus can query
+        monitor status, response times, and incident history via the REST API.</p>
+    </div>
+    <div class="step">
+      <div class="step-title"><span class="step-num">2</span> Set up Mattermost notification channel</div>
+      <p>Settings → Notifications → Add → Mattermost. Use the <code>olympus-alerts</code> incoming webhook URL. Enable
+        for all monitors. Hermes receives alerts in #olympus-alerts and can take action.</p>
+    </div>
+    <div class="step">
+      <div class="step-title"><span class="step-num">3</span> Add monitors for all running services</div>
+      <p>Add HTTP monitors for: Vikunja, Firefly III, Invoice Ninja, Mattermost, Authentik, Vaultwarden, Homebox,
+        Cloudbeaver, AdGuard, Traefik, Ollama, LiteLLM, OpenClaw. Set check interval to 60s.</p>
+    </div>
+
+    <div class="secret-box">
+      <div class="secret-title">Kubernetes Secret — namespace: monitoring</div>
+      <div class="secret-item">UPTIME_KUMA_URL=https://status.ramoneees.com</div>
+      <div class="secret-item">UPTIME_KUMA_API_KEY=&lt;api key&gt;</div>
+    </div>
+  </div>
+
+  <!-- ── VAULTWARDEN ── -->
+  <div class="service-box" style="border-color:#888">
+    <div class="service-header">
+      <div class="service-icon">🔒</div>
+      <div>
+        <div class="service-title">Vaultwarden — Passwords</div>
+        <div class="service-url">vault.ramoneees.com</div>
+      </div>
+    </div>
+    <div class="agent-row">
+      <span class="agent-chip agent-hermes">Hermes · secret retrieval only</span>
+    </div>
+
+    <div class="step">
+      <div class="step-title"><span class="step-num">1</span> Do NOT give agents direct Vaultwarden API access</div>
+      <p>Vaultwarden stores all your personal passwords. Agents should never have direct read access to the vault.
+        Instead, store agent credentials in Kubernetes Secrets (which they already have access to) and store your
+        personal passwords in Vaultwarden for human use only.</p>
+      <p class="note">The correct pattern: secrets agents need → Kubernetes Secrets. Secrets you need as a human →
+        Vaultwarden. These are separate stores for a reason.</p>
+    </div>
+    <div class="step">
+      <div class="step-title"><span class="step-num">2</span> Optional: Vaultwarden admin API for Prometheus</div>
+      <p>If you want Prometheus to monitor Vaultwarden health, enable the admin token in Vaultwarden config
+        (<code>ADMIN_TOKEN</code> env var) and give Prometheus read-only access to <code>/admin</code> endpoint for
+        health checks only.</p>
+    </div>
+  </div>
+
+  <!-- ── HOMEBOX ── -->
+  <div class="service-box">
+    <div class="service-header">
+      <div class="service-icon">📦</div>
+      <div>
+        <div class="service-title">Homebox — Inventory</div>
+        <div class="service-url">homebox.ramoneees.com</div>
+      </div>
+    </div>
+    <div class="agent-row">
+      <span class="agent-chip agent-athena">Athena · queries inventory</span>
+      <span class="agent-chip agent-hermes">Hermes · adds items on request</span>
+    </div>
+
+    <div class="step">
+      <div class="step-title"><span class="step-num">1</span> Create API token</div>
+      <p>Homebox → Profile → Generate API Token. Name: <code>olympus-agent</code>. Athena can query your inventory when
+        asked "do I have X?" or "where is my Y?". Hermes can add new items when you say so via Mattermost.</p>
+    </div>
+
+    <div class="secret-box">
+      <div class="secret-title">Kubernetes Secret — namespace: apps</div>
+      <div class="secret-item">HOMEBOX_URL=https://homebox.ramoneees.com/api/v1</div>
+      <div class="secret-item">HOMEBOX_API_TOKEN=&lt;token&gt;</div>
+    </div>
+  </div>
+
+  <!-- ── CLOUDBEAVER ── -->
+  <div class="service-box">
+    <div class="service-header">
+      <div class="service-icon">🗄️</div>
+      <div>
+        <div class="service-title">Cloudbeaver — DB UI</div>
+        <div class="service-url">db.ramoneees.com</div>
+      </div>
+    </div>
+    <div class="agent-row">
+      <span class="agent-chip agent-prometheus">Prometheus · human tool only</span>
+    </div>
+
+    <div class="step">
+      <div class="step-title"><span class="step-num">1</span> No agent access needed</div>
+      <p>Cloudbeaver is a human-facing DB management UI. Agents that need database access connect directly to PostgreSQL
+        or MariaDB via the database credentials — not via Cloudbeaver. No API token needed.</p>
+      <p>Prometheus and Hephaestus connect directly:
+        <code>postgresql://user:pass@postgresql.databases.svc.cluster.local:5432/dbname</code></p>
+    </div>
+  </div>
+
+  <!-- ── SUMMARY TABLE ── -->
+  <div class="section-title">Summary — what to create right now</div>
+  <table>
     <tr>
-      <td><strong>🪽 Hermes</strong> · Orchestrator + Comms</td>
-      <td><span class="badge-cloud">GLM-5-Turbo cloud</span> + <span class="badge-local">qwen3:8b local</span></td>
-      <td><span class="badge-cloud">GLM-5-Turbo cloud</span></td>
-      <td><span class="badge-cloud">GLM-5-Turbo cloud</span></td>
-      <td>No financial data</td>
+      <th>Service</th>
+      <th>Action needed</th>
+      <th>Who stores it</th>
+      <th>Priority</th>
     </tr>
     <tr>
-      <td><strong>⚒️ Hephaestus</strong> · Developer · OpenCode CLI</td>
-      <td><span class="badge-local">qwen2.5-coder:7b</span> + <span class="badge-cloud">GLM-5-Turbo fallback</span></td>
-      <td><span class="badge-local">qwen2.5-coder:14b</span> + GLM fallback</td>
-      <td><span class="badge-local">Qwen3.5:27B vLLM</span></td>
-      <td>Code only</td>
+      <td>Vikunja</td>
+      <td>API token + 6 projects + labels</td>
+      <td>k8s Secret · apps ns</td>
+      <td><span class="badge-todo">Do first</span></td>
     </tr>
     <tr>
-      <td><strong>🔥 Prometheus</strong> · Infrastructure · IaC</td>
-      <td><span class="badge-local">qwen2.5-coder:7b</span> + <span class="badge-cloud">GLM-5-Turbo fallback</span></td>
-      <td><span class="badge-local">qwen2.5-coder:14b</span> + GLM fallback</td>
-      <td><span class="badge-local">Qwen3.5:27B vLLM</span></td>
-      <td>IaC only</td>
+      <td>Mattermost</td>
+      <td>Bot account + 5 channels + webhooks</td>
+      <td>k8s Secret · apps ns</td>
+      <td><span class="badge-todo">Do first</span></td>
     </tr>
     <tr>
-      <td><strong>🦉 Athena</strong> · Research · Docs</td>
-      <td><span class="badge-cloud">GLM-5-Turbo cloud</span></td>
-      <td><span class="badge-cloud">GLM-5-Turbo cloud</span></td>
-      <td><span class="badge-cloud">GLM-5-Turbo cloud</span></td>
-      <td>No sensitive data</td>
+      <td>Firefly III</td>
+      <td>2 PATs (Plutus + Themis) + webhook</td>
+      <td>k8s Secret · apps ns · LOCAL ONLY</td>
+      <td><span class="badge-todo">Do first</span></td>
     </tr>
     <tr>
-      <td><strong>💰 Plutus</strong> · Finance</td>
-      <td><span class="badge-private">deepseek-r1:7b local only</span></td>
-      <td><span class="badge-private">phi4-reasoning-plus local</span> + deepseek-r1:14b</td>
-      <td><span class="badge-private">QwQ:32b local vLLM</span></td>
-      <td><strong>NEVER cloud</strong></td>
+      <td>Invoice Ninja</td>
+      <td>API token + company token + webhook</td>
+      <td>k8s Secret · apps ns · LOCAL ONLY</td>
+      <td><span class="badge-todo">Do first</span></td>
     </tr>
     <tr>
-      <td><strong>⚖️ Themis</strong> · Strategy + Audit</td>
-      <td><span class="badge-cloud">GLM-5-Turbo cloud</span></td>
-      <td><span class="badge-cloud">GLM-5-Turbo cloud</span></td>
-      <td><span class="badge-cloud">GLM-5-Turbo cloud</span></td>
-      <td>No financial data</td>
+      <td>Uptime Kuma</td>
+      <td>API key + Mattermost notification + all monitors</td>
+      <td>k8s Secret · monitoring ns</td>
+      <td><span class="badge-todo">Do first</span></td>
     </tr>
     <tr>
-      <td><strong>🧠 Mnemosyne</strong> · Memory</td>
-      <td><span class="badge-local">qwen3:8b</span> + nomic-embed-text-v2</td>
-      <td><span class="badge-local">qwen3:8b</span> + nomic-embed-text-v2</td>
-      <td><span class="badge-local">Qwen3.5:9B</span> + Infinity phase 2</td>
-      <td>Local only</td>
+      <td>Authentik</td>
+      <td>Service account token + connect all services to SSO</td>
+      <td>k8s Secret · infrastructure ns</td>
+      <td><span class="badge-todo">Do next</span></td>
     </tr>
     <tr>
-      <td><strong>👁️ Vision</strong> · All agents</td>
-      <td><span class="badge-local">qwen3-vl:7b</span> + <span class="badge-local">glm-ocr:0.9b</span></td>
-      <td><span class="badge-local">qwen3-vl:8b</span> + glm-ocr</td>
-      <td><span class="badge-local">Qwen3.5 native vision</span> (when Ollama ready)</td>
-      <td>Local only</td>
+      <td>Homebox</td>
+      <td>API token</td>
+      <td>k8s Secret · apps ns</td>
+      <td><span class="badge-todo">Do next</span></td>
+    </tr>
+    <tr>
+      <td>Vaultwarden</td>
+      <td>No agent access — human only</td>
+      <td>n/a</td>
+      <td><span class="badge-done">No action</span></td>
+    </tr>
+    <tr>
+      <td>Cloudbeaver</td>
+      <td>No agent access — human only</td>
+      <td>n/a</td>
+      <td><span class="badge-done">No action</span></td>
     </tr>
   </table>
-  <div style="font-size:11px; color:#888; margin-top:6px">GLM-5-Turbo: $0.96/M input · $3.20/M output · 200K context · purpose-built for OpenClaw · closed-source API only (no local weights). Minimax-M2.5 available as additional cloud fallback for Hephaestus/Prometheus coding tasks.</div>
 
-  <!-- Orchestration layer -->
-  <div class="section-label" style="margin-top:14px">Orchestration + Memory agents</div>
-  <div class="agent-grid-2" style="margin-bottom:12px">
-    <div class="agent-box" style="border-color:#E8A020; background:#fffbf0">
-      <div class="agent-icon">🪽</div>
-      <div class="agent-name" style="color:#8a5010">Hermes — Orchestrator + Comms</div>
-      <div class="agent-role" style="color:#a07030">Routes tasks · delegates · consolidates · outbound via OpenClaw → Mattermost</div>
-      <div class="agent-tools">Vikunja API · Mattermost bot · n8n triggers · OpenClaw router</div>
-      <span class="tag-glm">GLM-5-Turbo · OpenClaw native</span>
-    </div>
-    <div class="agent-box" style="border-color:#c0a0d0; background:#fdf8ff">
-      <div class="agent-icon">🧠</div>
-      <div class="agent-name" style="color:#5a2a7a">Mnemosyne — Memory Curator</div>
-      <div class="agent-role" style="color:#8a5aaa">Long-term memory · filters storage · organises knowledge across all agents</div>
-      <div class="agent-tools">nomic-embed-text-v2 · pgvector (768/256 Matryoshka) · Redis · Vikunja history</div>
-      <span class="tag-local">qwen3:8b local</span>
-      <span class="tag-local" style="margin-left:4px">Infinity phase 2</span>
-    </div>
+  <!-- ── HOW TO CREATE SECRETS ── -->
+  <div class="section-title">How to create the Kubernetes Secrets</div>
+  <div class="step">
+    <div class="step-title">Template — create secrets from CLI (never commit these to git)</div>
+    <pre>
+# Vikunja
+kubectl create secret generic vikunja-agent-secrets \
+  --namespace apps \
+  --from-literal=VIKUNJA_API_TOKEN=xxx \
+  --from-literal=VIKUNJA_API_URL=https://tasks.ramoneees.com/api/v1
+
+# Firefly (local-only — pin to olympus node)
+kubectl create secret generic firefly-agent-secrets \
+  --namespace apps \
+  --from-literal=FIREFLY_PLUTUS_TOKEN=xxx \
+  --from-literal=FIREFLY_THEMIS_TOKEN=xxx \
+  --from-literal=FIREFLY_API_URL=https://firefly.ramoneees.com/api/v1
+
+# Mattermost
+kubectl create secret generic mattermost-agent-secrets \
+  --namespace apps \
+  --from-literal=MATTERMOST_BOT_TOKEN=xxx \
+  --from-literal=MATTERMOST_URL=https://chat.ramoneees.com
+
+# Then reference in your agent Deployment/StatefulSet:
+# envFrom:
+# - secretRef:
+#     name: vikunja-agent-secrets</pre>
+    <p class="note">For GitOps: use Sealed Secrets or External Secrets Operator to encrypt secrets before committing to
+      Gitea. Never commit plain Kubernetes Secrets.</p>
   </div>
-
-  <!-- Specialist agents -->
-  <div class="section-label">Specialist agents</div>
-  <div class="agent-grid-3" style="margin-bottom:12px">
-    <div class="agent-box">
-      <div class="agent-icon">⚒️</div>
-      <div class="agent-name">Hephaestus — Developer</div>
-      <div class="agent-role">Code · debugging · OpenCode + oh-my-opencode · k8s Jobs</div>
-      <div class="agent-tools">Gitea API · OpenCode CLI · PR creation · test runners</div>
-      <span class="tag-local">qwen2.5-coder:7b</span><span class="tag-glm">GLM-5-Turbo fallback</span>
-    </div>
-    <div class="agent-box">
-      <div class="agent-icon">🔥</div>
-      <div class="agent-name">Prometheus — Infrastructure</div>
-      <div class="agent-role">k8s · Docker · IaC · system implementation</div>
-      <div class="agent-tools">kubectl · Helm · k3s API · Gitea IaC repo · system scripts</div>
-      <span class="tag-local">qwen2.5-coder:7b</span><span class="tag-glm">GLM-5-Turbo fallback</span>
-    </div>
-    <div class="agent-box">
-      <div class="agent-icon">🦉</div>
-      <div class="agent-name">Athena — Research</div>
-      <div class="agent-role">Web research · document parsing · knowledge synthesis</div>
-      <div class="agent-tools">Web search · PDF parsing · Nextcloud docs · qwen3-vl:7b for images</div>
-      <span class="tag-glm">GLM-5-Turbo cloud</span>
-    </div>
-    <div class="agent-box">
-      <div class="agent-icon">💰</div>
-      <div class="agent-name">Plutus — Finance</div>
-      <div class="agent-role">Expenses · reports · invoices · cost analysis</div>
-      <div class="agent-tools">Firefly III API · Invoice Ninja API · glm-ocr for receipts</div>
-      <span class="tag-private">Local only — NEVER cloud</span>
-    </div>
-    <div class="agent-box">
-      <div class="agent-icon">⚖️</div>
-      <div class="agent-name">Themis — Strategy + Audit</div>
-      <div class="agent-role">Risk analysis · decision review · feedback loop gatekeeper</div>
-      <div class="agent-tools">All agent outputs · Vikunja audit trail · scenario simulation</div>
-      <span class="tag-glm">GLM-5-Turbo cloud</span>
-    </div>
-    <div class="agent-box" style="border-color:#1D9E75; background:#f0fbf6">
-      <div class="agent-icon">📋</div>
-      <div class="agent-name" style="color:#0F6E56">Vikunja · task backbone</div>
-      <div class="agent-role" style="color:#1D9E75">Every agent action tracked · full audit trail</div>
-      <div class="agent-tools">tasks.ramoneees.com · task per subtask · agent assignment · status updates</div>
-      <span class="tag-local">PostgreSQL · Redis</span>
-    </div>
-  </div>
-
-  <!-- Memory architecture -->
-  <div class="section-label">Memory architecture (Mnemosyne managed)</div>
-  <div class="memory-grid" style="margin-bottom:12px">
-    <div class="memory-box" style="border-color:#378ADD">
-      <div class="memory-title" style="color:#185FA5">Short-term · Redis</div>
-      <div class="memory-sub">Within-session context · fast access · expires automatically</div>
-    </div>
-    <div class="memory-box" style="border-color:#7F77DD">
-      <div class="memory-title" style="color:#534AB7">Long-term · pgvector</div>
-      <div class="memory-sub">nomic-embed-text-v2 · Matryoshka 768 (important) / 256 (bulk) · PostgreSQL extension</div>
-    </div>
-    <div class="memory-box" style="border-color:#1D9E75">
-      <div class="memory-title" style="color:#0F6E56">Episodic · Vikunja</div>
-      <div class="memory-sub">What · when · which agent · full structured audit trail</div>
-    </div>
-  </div>
-
-  <!-- Embedding strategy -->
-  <div class="section-label">Embedding strategy — phased</div>
-  <div class="phase-grid">
-    <div class="phase-box" style="border-color:#1D9E75; background:#f0fbf6">
-      <div class="phase-label" style="color:#0F6E56">Phase 1 — now · Ollama</div>
-      <div class="phase-content">nomic-embed-text-v2 via Ollama · zero extra infra · ~100ms · fine for single-agent memory<br><br><code>ollama pull nomic-embed-text-v2</code></div>
-    </div>
-    <div class="phase-box" style="border-color:#E8A020; background:#fffbf0">
-      <div class="phase-label" style="color:#8a5010">Phase 2 — when needed · Infinity</div>
-      <div class="phase-content">~5x faster · adds bge-reranker-v2-m3 · 1-2GB VRAM · two-stage retrieval · one LiteLLM config line change<br><br><code>michaelf34/infinity</code></div>
-    </div>
-  </div>
-</div>
-
-<!-- ACCESS LAYER -->
-<div class="zone">
-  <div class="zone-title">Access layer</div>
-  <div class="flow">
-    <div class="flow-step flow-step-done">Your device</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step flow-step-done">WireGuard (router) ✓</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step flow-step-done">LAN 192.168.50.x ✓</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">AdGuard · *.ramoneees.com → Traefik IP (192.168.50.200)</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step flow-step-done">Traefik ✓</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">Service pod</div>
-  </div>
-  <div class="row">
-    <div class="chip chip-done"><div class="chip-title">WireGuard ✓</div><div class="chip-sub">On router · working</div></div>
-    <div class="chip chip-done"><div class="chip-title">Traefik ✓</div><div class="chip-sub">Bundled in k3s · running</div></div>
-    <div class="chip chip-next"><div class="chip-title">MetalLB — next</div><div class="chip-sub">Pool: 192.168.50.200–220</div></div>
-    <div class="chip chip-helm"><div class="chip-title">cert-manager</div><div class="chip-sub">Cloudflare DNS-01 · *.ramoneees.com wildcard</div></div>
-    <div class="chip chip-helm"><div class="chip-title">AdGuard Home</div><div class="chip-sub">Fixed IP 192.168.50.200 · MetalLB · DNS rewrites</div></div>
-  </div>
-</div>
-
-<!-- K3S CLUSTER -->
-<div class="zone">
-  <div class="zone-title">k3s cluster</div>
-  <div class="server-grid">
-
-    <!-- Server 1 -->
-    <div class="server-box s1">
-      <div class="server-title">Server 1 — homeserver (NiPoGi N100)</div>
-      <div class="server-sub">Control plane · 192.168.50.70 · 16→32 GB RAM · 2 TB NVMe</div>
-      <div class="ram-gauge">
-        <div class="ram-label"><span>Est. RAM usage</span><span>~4.4 GB / 32 GB</span></div>
-        <div class="ram-bar-bg"><div class="ram-bar-fill" style="width:14%; background:#1D9E75"></div></div>
-      </div>
-      <div class="row">
-        <div class="chip chip-done"><div class="chip-title">k3s server ✓</div><div class="chip-sub">v1.34.5+k3s1 · Ready</div></div>
-        <div class="chip chip-done"><div class="chip-title">MicroK8s removed ✓</div><div class="chip-sub">Conflict resolved</div></div>
-      </div>
-      <div class="section-label">GitOps</div>
-      <div class="row">
-        <div class="chip chip-helm"><div class="chip-title">ArgoCD</div><div class="chip-sub">GitOps · auto-sync · self-heal</div></div>
-        <div class="chip chip-helm"><div class="chip-title">Gitea</div><div class="chip-sub">git.ramoneees.com · source + registry</div></div>
-      </div>
-      <div class="section-label">Communication</div>
-      <div class="row">
-        <div class="chip chip-comms"><div class="chip-title">Mattermost</div><div class="chip-sub">chat.ramoneees.com · Hermes bot · agent channels</div></div>
-      </div>
-      <div class="section-label">Productivity + Finance</div>
-      <div class="row">
-        <div class="chip chip-helm"><div class="chip-title">Vikunja</div><div class="chip-sub">tasks.ramoneees.com · OLYMPUS task backbone</div></div>
-        <div class="chip chip-helm"><div class="chip-title">Firefly III</div><div class="chip-sub">firefly.ramoneees.com · Plutus integration</div></div>
-      </div>
-      <div class="row">
-        <div class="chip chip-helm"><div class="chip-title">Invoice Ninja</div><div class="chip-sub">invoice.ramoneees.com · Plutus integration</div></div>
-        <div class="chip chip-helm"><div class="chip-title">Homebox</div><div class="chip-sub">homebox.ramoneees.com · inventory</div></div>
-      </div>
-      <div class="section-label">Security + Auth</div>
-      <div class="row">
-        <div class="chip chip-helm"><div class="chip-title">Vaultwarden</div><div class="chip-sub">vault.ramoneees.com · passwords</div></div>
-        <div class="chip chip-helm"><div class="chip-title">Authentik</div><div class="chip-sub">auth.ramoneees.com · SSO</div></div>
-      </div>
-      <div class="section-label">Dev tools + Monitoring</div>
-      <div class="row">
-        <div class="chip chip-helm"><div class="chip-title">Cloudbeaver</div><div class="chip-sub">db.ramoneees.com · PostgreSQL + MariaDB UI</div></div>
-        <div class="chip chip-helm"><div class="chip-title">Mailhog</div><div class="chip-sub">mail.ramoneees.com · SMTP dev</div></div>
-      </div>
-      <div class="row">
-        <div class="chip chip-helm"><div class="chip-title">Uptime Kuma</div><div class="chip-sub">status.ramoneees.com</div></div>
-        <div class="chip chip-helm"><div class="chip-title">Prometheus + Grafana</div><div class="chip-sub">metrics.ramoneees.com</div></div>
-      </div>
-    </div>
-
-    <!-- Server 2 -->
-    <div class="server-box s2">
-      <div class="server-title">Server 2 — olympus (Ryzen 5600X)</div>
-      <div class="server-sub">Worker node · 64 GB RAM · 2 TB NVMe · RTX 2080 8GB → dual RTX 5060 Ti 16GB</div>
-      <div class="ram-gauge">
-        <div class="ram-label"><span>Est. RAM usage</span><span>~4 GB / 64 GB</span></div>
-        <div class="ram-bar-bg"><div class="ram-bar-fill" style="width:6%; background:#7F77DD"></div></div>
-      </div>
-      <div class="row">
-        <div class="chip chip-done"><div class="chip-title">k3s agent ✓</div><div class="chip-sub">v1.34.5+k3s1 · Ready</div></div>
-        <div class="chip chip-done"><div class="chip-title">NVIDIA driver ✓</div><div class="chip-sub">580.126.09 · nvidia-smi verified</div></div>
-      </div>
-      <div class="row">
-        <div class="chip chip-next"><div class="chip-title">nvidia-ctk — next</div><div class="chip-sub">k3s containerd path after MetalLB</div></div>
-        <div class="chip chip-helm"><div class="chip-title">NVIDIA GPU Operator</div><div class="chip-sub">Helm · device scheduling</div></div>
-      </div>
-      <div class="section-label">OLYMPUS LLM stack (pinned to olympus)</div>
-      <div class="row">
-        <div class="chip chip-gpu"><div class="chip-title">Ollama</div><div class="chip-sub">llm.ramoneees.com · LLMs + embeddings (phase 1)</div></div>
-        <div class="chip chip-gpu"><div class="chip-title">Open WebUI</div><div class="chip-sub">ai.ramoneees.com · points to LiteLLM</div></div>
-      </div>
-      <div class="row">
-        <div class="chip chip-new"><div class="chip-title">LiteLLM</div><div class="chip-sub">litellm.ramoneees.com · local + GLM-5-Turbo + Alibaba Qwen + Minimax</div></div>
-        <div class="chip chip-gpu"><div class="chip-title">OpenClaw</div><div class="chip-sub">openclaw.ramoneees.com · StatefulSet · Longhorn PVC · v2026.3.11</div></div>
-      </div>
-      <div class="section-label">Local models (now · RTX 2080 8GB)</div>
-      <div class="row">
-        <div class="chip chip-gpu"><div class="chip-title">qwen3:8b</div><div class="chip-sub">Hermes + Mnemosyne · fast routing</div></div>
-        <div class="chip chip-gpu"><div class="chip-title">qwen2.5-coder:7b</div><div class="chip-sub">Hephaestus + Prometheus</div></div>
-      </div>
-      <div class="row">
-        <div class="chip chip-gpu"><div class="chip-title">deepseek-r1:7b</div><div class="chip-sub">Plutus · finance · local only</div></div>
-        <div class="chip chip-gpu"><div class="chip-title">qwen3-vl:7b</div><div class="chip-sub">Vision · all agents</div></div>
-      </div>
-      <div class="row">
-        <div class="chip chip-gpu"><div class="chip-title">glm-ocr:0.9b</div><div class="chip-sub">Document OCR · tiny · always loaded</div></div>
-        <div class="chip chip-gpu"><div class="chip-title">nomic-embed-text-v2</div><div class="chip-sub">Mnemosyne embeddings</div></div>
-      </div>
-      <div class="section-label">Phase 2 — RTX 5060 Ti 16GB upgrades</div>
-      <div class="row">
-        <div class="chip chip-phase2"><div class="chip-title">qwen2.5-coder:14b</div><div class="chip-sub">Hephaestus + Prometheus upgrade</div></div>
-        <div class="chip chip-phase2"><div class="chip-title">phi4-reasoning-plus</div><div class="chip-sub">Plutus upgrade · best math 16GB</div></div>
-        <div class="chip chip-phase2"><div class="chip-title">qwen3-vl:8b</div><div class="chip-sub">Vision upgrade</div></div>
-      </div>
-      <div class="section-label">Automation + Media</div>
-      <div class="row">
-        <div class="chip chip-helm"><div class="chip-title">n8n</div><div class="chip-sub">n8n.ramoneees.com · Hermes triggers</div></div>
-        <div class="chip chip-helm"><div class="chip-title">browserless</div><div class="chip-sub">Internal · n8n browser automation</div></div>
-      </div>
-      <div class="row">
-        <div class="chip chip-helm"><div class="chip-title">Jellyfin</div><div class="chip-sub">jellyfin.ramoneees.com · GPU transcode</div></div>
-        <div class="chip chip-helm"><div class="chip-title">Nextcloud</div><div class="chip-sub">cloud.ramoneees.com · Athena docs</div></div>
-      </div>
-      <div class="row">
-        <div class="chip chip-helm"><div class="chip-title">Firefox container</div><div class="chip-sub">firefox.ramoneees.com</div></div>
-        <div class="chip chip-future"><div class="chip-title">Home Assistant — later</div><div class="chip-sub">When smart home devices arrive</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- LiteLLM routing -->
-  <div class="zone" style="margin-bottom:12px; border-color:#378ADD">
-    <div class="zone-title" style="color:#185FA5">LiteLLM — unified proxy · all agents + models</div>
-    <div class="flow">
-      <div class="flow-step flow-step-agent">Any OLYMPUS agent</div>
-      <div class="flow-arrow">+</div>
-      <div class="flow-step">n8n · Open WebUI</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step" style="font-weight:600; border-color:#378ADD">LiteLLM</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step">Ollama (local)</div>
-      <div class="flow-arrow">+</div>
-      <div class="flow-step flow-step-glm">GLM-5-Turbo (OpenRouter)</div>
-      <div class="flow-arrow">+</div>
-      <div class="flow-step">Alibaba Qwen API</div>
-      <div class="flow-arrow">+</div>
-      <div class="flow-step">Minimax-M2.5 (coding fallback)</div>
-    </div>
-    <div style="font-size:11px; color:#888; margin-top:6px">Phase 2: swap Ollama embeddings → Infinity with one config line. Phase 3: add vLLM endpoint for tensor parallel inference.</div>
-  </div>
-
-  <!-- Databases -->
-  <div class="zone" style="margin-bottom:12px">
-    <div class="zone-title">Databases (shared instances)</div>
-    <div class="row">
-      <div class="chip chip-helm"><div class="chip-title">PostgreSQL + pgvector</div><div class="chip-sub">Gitea · Firefly · n8n · ArgoCD · Authentik · Mattermost · Vikunja · Mnemosyne long-term memory · vector(768) + vector(256)</div></div>
-      <div class="chip chip-helm"><div class="chip-title">MariaDB</div><div class="chip-sub">Nextcloud · Invoice Ninja · any MySQL-required app</div></div>
-      <div class="chip chip-helm"><div class="chip-title">Redis</div><div class="chip-sub">Nextcloud · Gitea · n8n · Authentik · Mnemosyne short-term memory</div></div>
-    </div>
-  </div>
-
-  <!-- Shared services -->
-  <div class="zone" style="margin-bottom:0">
-    <div class="zone-title">Shared cluster services</div>
-    <div class="row">
-      <div class="chip chip-done"><div class="chip-title">CoreDNS ✓</div><div class="chip-sub">Bundled · running</div></div>
-      <div class="chip chip-done"><div class="chip-title">Traefik ✓</div><div class="chip-sub">Bundled · running on both nodes</div></div>
-      <div class="chip chip-done"><div class="chip-title">metrics-server ✓</div><div class="chip-sub">Bundled · running</div></div>
-      <div class="chip chip-next"><div class="chip-title">MetalLB — next</div><div class="chip-sub">Helm · pool 192.168.50.200–220</div></div>
-    </div>
-    <div class="row">
-      <div class="chip chip-helm"><div class="chip-title">cert-manager</div><div class="chip-sub">Cloudflare DNS-01 · *.ramoneees.com</div></div>
-      <div class="chip chip-helm"><div class="chip-title">Longhorn</div><div class="chip-sub">Distributed storage · 2 replicas · default StorageClass</div></div>
-      <div class="chip chip-helm"><div class="chip-title">kube-prometheus-stack</div><div class="chip-sub">Prometheus + Grafana + Alertmanager</div></div>
-      <div class="chip chip-helm"><div class="chip-title">Loki + Promtail</div><div class="chip-sub">Log aggregation</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- Future phases -->
-<div class="future-banner">
-  <div class="future-badge">Future phase · dual RTX 5060 Ti</div>
-  <div style="flex:1">
-    <div class="future-title">vLLM tensor parallelism + QwQ:32b Plutus + Infinity reranker</div>
-    <div class="future-sub">When second GPU arrives — vLLM with <code>--tensor-parallel-size 2</code> for heavy agents. QwQ:32b replaces phi4-reasoning-plus for Plutus (much better financial reasoning). Infinity promoted to primary embedding server with bge-reranker-v2-m3 for Mnemosyne two-stage retrieval. If Z.ai open-sources GLM-5-Turbo weights, reassess local deployment (2-bit quant needs ~32GB VRAM + 250GB RAM).</div>
-    <div class="future-chips">
-      <span class="future-chip">vLLM --tensor-parallel-size 2</span>
-      <span class="future-chip">nvidia.com/gpu: 2</span>
-      <span class="future-chip">QwQ:32b for Plutus</span>
-      <span class="future-chip">Infinity + bge-reranker-v2-m3</span>
-      <span class="future-chip">Two-stage retrieval for Mnemosyne</span>
-      <span class="future-chip">GLM-5-Turbo local weights — pending open-source</span>
-    </div>
-  </div>
-</div>
-
-<!-- Migration map -->
-<div class="zone">
-  <div class="zone-title">Existing Docker services — migration plan</div>
-  <table class="migrate-table">
-    <tr><th>Current service</th><th>Status</th><th>Action</th></tr>
-    <tr><td>AdGuard</td><td><span class="badge-migrate">migrate</span></td><td>Move to k3s · MetalLB fixed IP 192.168.50.200</td></tr>
-    <tr><td>nginx (Nginx Proxy Manager)</td><td><span class="badge-replace">replace</span></td><td>Traefik already running in k3s · migrate rules to IngressRoutes</td></tr>
-    <tr><td>auth (Authentik)</td><td><span class="badge-migrate">migrate</span></td><td>Migrate to k3s · confirm image name with <code>docker inspect auth</code></td></tr>
-    <tr><td>gitea</td><td><span class="badge-migrate">migrate</span></td><td>Migrate early — ArgoCD watches it · built-in registry replaces standalone registry</td></tr>
-    <tr><td>jenkins</td><td><span class="badge-replace">replace</span></td><td>Gitea Actions + ArgoCD · same CI/CD · no Java overhead</td></tr>
-    <tr><td>n8n + browserless</td><td><span class="badge-migrate">migrate</span></td><td>Migrate together in same namespace · n8n depends on browserless</td></tr>
-    <tr><td>ollama + openwebui</td><td><span class="badge-migrate">migrate</span></td><td>Migrate to k3s olympus node · add LiteLLM in front</td></tr>
-    <tr><td>firefly</td><td><span class="badge-migrate">migrate</span></td><td>Migrate to k3s · Plutus API integration</td></tr>
-    <tr><td>mariadb + redis</td><td><span class="badge-migrate">migrate</span></td><td>Migrate as shared instances · Longhorn PVCs</td></tr>
-    <tr><td>pocketbase</td><td><span class="badge-migrate">migrate</span></td><td>Migrate if actively used · check if team-organizer depends on it</td></tr>
-    <tr><td>cloudbeaver</td><td><span class="badge-migrate">migrate</span></td><td>Migrate · replaces pgadmin (supports both PostgreSQL + MariaDB)</td></tr>
-    <tr><td>pgadmin</td><td><span class="badge-replace">replace</span></td><td>Redundant with Cloudbeaver · drop</td></tr>
-    <tr><td>mailhog</td><td><span class="badge-migrate">migrate</span></td><td>Migrate · useful for testing email flows</td></tr>
-    <tr><td>homebox</td><td><span class="badge-migrate">migrate</span></td><td>Migrate · lightweight · no special requirements</td></tr>
-    <tr><td>firefox</td><td><span class="badge-migrate">migrate</span></td><td>Migrate · browser-in-browser container</td></tr>
-    <tr><td>dashy</td><td><span class="badge-migrate">migrate</span></td><td>Migrate or replace with Homarr · personal preference</td></tr>
-    <tr><td>registry</td><td><span class="badge-replace">replace</span></td><td>Gitea has built-in container registry · consolidate</td></tr>
-    <tr><td>ntfy</td><td><span class="badge-replace">replace</span></td><td>Replaced by Mattermost mobile notifications</td></tr>
-    <tr><td>team-organizer</td><td><span class="badge-replace">replace</span></td><td>Replaced by Vikunja · better agent API integration</td></tr>
-    <tr><td>vscode (code-server)</td><td><span class="badge-migrate">migrate</span></td><td>Keep if used · may become redundant as LazyVim replaces it</td></tr>
-  </table>
-</div>
-
-<!-- GitOps flow -->
-<div class="zone">
-  <div class="zone-title">GitOps deployment flow</div>
-  <div class="flow">
-    <div class="flow-step">Edit manifest · LazyVim</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">lazygit commit + push</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">Gitea (olympus-gitops repo)</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">ArgoCD detects · auto-sync</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">kubectl apply</div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">Watch rollout · k9s</div>
-  </div>
-  <div style="font-size:11px; color:#888; margin-top:8px">Repo structure: bootstrap/ · infrastructure/ · databases/ · apps/ · olympus/ · argocd/ — see Claude Code prompt for full structure.</div>
-</div>
-
-<!-- Laptop -->
-<div class="zone">
-  <div class="zone-title">Laptop (macOS) — control workstation</div>
-  <div class="row">
-    <div class="chip chip-done"><div class="chip-title">kubectl ✓</div><div class="chip-sub">v1.35.2 · connected · ~/.kube/config</div></div>
-    <div class="chip chip-done"><div class="chip-title">Helm ✓</div><div class="chip-sub">brew install helm</div></div>
-    <div class="chip chip-done"><div class="chip-title">k9s ✓</div><div class="chip-sub">brew install k9s</div></div>
-    <div class="chip chip-done"><div class="chip-title">kubeconfig ✓</div><div class="chip-sub">server: 192.168.50.70:6443</div></div>
-    <div class="chip chip-neutral"><div class="chip-title">stern</div><div class="chip-sub">brew install stern · multi-pod logs</div></div>
-    <div class="chip chip-neutral"><div class="chip-title">kubectx</div><div class="chip-sub">brew install kubectx · namespace switching</div></div>
-    <div class="chip chip-neutral"><div class="chip-title">yq</div><div class="chip-sub">brew install yq · YAML tool</div></div>
-  </div>
-  <div style="font-size:11px; color:#888; margin-top:8px">LazyVim plugins: yaml-language-server · schemastore.nvim · helm-ls · lazygit.nvim · toggleterm.nvim · kubectl.nvim</div>
-</div>
 
 </body>
+
 </html>
