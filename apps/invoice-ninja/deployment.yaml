@@ -18,6 +18,22 @@ spec:
       labels:
         app: invoice-ninja
     spec:
+      initContainers:
+        - name: fix-permissions
+          image: busybox:latest
+          command: ["sh", "-c", "chown -R 1500:1500 /var/www/app/public /var/www/app/storage"]
+          volumeMounts:
+            - name: public
+              mountPath: /var/www/app/public
+            - name: storage
+              mountPath: /var/www/app/storage
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
       containers:
         - name: invoice-ninja
           image: invoiceninja/invoiceninja:latest
