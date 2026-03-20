@@ -25,11 +25,9 @@ externalDB:
   externalConnectionString: "postgres://mattermost:mm_Rj3wN8yT5kB6@postgresql.databases.svc.cluster.local:5432/mattermost?sslmode=disable"
 
 config:
-  ServiceSettings:
-    SiteURL: "https://chat.ramoneees.com"
-  SqlSettings:
-    DriverName: "postgres"
-    DataSource: "postgres://mattermost:mm_Rj3wN8yT5kB6@postgresql.databases.svc.cluster.local:5432/mattermost?sslmode=disable"
+  MM_SERVICESETTINGS_SITEURL: "https://chat.ramoneees.com"
+  MM_SQLSETTINGS_DRIVERNAME: "postgres"
+  MM_SQLSETTINGS_DATASOURCE: "postgres://mattermost:mm_Rj3wN8yT5kB6@postgresql.databases.svc.cluster.local:5432/mattermost?sslmode=disable"
 
 resources:
   requests:
