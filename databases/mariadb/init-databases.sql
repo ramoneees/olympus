@@ -7,13 +7,13 @@ CREATE USER 'nextcloud'@'%' IDENTIFIED BY 'CHANGE_ME';
 GRANT ALL PRIVILEGES ON nextcloud.* TO 'nextcloud'@'%';
 
 -- Firefly III
-CREATE DATABASE firefly CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-CREATE USER 'firefly'@'%' IDENTIFIED BY 'CHANGE_ME';
+CREATE DATABASE IF NOT EXISTS firefly CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE USER IF NOT EXISTS 'firefly'@'%' IDENTIFIED BY 'CHANGE_ME';
 GRANT ALL PRIVILEGES ON firefly.* TO 'firefly'@'%';
 
 -- Invoice Ninja
-CREATE DATABASE invoiceninja CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-CREATE USER 'invoiceninja'@'%' IDENTIFIED BY 'CHANGE_ME';
+CREATE DATABASE IF NOT EXISTS invoiceninja CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE USER IF NOT EXISTS 'invoiceninja'@'%' IDENTIFIED BY 'CHANGE_ME';
 GRANT ALL PRIVILEGES ON invoiceninja.* TO 'invoiceninja'@'%';
 
 FLUSH PRIVILEGES;
