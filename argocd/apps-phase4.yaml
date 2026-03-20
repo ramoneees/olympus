@@ -200,24 +200,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: mailhog
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
-    targetRevision: main
-    path: apps/mailhog
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: apps
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
