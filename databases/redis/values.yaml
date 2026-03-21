@@ -17,6 +17,8 @@ auth:
   enabled: false  # LAN-only, no auth needed for internal services
 
 master:
+  nodeSelector:
+    kubernetes.io/hostname: olympus
   persistence:
     enabled: true
     storageClass: longhorn
