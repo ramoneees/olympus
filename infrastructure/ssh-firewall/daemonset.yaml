@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ssh-firewall
+  namespace: kube-system
+  labels:
+    app: ssh-firewall
+spec:
+  selector:
+    matchLabels:
+      app: ssh-firewall
+  template:
+    metadata:
+      labels:
+        app: ssh-firewall
+    spec:
+      hostNetwork: true
+      hostPID: true
+      tolerations:
+        # Run on all nodes including control plane
+        - operator: Exists
+      initContainers:
+        # Apply SSH iptables rule immediately on pod start
+        - name: ensure-ssh
+          image: alpine:3.20
+          command: ["/bin/sh", "/scripts/ensure-ssh.sh"]
+          securityContext:
+            privileged: true
+            capabilities:
+              add: ["NET_ADMIN", "NET_RAW"]
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+        # Fix cloud-init sshd override
+        - name: fix-sshd
+          image: alpine:3.20
+          command: ["/bin/sh", "/scripts/fix-sshd-cloud-init.sh"]
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+            - name: host-etc
+              mountPath: /host/etc
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+      containers:
+        # Watch loop to re-apply rule if k3s overwrites it
+        - name: watch-ssh
+          image: alpine:3.20
+          command: ["/bin/sh", "/scripts/watch-ssh.sh"]
+          securityContext:
+            privileged: true
+            capabilities:
+              add: ["NET_ADMIN", "NET_RAW"]
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+      volumes:
+        - name: scripts
+          configMap:
+            name: ssh-firewall-scripts
+            defaultMode: 0755
+        - name: host-etc
+          hostPath:
+            path: /etc
+            type: Directory

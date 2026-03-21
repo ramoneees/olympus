@@ -1,0 +1,20 @@
+# ArgoCD Application — SSH Firewall DaemonSet
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ssh-firewall
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: infrastructure/ssh-firewall
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
