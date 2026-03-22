@@ -71,6 +71,8 @@ spec:
           env:
             - name: NODE_ENV
               value: "production"
+            - name: NODE_OPTIONS
+              value: "--max-old-space-size=768"
             - name: OPENCLAW_GATEWAY_TOKEN
               valueFrom:
                 secretKeyRef:
