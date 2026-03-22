@@ -1,0 +1,24 @@
+{
+  // Functional v1 plugin set.
+  // Keep this minimal so the system boots cleanly before custom OLYMPUS plugins exist.
+
+  enabled: true,
+  allow: [
+    "memory-core",
+    "qwen-portal-auth",
+  ],
+  load: {
+    paths: [
+      "~/.openclaw/extensions",
+    ],
+  },
+  entries: {
+    "qwen-portal-auth": {
+      enabled: true,
+    },
+  },
+  slots: {
+    memory: "memory-core",
+    contextEngine: "legacy",
+  },
+}

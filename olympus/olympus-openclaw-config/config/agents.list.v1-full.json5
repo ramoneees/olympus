@@ -1,0 +1,96 @@
+[
+  // v1 full = all 7 agents: Hermes + Hephaestus + Athena + Plutus + Themis + Prometheus + Mnemosyne
+  // All models route through LiteLLM. Sandbox disabled for K8s v1.
+  {
+    id: "hermes",
+    default: true,
+    workspace: "/home/node/.openclaw/workspaces/hermes",
+    model: "litellm/MiniMax-M2.5",
+    sandbox: { mode: "none" },
+    subagents: { allowAgents: ["hephaestus", "athena", "plutus", "themis", "prometheus", "mnemosyne"] },
+    tools: {
+      profile: "minimal",
+      allow: ["read", "memory_search", "memory_get", "sessions_list", "sessions_history", "sessions_spawn", "session_status"],
+      deny: ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch", "cron", "gateway", "message", "image"],
+      agentToAgent: { enabled: true, allow: ["hephaestus", "athena", "plutus", "themis", "prometheus", "mnemosyne"] },
+      sessions: { visibility: "tree" },
+      loopDetection: { enabled: true },
+    },
+  },
+  {
+    id: "hephaestus",
+    workspace: "/home/node/.openclaw/workspaces/hephaestus",
+    model: "litellm/qwen3-coder-plus",
+    sandbox: { mode: "none" },
+    tools: {
+      profile: "minimal",
+      allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"],
+      deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"],
+      elevated: { enabled: false },
+      loopDetection: { enabled: true },
+    },
+  },
+  {
+    id: "athena",
+    workspace: "/home/node/.openclaw/workspaces/athena",
+    model: "litellm/MiniMax-M2.5",
+    sandbox: { mode: "none" },
+    tools: {
+      profile: "minimal",
+      allow: ["read", "group:memory", "web_search", "web_fetch", "browser", "session_status"],
+      deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway", "message"],
+      loopDetection: { enabled: true },
+    },
+  },
+  {
+    // PLUTUS: LOCAL MODELS ONLY — financial data must never touch cloud APIs.
+    // deepseek-r1:7b routes through LiteLLM → Ollama (stays local).
+    id: "plutus",
+    workspace: "/home/node/.openclaw/workspaces/plutus",
+    model: "litellm/deepseek-r1:7b",
+    sandbox: { mode: "none" },
+    tools: {
+      profile: "minimal",
+      allow: ["group:fs", "group:memory", "web_fetch", "session_status"],
+      deny: ["exec", "process", "browser", "web_search", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway", "message"],
+      loopDetection: { enabled: true },
+    },
+  },
+  {
+    id: "themis",
+    workspace: "/home/node/.openclaw/workspaces/themis",
+    model: "litellm/MiniMax-M2.5",
+    sandbox: { mode: "none" },
+    tools: {
+      profile: "minimal",
+      allow: ["read", "group:memory", "web_search", "web_fetch", "session_status"],
+      deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"],
+      loopDetection: { enabled: true },
+    },
+  },
+  {
+    id: "prometheus",
+    workspace: "/home/node/.openclaw/workspaces/prometheus",
+    model: "litellm/qwen3-coder-plus",
+    sandbox: { mode: "none" },
+    tools: {
+      profile: "minimal",
+      allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"],
+      deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"],
+      elevated: { enabled: false },
+      loopDetection: { enabled: true },
+    },
+  },
+  {
+    id: "mnemosyne",
+    workspace: "/home/node/.openclaw/workspaces/mnemosyne",
+    model: "litellm/qwen3:8b",
+    sandbox: { mode: "none" },
+    tools: {
+      profile: "minimal",
+      allow: ["read", "group:memory", "memory_search", "memory_get", "memory_put", "session_status"],
+      deny: ["write", "edit", "apply_patch", "exec", "process", "web_search", "web_fetch", "browser", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway", "message"],
+      loopDetection: { enabled: true },
+    },
+  },
+]

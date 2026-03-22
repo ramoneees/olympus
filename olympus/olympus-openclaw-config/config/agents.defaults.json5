@@ -1,0 +1,106 @@
+{
+  // Global defaults for OLYMPUS agents — K8s deployment.
+  // All models route through LiteLLM.
+
+  userTimezone: "Europe/Lisbon",
+  timeFormat: "24",
+  skipBootstrap: false,
+  bootstrapMaxChars: 20000,
+  bootstrapTotalMaxChars: 150000,
+  imageMaxDimensionPx: 1200,
+
+  // Model allowlist / catalog — all via LiteLLM.
+  models: {
+    "litellm/MiniMax-M2.5": {
+      alias: "fast-route",
+      params: { temperature: 0.1 },
+    },
+    "litellm/qwen3-coder-plus": {
+      alias: "smart-coder",
+      params: { temperature: 0.2 },
+    },
+    "litellm/qwen3.5:9b": {
+      alias: "fast-general",
+      params: { temperature: 0.2 },
+    },
+    "litellm/deepseek-r1:7b": {
+      alias: "local-reasoning",
+    },
+    "litellm/qwen3:8b": {
+      alias: "local-general",
+    },
+    "litellm/qwen3-vl:8b": {
+      alias: "vision",
+    },
+    "litellm/glm-5-turbo": {
+      alias: "smart-glm",
+    },
+    "litellm/qwen-plus": {
+      alias: "smart-qwen",
+    },
+    "litellm/qwen-max": {
+      alias: "smart-qwen-max",
+    },
+    "litellm/openrouter/deepseek/deepseek-r1": {
+      alias: "smart-deepseek",
+    },
+    "litellm/openrouter/google/gemini-2.5-flash": {
+      alias: "smart-gemini",
+    },
+    "litellm/openrouter/anthropic/claude-sonnet-4": {
+      alias: "premium-sonnet",
+    },
+  },
+
+  model: {
+    primary: "litellm/MiniMax-M2.5",
+    fallbacks: [
+      "litellm/qwen-plus",
+      "litellm/openrouter/deepseek/deepseek-r1",
+      "litellm/openrouter/anthropic/claude-sonnet-4",
+    ],
+  },
+
+  maxConcurrent: 2,
+  timeoutSeconds: 900,
+  thinkingDefault: "low",
+  verboseDefault: "off",
+  elevatedDefault: "off",
+
+  sandbox: {
+    mode: "none",
+  },
+
+  // Default behavior for sub-agent runs spawned via Hermes.
+  subagents: {
+    model: "litellm/MiniMax-M2.5",
+    maxConcurrent: 2,
+    runTimeoutSeconds: 900,
+    archiveAfterMinutes: 60,
+    maxSpawnDepth: 2,
+    maxChildrenPerAgent: 4,
+  },
+
+  // Memory search via LiteLLM (OpenAI-compatible embeddings endpoint).
+  memorySearch: {
+    enabled: true,
+    provider: "openai",
+    remote: {
+      baseUrl: "http://litellm.olympus.svc.cluster.local:4000/v1/",
+      apiKey: "${LITELLM_API_KEY}",
+    },
+    model: "nomic-embed-text-v2",
+    fallback: "none",
+    sync: { watch: true },
+    query: {
+      hybrid: {
+        enabled: true,
+        vectorWeight: 0.7,
+        textWeight: 0.3,
+        candidateMultiplier: 4,
+        mmr: { enabled: true, lambda: 0.7 },
+        temporalDecay: { enabled: true, halfLifeDays: 30 },
+      },
+    },
+  },
+}

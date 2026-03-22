@@ -1,3 +1,16 @@
 passwords.txt
 *.key
 *.pem
+.DS_Store
+**/.DS_Store
+
+# Secrets — never commit
+.secrets/
+*.env
+*credentials*
+*passwords*
+*tokens*
+**/*secret*.yaml
+!infrastructure/secrets/
+!infrastructure/secrets/agent-secrets-template/
+!infrastructure/secrets/agent-secrets-template/*.yaml

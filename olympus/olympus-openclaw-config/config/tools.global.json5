@@ -1,0 +1,47 @@
+{
+  // Global safety defaults. Per-agent policies can only become stricter.
+
+  elevated: {
+    enabled: false,
+  },
+
+  loopDetection: {
+    enabled: true,
+    historySize: 30,
+    warningThreshold: 10,
+    criticalThreshold: 20,
+    globalCircuitBreakerThreshold: 30,
+    detectors: {
+      genericRepeat: true,
+      knownPollNoProgress: true,
+      pingPong: true,
+    },
+  },
+
+  agentToAgent: {
+    enabled: true,
+    allow: ["hermes", "hephaestus", "athena", "plutus", "themis", "prometheus", "mnemosyne"],
+  },
+
+  sessions: {
+    visibility: "tree",
+  },
+
+  web: {
+    search: {
+      enabled: true,
+      provider: "brave",
+      apiKey: "${BRAVE_API_KEY}",
+      maxResults: 5,
+      timeoutSeconds: 30,
+      cacheTtlMinutes: 15,
+    },
+    fetch: {
+      enabled: true,
+      maxChars: 50000,
+      maxCharsCap: 50000,
+      timeoutSeconds: 30,
+      cacheTtlMinutes: 15,
+    },
+  },
+}

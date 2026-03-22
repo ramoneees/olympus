@@ -1,0 +1,100 @@
+{
+  // Future OLYMPUS plugin shape.
+  // DO NOT point your root config at this file until the plugins actually exist.
+
+  enabled: true,
+  allow: [
+    "memory-core",
+    "qwen-portal-auth",
+    "olympus-shared-memory",
+    "olympus-google-tools",
+    "olympus-slack-tools",
+    "olympus-dev-tools",
+    "olympus-knowledge-tools",
+    "olympus-finance-tools",
+    "olympus-audit-tools",
+  ],
+  load: {
+    paths: [
+      "~/.openclaw/extensions",
+      "~/.openclaw/extensions/olympus-shared-memory",
+      "~/.openclaw/extensions/olympus-google-tools",
+      "~/.openclaw/extensions/olympus-slack-tools",
+      "~/.openclaw/extensions/olympus-dev-tools",
+      "~/.openclaw/extensions/olympus-knowledge-tools",
+      "~/.openclaw/extensions/olympus-finance-tools",
+      "~/.openclaw/extensions/olympus-audit-tools",
+    ],
+  },
+  entries: {
+    "qwen-portal-auth": {
+      enabled: true,
+    },
+    "olympus-shared-memory": {
+      enabled: true,
+      hooks: { allowPromptInjection: false },
+      config: {
+        backend: "pgvector",
+        dsn: "${PGVECTOR_DSN}",
+        embeddingProvider: "ollama",
+        embeddingModel: "mxbai-embed-large",
+        namespaces: [
+          "/memory/personal",
+          "/memory/finance",
+          "/memory/projects",
+          "/memory/knowledge",
+        ],
+      },
+    },
+    "olympus-google-tools": {
+      enabled: true,
+      hooks: { allowPromptInjection: false },
+      config: {
+        credentialsPath: "${GOOGLE_APPLICATION_CREDENTIALS}",
+        services: ["gmail", "calendar", "drive", "docs", "sheets"],
+      },
+    },
+    "olympus-slack-tools": {
+      enabled: true,
+      hooks: { allowPromptInjection: false },
+      config: {
+        botToken: "${SLACK_BOT_TOKEN}",
+      },
+    },
+    "olympus-dev-tools": {
+      enabled: true,
+      hooks: { allowPromptInjection: false },
+      config: {
+        tools: ["filesystem", "git", "docker", "terminal", "code_runner", "docs_search"],
+      },
+    },
+    "olympus-knowledge-tools": {
+      enabled: true,
+      hooks: { allowPromptInjection: false },
+      config: {
+        tools: ["vector_db", "obsidian", "document_tools"],
+      },
+    },
+    "olympus-finance-tools": {
+      enabled: true,
+      hooks: { allowPromptInjection: false },
+      config: {
+        fireflyBaseUrl: "${FIREFLY_BASE_URL}",
+        fireflyToken: "${FIREFLY_TOKEN}",
+        invoiceNinjaBaseUrl: "${INVOICE_NINJA_BASE_URL}",
+        invoiceNinjaToken: "${INVOICE_NINJA_TOKEN}",
+      },
+    },
+    "olympus-audit-tools": {
+      enabled: true,
+      hooks: { allowPromptInjection: false },
+      config: {
+        tools: ["risk_analysis", "data_query", "audit_tools"],
+      },
+    },
+  },
+  slots: {
+    memory: "memory-core",
+    contextEngine: "legacy",
+  },
+}

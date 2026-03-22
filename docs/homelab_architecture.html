@@ -341,6 +341,14 @@
     (<code>http://service.namespace.svc.cluster.local</code>) or via Traefik subdomains when needed.
   </div>
 
+  <div class="litellm-note">
+    <strong>Email routing:</strong> All agent emails at <code>name@ramoneees.com</code> route via
+    Cloudflare Email Routing to the owner's inbox. Each agent has a dedicated address
+    (<code>hermes@</code>, <code>hephaestus@</code>, <code>prometheus@</code>, <code>athena@</code>,
+    <code>plutus@</code>, <code>themis@</code>, <code>mnemosyne@</code>).
+    Catch-all is enabled as a safety net for any unmatched addresses.
+  </div>
+
   <!-- ── VIKUNJA ── -->
   <div class="service-box" style="border-color:#1D9E75">
     <div class="service-header">

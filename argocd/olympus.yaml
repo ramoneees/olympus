@@ -1,0 +1,139 @@
+# ArgoCD Applications — Phase 5: OLYMPUS AI Stack
+---
+# NVIDIA GPU Operator (Helm chart)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gpu-operator
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://helm.ngc.nvidia.com/nvidia
+      chart: gpu-operator
+      targetRevision: "v24.*"
+      helm:
+        valueFiles:
+          - $values/infrastructure/gpu-operator/values.yaml
+    - repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gpu-operator
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# Ollama — Local LLM inference (GPU)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ollama
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: olympus/ollama
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: olympus
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# LiteLLM — Unified LLM proxy
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: litellm
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: olympus/litellm
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: olympus
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# n8n — Workflow automation
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: n8n
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: olympus/n8n
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: olympus
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# OpenClaw — Multi-agent AI orchestration
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openclaw
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: olympus/openclaw
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: olympus
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# Open WebUI — Chat frontend
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openwebui
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: olympus/openwebui
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: olympus
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,9 @@
+[
+  // Intentionally empty for v1.
+  // Hermes is the default agent, so unbound inbound traffic falls back to Hermes.
+  // Add channel-specific bindings later if you want per-channel behavior.
+  // Examples:
+  // { agentId: "hermes", match: { channel: "slack" } },
+  // { agentId: "hermes", match: { channel: "telegram" } },
+  // { agentId: "hermes", match: { channel: "discord" } },
+]

@@ -1,0 +1,72 @@
+{
+  // OLYMPUS v1 root config for OpenClaw — K8s deployment.
+  // Mounted at /home/node/.openclaw/openclaw.json via ConfigMap.
+
+  agents: {
+    defaults: { $include: "./config/agents.defaults.json5" },
+    list: { $include: "./config/agents.list.v1-full.json5" },
+  },
+
+  bindings: { $include: "./config/bindings.v1.json5" },
+
+  tools: { $include: "./config/tools.global.json5" },
+
+  models: {
+    mode: "merge",
+    providers: { $include: "./config/models.providers.json5" },
+  },
+
+  plugins: { $include: "./config/plugins.v1.json5" },
+
+  gateway: {
+    port: 18789,
+    mode: "local",
+    bind: "all",
+    auth: {
+      mode: "token",
+      token: "${OPENCLAW_GATEWAY_TOKEN}",
+    },
+  },
+
+  hooks: {
+    enabled: true,
+    path: "/hooks",
+    token: "${OPENCLAW_HOOKS_TOKEN}",
+    defaultSessionKey: "hook:ingress",
+    allowedAgentIds: ["hermes", "hephaestus", "athena", "plutus", "themis", "prometheus", "mnemosyne"],
+    internal: {
+      enabled: true,
+      entries: {
+        "boot-md": { enabled: true },
+        "command-logger": { enabled: true },
+        "session-memory": { enabled: true },
+      },
+    },
+  },
+
+  channels: {
+    whatsapp: {
+      dmPolicy: "allowlist",
+      allowFrom: ["+351926565596"],
+      selfChatMode: true,
+      sendReadReceipts: true,
+      ackReaction: {
+        emoji: "👀",
+        direct: true,
+        group: "mentions",
+      },
+    },
+    mattermost: {
+      enabled: true,
+      botToken: "${MATTERMOST_BOT_TOKEN}",
+      baseUrl: "${MATTERMOST_URL}",
+      dmPolicy: "pairing",
+      chatmode: "oncall",
+    },
+  },
+
+  web: { enabled: true },
+  memory: { backend: "builtin" },
+  commands: { native: "auto" },
+  cron: { enabled: true },
+}

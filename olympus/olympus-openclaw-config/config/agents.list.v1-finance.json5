@@ -1,0 +1,56 @@
+[
+  // v1 + finance = Hermes + Hephaestus + Athena + Plutus
+  {
+    id: "hermes",
+    default: true,
+    workspace: "~/.openclaw/olympus/workspaces/hermes",
+    model: "ollama/qwen3.5:4b",
+    sandbox: { mode: "all", scope: "agent", workspaceAccess: "ro" },
+    subagents: { allowAgents: ["hephaestus", "athena", "plutus"] },
+    tools: {
+      profile: "minimal",
+      allow: ["read", "memory_search", "memory_get", "sessions_list", "sessions_history", "sessions_spawn", "session_status"],
+      deny: ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch", "cron", "gateway", "message", "image"],
+      agentToAgent: { enabled: true, allow: ["hephaestus", "athena", "plutus"] },
+      sessions: { visibility: "tree" },
+      loopDetection: { enabled: true },
+    },
+  },
+  {
+    id: "hephaestus",
+    workspace: "~/.openclaw/olympus/workspaces/hephaestus",
+    model: "ollama/qwen3.5:9b",
+    sandbox: { mode: "all", scope: "agent", workspaceAccess: "rw" },
+    tools: {
+      profile: "minimal",
+      allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"],
+      deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"],
+      elevated: { enabled: false },
+      loopDetection: { enabled: true },
+    },
+  },
+  {
+    id: "athena",
+    workspace: "~/.openclaw/olympus/workspaces/athena",
+    model: "ollama/qwen3.5:9b",
+    sandbox: { mode: "all", scope: "agent", workspaceAccess: "ro" },
+    tools: {
+      profile: "minimal",
+      allow: ["read", "group:memory", "web_search", "web_fetch", "browser", "session_status"],
+      deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway", "message"],
+      loopDetection: { enabled: true },
+    },
+  },
+  {
+    id: "plutus",
+    workspace: "~/.openclaw/olympus/workspaces/plutus",
+    model: "minimax/MiniMax-M2.5",
+    sandbox: { mode: "all", scope: "agent", workspaceAccess: "rw" },
+    tools: {
+      profile: "minimal",
+      allow: ["group:fs", "group:memory", "web_fetch", "session_status"],
+      deny: ["exec", "process", "browser", "web_search", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway", "message"],
+      loopDetection: { enabled: true },
+    },
+  },
+]

@@ -1,0 +1,52 @@
+# One-time job to pull required models after Ollama is running
+# Delete and re-create if you need to re-pull:
+#   kubectl delete job ollama-model-pull -n olympus
+#   kubectl apply -f olympus/ollama/model-pull-job.yaml
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ollama-model-pull
+  namespace: olympus
+  labels:
+    app: ollama
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app: ollama-model-pull
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: pull
+          image: curlimages/curl:8.7.1
+          command:
+            - sh
+            - -c
+            - |
+              OLLAMA=http://ollama.olympus.svc.cluster.local:11434
+              echo "Waiting for Ollama..."
+              until curl -sf "$OLLAMA/api/tags" >/dev/null 2>&1; do sleep 5; done
+              echo "Ollama is ready. Pulling models..."
+
+              for MODEL in \
+                "qwen2.5-coder:7b" \
+                "deepseek-r1:7b" \
+                "qwen3:8b" \
+                "qwen3.5:9b" \
+                "nomic-embed-text-v2" \
+                "qwen3-vl:8b"; do
+                echo "Pulling $MODEL..."
+                curl -sf "$OLLAMA/api/pull" -d "{\"name\":\"$MODEL\"}" || echo "WARN: Failed to pull $MODEL"
+                echo ""
+              done
+              echo "All model pulls complete."
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi

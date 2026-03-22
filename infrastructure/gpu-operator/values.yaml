@@ -1,0 +1,44 @@
+# NVIDIA GPU Operator — exposes RTX 2080 on olympus node
+# Chart: https://nvidia.github.io/gpu-operator
+# Only the olympus node has a GPU; the operator auto-discovers it.
+
+# Use the pre-installed driver on the host (Ubuntu 24.04 ships nvidia drivers)
+driver:
+  enabled: true           # Let the operator install/manage NVIDIA drivers
+
+toolkit:
+  enabled: true
+
+devicePlugin:
+  enabled: true
+
+# Disable components we don't need in a 2-node homelab
+dcgmExporter:
+  enabled: false
+
+migManager:
+  enabled: false
+
+gfd:
+  enabled: true           # GPU Feature Discovery — labels the node
+
+nodeStatusExporter:
+  enabled: false
+
+sandboxDevicePlugin:
+  enabled: false
+
+vfioManager:
+  enabled: false
+
+vgpuManager:
+  enabled: false
+
+vgpuDeviceManager:
+  enabled: false
+
+# Node selector — only run operator components on the GPU node
+node-feature-discovery:
+  worker:
+    nodeSelector:
+      kubernetes.io/hostname: olympus

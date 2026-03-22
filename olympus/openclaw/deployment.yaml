@@ -1,0 +1,179 @@
+# OpenClaw — Multi-agent AI orchestration gateway
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openclaw
+  namespace: olympus
+  labels:
+    app: openclaw
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: openclaw
+  template:
+    metadata:
+      labels:
+        app: openclaw
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: openclaw
+          image: ghcr.io/openclaw/openclaw:latest
+          ports:
+            - name: http
+              containerPort: 18789
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: OPENCLAW_GATEWAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: OPENCLAW_GATEWAY_TOKEN
+            - name: OPENCLAW_HOOKS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: OPENCLAW_HOOKS_TOKEN
+            - name: LITELLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: LITELLM_API_KEY
+            - name: BRAVE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: BRAVE_API_KEY
+            - name: MATTERMOST_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: MATTERMOST_BOT_TOKEN
+            - name: MATTERMOST_URL
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: MATTERMOST_URL
+          volumeMounts:
+            # Root config
+            - name: root-config
+              mountPath: /home/node/.openclaw/openclaw.json
+              subPath: openclaw.json
+              readOnly: true
+            # Config directory
+            - name: config-files
+              mountPath: /home/node/.openclaw/config
+              readOnly: true
+            # Agent workspaces
+            - name: ws-hermes
+              mountPath: /home/node/.openclaw/workspaces/hermes
+              readOnly: true
+            - name: ws-hephaestus
+              mountPath: /home/node/.openclaw/workspaces/hephaestus
+              readOnly: true
+            - name: ws-athena
+              mountPath: /home/node/.openclaw/workspaces/athena
+              readOnly: true
+            - name: ws-plutus
+              mountPath: /home/node/.openclaw/workspaces/plutus
+              readOnly: true
+            - name: ws-themis
+              mountPath: /home/node/.openclaw/workspaces/themis
+              readOnly: true
+            - name: ws-prometheus
+              mountPath: /home/node/.openclaw/workspaces/prometheus
+              readOnly: true
+            - name: ws-mnemosyne
+              mountPath: /home/node/.openclaw/workspaces/mnemosyne
+              readOnly: true
+            # Runtime data (PVC)
+            - name: data
+              mountPath: /home/node/.openclaw/data
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "2"
+              memory: 1Gi
+          securityContext:
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+      volumes:
+        - name: root-config
+          configMap:
+            name: openclaw-root-config
+        - name: config-files
+          configMap:
+            name: openclaw-config-files
+        - name: ws-hermes
+          configMap:
+            name: openclaw-ws-hermes
+        - name: ws-hephaestus
+          configMap:
+            name: openclaw-ws-hephaestus
+        - name: ws-athena
+          configMap:
+            name: openclaw-ws-athena
+        - name: ws-plutus
+          configMap:
+            name: openclaw-ws-plutus
+        - name: ws-themis
+          configMap:
+            name: openclaw-ws-themis
+        - name: ws-prometheus
+          configMap:
+            name: openclaw-ws-prometheus
+        - name: ws-mnemosyne
+          configMap:
+            name: openclaw-ws-mnemosyne
+        - name: data
+          persistentVolumeClaim:
+            claimName: openclaw-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: openclaw-data
+  namespace: olympus
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openclaw
+  namespace: olympus
+spec:
+  type: ClusterIP
+  selector:
+    app: openclaw
+  ports:
+    - name: http
+      port: 18789
+      targetPort: 18789
