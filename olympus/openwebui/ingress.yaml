@@ -8,7 +8,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`chat.ramoneees.com`)
+    - match: Host(`ai.ramoneees.com`)
       kind: Rule
       services:
         - name: openwebui
