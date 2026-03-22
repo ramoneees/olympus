@@ -72,7 +72,7 @@ spec:
             - name: NODE_ENV
               value: "production"
             - name: NODE_OPTIONS
-              value: "--max-old-space-size=1536"
+              value: "--max-old-space-size=3584"
             - name: OPENCLAW_GATEWAY_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -144,7 +144,7 @@ spec:
               memory: 256Mi
             limits:
               cpu: "2"
-              memory: 2Gi
+              memory: 4Gi
           securityContext:
             readOnlyRootFilesystem: false
             capabilities:
