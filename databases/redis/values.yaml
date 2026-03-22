@@ -11,6 +11,9 @@
 #   5  — Mnemosyne short-term memory
 #   6-15 — available
 
+image:
+  tag: latest
+
 architecture: standalone
 
 auth:
@@ -33,6 +36,8 @@ master:
 
 metrics:
   enabled: true
+  image:
+    tag: latest
   resources:
     requests:
       cpu: 25m

@@ -13,6 +13,9 @@
 #   CREATE USER gitea WITH PASSWORD '...'; GRANT ALL ON DATABASE gitea TO gitea;
 #   (repeat per service)
 
+image:
+  tag: latest
+
 auth:
   existingSecret: postgresql-secret  # keys: postgres-password, replication-password
   database: postgres
@@ -44,6 +47,8 @@ architecture: standalone
 
 metrics:
   enabled: true
+  image:
+    tag: latest
   resources:
     requests:
       cpu: 25m
