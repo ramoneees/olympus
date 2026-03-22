@@ -31,7 +31,7 @@ spec:
             - -c
             - |
               # Create writable directories on PVC
-              mkdir -p /data/extensions /data/canvas /data/cron /data/devices /data/identity /data/agents
+              mkdir -p /data/extensions /data/canvas /data/cron /data/devices /data/identity /data/agents /data/credentials
               # Sync workspace files from ConfigMaps into writable PVC dirs
               for agent in hermes hephaestus athena plutus themis prometheus mnemosyne; do
                 mkdir -p /data/workspaces/$agent
@@ -135,6 +135,9 @@ spec:
             - name: data
               mountPath: /home/node/.openclaw/agents
               subPath: agents
+            - name: data
+              mountPath: /home/node/.openclaw/credentials
+              subPath: credentials
           resources:
             requests:
               cpu: 100m
