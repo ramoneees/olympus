@@ -24,48 +24,54 @@ spec:
         runAsGroup: 1000
         fsGroup: 1000
       initContainers:
-        - name: init-workspaces
+        - name: init-openclaw
           image: busybox:1.36
           command:
             - sh
             - -c
             - |
-              # Create writable directories on PVC
-              mkdir -p /data/extensions /data/canvas /data/cron /data/devices /data/identity /data/agents /data/credentials
-              # Copy root config to writable location
-              cp -f /config-src/openclaw.json /data/openclaw.json
-              # Sync workspace files from ConfigMaps into writable PVC dirs
+              # The entire ~/.openclaw is the PVC — create all needed dirs
+              mkdir -p /openclaw/config /openclaw/data /openclaw/extensions \
+                       /openclaw/canvas /openclaw/cron /openclaw/devices \
+                       /openclaw/identity /openclaw/agents /openclaw/credentials
+              # Copy root config (overwrite each start so git changes propagate)
+              cp -f /src/root-config/openclaw.json /openclaw/openclaw.json
+              # Copy config files from ConfigMap
+              cp -f /src/config-files/* /openclaw/config/ 2>/dev/null || true
+              # Sync workspace files from ConfigMaps
               for agent in hermes hephaestus athena plutus themis prometheus mnemosyne; do
-                mkdir -p /data/workspaces/$agent
-                # Copy all files from the read-only ConfigMap mount, overwriting
-                cp -f /ws-src/$agent/* /data/workspaces/$agent/ 2>/dev/null || true
+                mkdir -p /openclaw/workspaces/$agent
+                cp -f /src/ws/$agent/* /openclaw/workspaces/$agent/ 2>/dev/null || true
               done
           volumeMounts:
             - name: data
-              mountPath: /data
+              mountPath: /openclaw
             - name: root-config
-              mountPath: /config-src
+              mountPath: /src/root-config
+              readOnly: true
+            - name: config-files
+              mountPath: /src/config-files
               readOnly: true
             - name: ws-hermes
-              mountPath: /ws-src/hermes
+              mountPath: /src/ws/hermes
               readOnly: true
             - name: ws-hephaestus
-              mountPath: /ws-src/hephaestus
+              mountPath: /src/ws/hephaestus
               readOnly: true
             - name: ws-athena
-              mountPath: /ws-src/athena
+              mountPath: /src/ws/athena
               readOnly: true
             - name: ws-plutus
-              mountPath: /ws-src/plutus
+              mountPath: /src/ws/plutus
               readOnly: true
             - name: ws-themis
-              mountPath: /ws-src/themis
+              mountPath: /src/ws/themis
               readOnly: true
             - name: ws-prometheus
-              mountPath: /ws-src/prometheus
+              mountPath: /src/ws/prometheus
               readOnly: true
             - name: ws-mnemosyne
-              mountPath: /ws-src/mnemosyne
+              mountPath: /src/ws/mnemosyne
               readOnly: true
       containers:
         - name: openclaw
@@ -109,39 +115,9 @@ spec:
                   name: openclaw-secrets
                   key: MATTERMOST_URL
           volumeMounts:
-            # Root config (writable copy on PVC, seeded by initContainer)
+            # Entire .openclaw directory is the PVC (fully writable)
             - name: data
-              mountPath: /home/node/.openclaw/openclaw.json
-              subPath: openclaw.json
-            # Config directory (read-only)
-            - name: config-files
-              mountPath: /home/node/.openclaw/config
-              readOnly: true
-            # Agent workspaces (writable, from PVC — seeded by initContainer)
-            - name: data
-              mountPath: /home/node/.openclaw/workspaces
-              subPath: workspaces
-            # Runtime data (PVC)
-            - name: data
-              mountPath: /home/node/.openclaw/data
-            - name: data
-              mountPath: /home/node/.openclaw/canvas
-              subPath: canvas
-            - name: data
-              mountPath: /home/node/.openclaw/cron
-              subPath: cron
-            - name: data
-              mountPath: /home/node/.openclaw/devices
-              subPath: devices
-            - name: data
-              mountPath: /home/node/.openclaw/identity
-              subPath: identity
-            - name: data
-              mountPath: /home/node/.openclaw/agents
-              subPath: agents
-            - name: data
-              mountPath: /home/node/.openclaw/credentials
-              subPath: credentials
+              mountPath: /home/node/.openclaw
           resources:
             requests:
               cpu: 100m
