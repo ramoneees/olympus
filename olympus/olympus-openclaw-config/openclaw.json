@@ -21,7 +21,7 @@
   gateway: {
     port: 18789,
     mode: "local",
-    bind: "all",
+    bind: "lan",
     auth: {
       mode: "token",
       token: "${OPENCLAW_GATEWAY_TOKEN}",

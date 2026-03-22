@@ -23,7 +23,7 @@ data:
       "gateway": {
         "port": 18789,
         "mode": "local",
-        "bind": "all",
+        "bind": "lan",
         "auth": {
           "mode": "token",
           "token": "${OPENCLAW_GATEWAY_TOKEN}"
@@ -111,7 +111,7 @@ data:
       thinkingDefault: "low",
       verboseDefault: "off",
       elevatedDefault: "off",
-      sandbox: { mode: "none" },
+      sandbox: { mode: "off" },
       subagents: {
         model: "litellm/MiniMax-M2.5",
         maxConcurrent: 2,
@@ -148,14 +148,12 @@ data:
         id: "hermes", default: true,
         workspace: "/home/node/.openclaw/workspaces/hermes",
         model: "litellm/MiniMax-M2.5",
-        sandbox: { mode: "none" },
+        sandbox: { mode: "off" },
         subagents: { allowAgents: ["hephaestus", "athena", "plutus", "themis", "prometheus", "mnemosyne"] },
         tools: {
           profile: "minimal",
           allow: ["read", "memory_search", "memory_get", "sessions_list", "sessions_history", "sessions_spawn", "session_status"],
           deny: ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch", "cron", "gateway", "message", "image"],
-          agentToAgent: { enabled: true, allow: ["hephaestus", "athena", "plutus", "themis", "prometheus", "mnemosyne"] },
-          sessions: { visibility: "tree" },
           loopDetection: { enabled: true },
         },
       },
@@ -163,7 +161,7 @@ data:
         id: "hephaestus",
         workspace: "/home/node/.openclaw/workspaces/hephaestus",
         model: "litellm/qwen3-coder-plus",
-        sandbox: { mode: "none" },
+        sandbox: { mode: "off" },
         tools: {
           profile: "minimal",
           allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"],
@@ -176,7 +174,7 @@ data:
         id: "athena",
         workspace: "/home/node/.openclaw/workspaces/athena",
         model: "litellm/MiniMax-M2.5",
-        sandbox: { mode: "none" },
+        sandbox: { mode: "off" },
         tools: {
           profile: "minimal",
           allow: ["read", "group:memory", "web_search", "web_fetch", "browser", "session_status"],
@@ -188,7 +186,7 @@ data:
         id: "plutus",
         workspace: "/home/node/.openclaw/workspaces/plutus",
         model: "litellm/deepseek-r1:7b",
-        sandbox: { mode: "none" },
+        sandbox: { mode: "off" },
         tools: {
           profile: "minimal",
           allow: ["group:fs", "group:memory", "web_fetch", "session_status"],
@@ -200,7 +198,7 @@ data:
         id: "themis",
         workspace: "/home/node/.openclaw/workspaces/themis",
         model: "litellm/MiniMax-M2.5",
-        sandbox: { mode: "none" },
+        sandbox: { mode: "off" },
         tools: {
           profile: "minimal",
           allow: ["read", "group:memory", "web_search", "web_fetch", "session_status"],
@@ -212,7 +210,7 @@ data:
         id: "prometheus",
         workspace: "/home/node/.openclaw/workspaces/prometheus",
         model: "litellm/qwen3-coder-plus",
-        sandbox: { mode: "none" },
+        sandbox: { mode: "off" },
         tools: {
           profile: "minimal",
           allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"],
@@ -225,7 +223,7 @@ data:
         id: "mnemosyne",
         workspace: "/home/node/.openclaw/workspaces/mnemosyne",
         model: "litellm/qwen3:8b",
-        sandbox: { mode: "none" },
+        sandbox: { mode: "off" },
         tools: {
           profile: "minimal",
           allow: ["read", "group:memory", "memory_search", "memory_get", "memory_put", "session_status"],
@@ -236,9 +234,9 @@ data:
     ]
   agents.list.v1.json5: |
     [
-      { id: "hermes", default: true, workspace: "/home/node/.openclaw/workspaces/hermes", model: "litellm/MiniMax-M2.5", sandbox: { mode: "none" }, subagents: { allowAgents: ["hephaestus", "athena"] }, tools: { profile: "minimal", allow: ["read", "memory_search", "memory_get", "sessions_list", "sessions_history", "sessions_spawn", "session_status"], deny: ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch", "cron", "gateway", "message", "image"], agentToAgent: { enabled: true, allow: ["hephaestus", "athena"] }, sessions: { visibility: "tree" }, loopDetection: { enabled: true } } },
-      { id: "hephaestus", workspace: "/home/node/.openclaw/workspaces/hephaestus", model: "litellm/qwen3-coder-plus", sandbox: { mode: "none" }, tools: { profile: "minimal", allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"], deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"], elevated: { enabled: false }, loopDetection: { enabled: true } } },
-      { id: "athena", workspace: "/home/node/.openclaw/workspaces/athena", model: "litellm/MiniMax-M2.5", sandbox: { mode: "none" }, tools: { profile: "minimal", allow: ["read", "group:memory", "web_search", "web_fetch", "browser", "session_status"], deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway", "message"], loopDetection: { enabled: true } } },
+      { id: "hermes", default: true, workspace: "/home/node/.openclaw/workspaces/hermes", model: "litellm/MiniMax-M2.5", sandbox: { mode: "off" }, subagents: { allowAgents: ["hephaestus", "athena"] }, tools: { profile: "minimal", allow: ["read", "memory_search", "memory_get", "sessions_list", "sessions_history", "sessions_spawn", "session_status"], deny: ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch", "cron", "gateway", "message", "image"], loopDetection: { enabled: true } } },
+      { id: "hephaestus", workspace: "/home/node/.openclaw/workspaces/hephaestus", model: "litellm/qwen3-coder-plus", sandbox: { mode: "off" }, tools: { profile: "minimal", allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"], deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"], elevated: { enabled: false }, loopDetection: { enabled: true } } },
+      { id: "athena", workspace: "/home/node/.openclaw/workspaces/athena", model: "litellm/MiniMax-M2.5", sandbox: { mode: "off" }, tools: { profile: "minimal", allow: ["read", "group:memory", "web_search", "web_fetch", "browser", "session_status"], deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway", "message"], loopDetection: { enabled: true } } },
     ]
   bindings.v1.json5: |
     []
@@ -247,13 +245,13 @@ data:
       litellm: {
         baseUrl: "http://litellm.olympus.svc.cluster.local:4000",
         apiKey: "${LITELLM_API_KEY}",
-        api: "openai-chat",
+        api: "openai-completions",
         models: [
           { id: "qwen2.5-coder:7b", name: "Qwen 2.5 Coder 7B", reasoning: false, input: ["text"], contextWindow: 131072, maxTokens: 8192 },
           { id: "deepseek-r1:7b", name: "DeepSeek R1 7B", reasoning: true, input: ["text"], contextWindow: 163840, maxTokens: 8192 },
           { id: "qwen3:8b", name: "Qwen 3 8B", reasoning: false, input: ["text"], contextWindow: 131072, maxTokens: 8192 },
           { id: "qwen3.5:9b", name: "Qwen 3.5 9B", reasoning: false, input: ["text"], contextWindow: 262144, maxTokens: 8192 },
-          { id: "nomic-embed-text-v2", name: "Nomic Embed Text v2", reasoning: false, input: ["text"], contextWindow: 8192, maxTokens: 0 },
+          { id: "nomic-embed-text-v2", name: "Nomic Embed Text v2", reasoning: false, input: ["text"], contextWindow: 8192, maxTokens: 1 },
           { id: "qwen3-vl:8b", name: "Qwen 3 VL 8B", reasoning: false, input: ["text", "image"], contextWindow: 131072, maxTokens: 8192 },
           { id: "qwen3-coder-plus", name: "Qwen 3 Coder Plus", reasoning: false, input: ["text"], contextWindow: 131072, maxTokens: 8192 },
           { id: "MiniMax-M2.5", name: "MiniMax M2.5", reasoning: false, input: ["text"], contextWindow: 131072, maxTokens: 8192 },

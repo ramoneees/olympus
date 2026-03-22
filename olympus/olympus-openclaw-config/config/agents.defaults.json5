@@ -68,7 +68,7 @@
   elevatedDefault: "off",
 
   sandbox: {
-    mode: "none",
+    mode: "off",
   },
 
   // Default behavior for sub-agent runs spawned via Hermes.

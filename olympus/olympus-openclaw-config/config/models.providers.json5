@@ -6,14 +6,14 @@
   litellm: {
     baseUrl: "http://litellm.olympus.svc.cluster.local:4000",
     apiKey: "${LITELLM_API_KEY}",
-    api: "openai-chat",
+    api: "openai-completions",
     models: [
       // Local Ollama models (via LiteLLM → Ollama)
       { id: "qwen2.5-coder:7b", name: "Qwen 2.5 Coder 7B", reasoning: false, input: ["text"], contextWindow: 131072, maxTokens: 8192 },
       { id: "deepseek-r1:7b", name: "DeepSeek R1 7B", reasoning: true, input: ["text"], contextWindow: 163840, maxTokens: 8192 },
       { id: "qwen3:8b", name: "Qwen 3 8B", reasoning: false, input: ["text"], contextWindow: 131072, maxTokens: 8192 },
       { id: "qwen3.5:9b", name: "Qwen 3.5 9B", reasoning: false, input: ["text"], contextWindow: 262144, maxTokens: 8192 },
-      { id: "nomic-embed-text-v2", name: "Nomic Embed Text v2", reasoning: false, input: ["text"], contextWindow: 8192, maxTokens: 0 },
+      { id: "nomic-embed-text-v2", name: "Nomic Embed Text v2", reasoning: false, input: ["text"], contextWindow: 8192, maxTokens: 1 },
       { id: "qwen3-vl:8b", name: "Qwen 3 VL 8B", reasoning: false, input: ["text", "image"], contextWindow: 131072, maxTokens: 8192 },
       // Cloud models (via LiteLLM → DashScope)
       { id: "qwen3-coder-plus", name: "Qwen 3 Coder Plus", reasoning: false, input: ["text"], contextWindow: 131072, maxTokens: 8192 },
