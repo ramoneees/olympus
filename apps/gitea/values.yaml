@@ -17,7 +17,7 @@ gitea:
       DOMAIN: git.ramoneees.com
       ROOT_URL: https://git.ramoneees.com/
       SSH_DOMAIN: git.ramoneees.com
-      SSH_PORT: 22
+      SSH_PORT: 2222
     database:
       DB_TYPE: postgres
       HOST: postgresql.databases.svc.cluster.local:5432
@@ -78,4 +78,4 @@ service:
     port: 3000
   ssh:
     type: LoadBalancer  # SSH access via MetalLB IP
-    port: 22
+    port: 2222
