@@ -26,7 +26,7 @@ spec:
       initContainers:
         - name: init-dirs
           image: busybox:1.36
-          command: ["sh", "-c", "mkdir -p /data/extensions"]
+          command: ["sh", "-c", "mkdir -p /data/extensions /data/canvas /data/cron"]
           volumeMounts:
             - name: data
               mountPath: /data
@@ -104,6 +104,12 @@ spec:
             # Runtime data (PVC)
             - name: data
               mountPath: /home/node/.openclaw/data
+            - name: data
+              mountPath: /home/node/.openclaw/canvas
+              subPath: canvas
+            - name: data
+              mountPath: /home/node/.openclaw/cron
+              subPath: cron
           resources:
             requests:
               cpu: 100m
