@@ -32,6 +32,8 @@ spec:
             - |
               # Create writable directories on PVC
               mkdir -p /data/extensions /data/canvas /data/cron /data/devices /data/identity /data/agents /data/credentials
+              # Copy root config to writable location
+              cp -f /config-src/openclaw.json /data/openclaw.json
               # Sync workspace files from ConfigMaps into writable PVC dirs
               for agent in hermes hephaestus athena plutus themis prometheus mnemosyne; do
                 mkdir -p /data/workspaces/$agent
@@ -41,6 +43,9 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
+            - name: root-config
+              mountPath: /config-src
+              readOnly: true
             - name: ws-hermes
               mountPath: /ws-src/hermes
               readOnly: true
@@ -104,11 +109,10 @@ spec:
                   name: openclaw-secrets
                   key: MATTERMOST_URL
           volumeMounts:
-            # Root config (read-only)
-            - name: root-config
+            # Root config (writable copy on PVC, seeded by initContainer)
+            - name: data
               mountPath: /home/node/.openclaw/openclaw.json
               subPath: openclaw.json
-              readOnly: true
             # Config directory (read-only)
             - name: config-files
               mountPath: /home/node/.openclaw/config
