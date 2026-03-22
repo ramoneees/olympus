@@ -41,6 +41,20 @@
     "litellm/qwen-max": {
       alias: "smart-qwen-max",
     },
+    "litellm/qwen3-coder-next": {
+      alias: "smart-coder-next",
+      params: { temperature: 0.2 },
+    },
+    "litellm/qwen3.5-plus": {
+      alias: "smart-qwen35",
+      params: { temperature: 0.1 },
+    },
+    "litellm/kimi-k2.5": {
+      alias: "smart-kimi",
+    },
+    "litellm/glm-5": {
+      alias: "smart-glm5",
+    },
     "litellm/openrouter/deepseek/deepseek-r1": {
       alias: "smart-deepseek",
     },

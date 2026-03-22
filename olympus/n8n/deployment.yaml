@@ -56,6 +56,8 @@ spec:
                 secretKeyRef:
                   name: n8n-secret
                   key: encryption-key
+            - name: NODES_EXCLUDE
+              value: "[]"
           volumeMounts:
             - name: data
               mountPath: /home/node/.n8n

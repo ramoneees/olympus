@@ -66,6 +66,16 @@
       baseUrl: "${MATTERMOST_URL}",
       dmPolicy: "pairing",
       chatmode: "oncall",
+      interactions: {
+        callbackBaseUrl: "https://openclaw.ramoneees.com",
+      },
+    },
+  },
+
+  skills: {
+    install: {
+      preferBrew: false,
+      nodeManager: "npm",
     },
   },
 

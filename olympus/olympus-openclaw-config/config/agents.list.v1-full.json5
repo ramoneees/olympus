@@ -21,7 +21,7 @@
     model: "litellm/qwen3-coder-plus",
     sandbox: { mode: "off" },
     tools: {
-      profile: "minimal",
+      profile: "standard",
       allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"],
       deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"],
       elevated: { enabled: false },
@@ -72,7 +72,7 @@
     model: "litellm/qwen3-coder-plus",
     sandbox: { mode: "off" },
     tools: {
-      profile: "minimal",
+      profile: "standard",
       allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"],
       deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"],
       elevated: { enabled: false },

@@ -14,3 +14,4 @@ passwords.txt
 !infrastructure/secrets/
 !infrastructure/secrets/agent-secrets-template/
 !infrastructure/secrets/agent-secrets-template/*.yaml
+openclaw-previous-config
