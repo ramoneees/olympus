@@ -1,0 +1,110 @@
+# ArgoCD Applications — Phase 8: Monitoring Stack
+---
+# kube-prometheus-stack (Prometheus + Grafana + Alertmanager)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://prometheus-community.github.io/helm-charts
+      chart: kube-prometheus-stack
+      targetRevision: "82.*"
+      helm:
+        valueFiles:
+          - $values/monitoring/kube-prometheus-stack/values.yaml
+    - repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+---
+# Loki (log aggregation)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: loki
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: loki
+      targetRevision: "6.*"
+      helm:
+        valueFiles:
+          - $values/monitoring/loki/values.yaml
+    - repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# Promtail (log collector DaemonSet)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: promtail
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: promtail
+      targetRevision: "6.*"
+      helm:
+        valueFiles:
+          - $values/monitoring/promtail/values.yaml
+    - repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+# Monitoring IngressRoutes (Grafana, Prometheus, Alertmanager)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: monitoring-ingress
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: monitoring/kube-prometheus-stack
+    directory:
+      include: "{ingress.yaml,secrets.yaml}"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

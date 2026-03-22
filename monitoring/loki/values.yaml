@@ -1,0 +1,55 @@
+# Loki — Log aggregation for homelab
+# SingleBinary mode (simple, fits 2-node cluster)
+
+deploymentMode: SingleBinary
+
+loki:
+  auth_enabled: false
+  commonConfig:
+    replication_factor: 1
+  storage:
+    type: filesystem
+  schemaConfig:
+    configs:
+      - from: "2024-01-01"
+        store: tsdb
+        object_store: filesystem
+        schema: v13
+        index:
+          prefix: loki_index_
+          period: 24h
+  limits_config:
+    retention_period: 168h  # 7 days
+    max_query_series: 500
+  compactor:
+    retention_enabled: true
+
+singleBinary:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  persistence:
+    enabled: true
+    storageClass: longhorn
+    size: 10Gi
+
+# Disable unused microservice components
+gateway:
+  enabled: false
+read:
+  replicas: 0
+write:
+  replicas: 0
+backend:
+  replicas: 0
+
+# Disable components we don't need
+chunksCache:
+  enabled: false
+resultsCache:
+  enabled: false
