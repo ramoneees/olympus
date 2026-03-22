@@ -290,7 +290,7 @@ data:
     {
       enabled: true,
       allow: ["memory-core", "qwen-portal-auth"],
-      load: { paths: ["~/.openclaw/extensions"] },
+      load: { paths: ["~/.openclaw/data/extensions"] },
       entries: { "qwen-portal-auth": { enabled: true } },
       slots: { memory: "memory-core", contextEngine: "legacy" },
     }

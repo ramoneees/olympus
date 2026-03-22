@@ -9,7 +9,7 @@
   ],
   load: {
     paths: [
-      "~/.openclaw/extensions",
+      "~/.openclaw/data/extensions",
     ],
   },
   entries: {
