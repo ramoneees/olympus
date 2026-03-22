@@ -24,12 +24,44 @@ spec:
         runAsGroup: 1000
         fsGroup: 1000
       initContainers:
-        - name: init-dirs
+        - name: init-workspaces
           image: busybox:1.36
-          command: ["sh", "-c", "mkdir -p /data/extensions /data/canvas /data/cron /data/devices /data/identity"]
+          command:
+            - sh
+            - -c
+            - |
+              # Create writable directories on PVC
+              mkdir -p /data/extensions /data/canvas /data/cron /data/devices /data/identity /data/agents
+              # Sync workspace files from ConfigMaps into writable PVC dirs
+              for agent in hermes hephaestus athena plutus themis prometheus mnemosyne; do
+                mkdir -p /data/workspaces/$agent
+                # Copy all files from the read-only ConfigMap mount, overwriting
+                cp -f /ws-src/$agent/* /data/workspaces/$agent/ 2>/dev/null || true
+              done
           volumeMounts:
             - name: data
               mountPath: /data
+            - name: ws-hermes
+              mountPath: /ws-src/hermes
+              readOnly: true
+            - name: ws-hephaestus
+              mountPath: /ws-src/hephaestus
+              readOnly: true
+            - name: ws-athena
+              mountPath: /ws-src/athena
+              readOnly: true
+            - name: ws-plutus
+              mountPath: /ws-src/plutus
+              readOnly: true
+            - name: ws-themis
+              mountPath: /ws-src/themis
+              readOnly: true
+            - name: ws-prometheus
+              mountPath: /ws-src/prometheus
+              readOnly: true
+            - name: ws-mnemosyne
+              mountPath: /ws-src/mnemosyne
+              readOnly: true
       containers:
         - name: openclaw
           image: ghcr.io/openclaw/openclaw:latest
@@ -70,37 +102,19 @@ spec:
                   name: openclaw-secrets
                   key: MATTERMOST_URL
           volumeMounts:
-            # Root config
+            # Root config (read-only)
             - name: root-config
               mountPath: /home/node/.openclaw/openclaw.json
               subPath: openclaw.json
               readOnly: true
-            # Config directory
+            # Config directory (read-only)
             - name: config-files
               mountPath: /home/node/.openclaw/config
               readOnly: true
-            # Agent workspaces
-            - name: ws-hermes
-              mountPath: /home/node/.openclaw/workspaces/hermes
-              readOnly: true
-            - name: ws-hephaestus
-              mountPath: /home/node/.openclaw/workspaces/hephaestus
-              readOnly: true
-            - name: ws-athena
-              mountPath: /home/node/.openclaw/workspaces/athena
-              readOnly: true
-            - name: ws-plutus
-              mountPath: /home/node/.openclaw/workspaces/plutus
-              readOnly: true
-            - name: ws-themis
-              mountPath: /home/node/.openclaw/workspaces/themis
-              readOnly: true
-            - name: ws-prometheus
-              mountPath: /home/node/.openclaw/workspaces/prometheus
-              readOnly: true
-            - name: ws-mnemosyne
-              mountPath: /home/node/.openclaw/workspaces/mnemosyne
-              readOnly: true
+            # Agent workspaces (writable, from PVC — seeded by initContainer)
+            - name: data
+              mountPath: /home/node/.openclaw/workspaces
+              subPath: workspaces
             # Runtime data (PVC)
             - name: data
               mountPath: /home/node/.openclaw/data
@@ -116,6 +130,9 @@ spec:
             - name: data
               mountPath: /home/node/.openclaw/identity
               subPath: identity
+            - name: data
+              mountPath: /home/node/.openclaw/agents
+              subPath: agents
           resources:
             requests:
               cpu: 100m
