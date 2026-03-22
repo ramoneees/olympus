@@ -63,24 +63,41 @@ data:
     #!/bin/sh
     set -e
 
-    CLOUD_INIT_SSHD="/host/etc/ssh/sshd_config.d/50-cloud-init.conf"
-    CLOUD_INIT_CFG="/host/etc/cloud/cloud.cfg.d/99-disable-sshd-override.cfg"
+    NSENTER="nsenter -t 1 -m -p --"
+    SSHD_CONF_DIR="/etc/ssh/sshd_config.d"
+    CLOUD_INIT_SSHD="$SSHD_CONF_DIR/50-cloud-init.conf"
+    CLOUD_INIT_CFG="/etc/cloud/cloud.cfg.d/99-disable-sshd-override.cfg"
+    CHANGED=0
 
     # Fix existing cloud-init sshd config if it forces PasswordAuthentication
-    if [ -f "$CLOUD_INIT_SSHD" ]; then
-      if grep -q "^PasswordAuthentication" "$CLOUD_INIT_SSHD"; then
-        # Comment out the PasswordAuthentication line so the main sshd_config controls it
-        sed -i 's/^PasswordAuthentication/#PasswordAuthentication/' "$CLOUD_INIT_SSHD"
+    if $NSENTER test -f "$CLOUD_INIT_SSHD"; then
+      if $NSENTER grep -q "^PasswordAuthentication" "$CLOUD_INIT_SSHD"; then
+        $NSENTER sed -i 's/^PasswordAuthentication/#PasswordAuthentication/' "$CLOUD_INIT_SSHD"
         echo "$(date): Commented out PasswordAuthentication in 50-cloud-init.conf"
+        CHANGED=1
       fi
     fi
 
+    # Fix backup files with trailing ~ that sshd ignores
+    for f in $($NSENTER find "$SSHD_CONF_DIR" -name '*.conf~' 2>/dev/null); do
+      NEWNAME=$(echo "$f" | sed 's/~$//')
+      $NSENTER mv "$f" "$NEWNAME"
+      echo "$(date): Renamed $f to $NEWNAME"
+      CHANGED=1
+    done
+
     # Prevent cloud-init from managing sshd config on future runs
-    mkdir -p "$(dirname "$CLOUD_INIT_CFG")"
-    cat > "$CLOUD_INIT_CFG" <<'CLOUDINIT'
+    $NSENTER mkdir -p "$(dirname "$CLOUD_INIT_CFG")"
+    $NSENTER sh -c "cat > $CLOUD_INIT_CFG" <<'CLOUDINIT'
     # Prevent cloud-init from overriding sshd_config
     ssh_pwauth: null
     ssh_genkeytypes: []
     manage_etc_hosts: false
     CLOUDINIT
     echo "$(date): Ensured cloud-init sshd override is disabled"
+
+    # Reload sshd if we made changes
+    if [ "$CHANGED" = "1" ]; then
+      $NSENTER systemctl reload ssh 2>/dev/null || $NSENTER systemctl reload sshd 2>/dev/null || true
+      echo "$(date): Reloaded sshd"
+    fi

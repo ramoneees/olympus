@@ -47,8 +47,6 @@ spec:
           volumeMounts:
             - name: scripts
               mountPath: /scripts
-            - name: host-etc
-              mountPath: /host/etc
           resources:
             requests:
               cpu: 10m
@@ -80,7 +78,3 @@ spec:
           configMap:
             name: ssh-firewall-scripts
             defaultMode: 0755
-        - name: host-etc
-          hostPath:
-            path: /etc
-            type: Directory
