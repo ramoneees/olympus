@@ -8,24 +8,28 @@ data:
     #!/bin/sh
     set -e
 
+    # Use nsenter to run iptables on the host
+    IPT="nsenter -t 1 -n -- iptables"
+
     RULE="-p tcp --dport 22 -j ACCEPT"
 
     ensure_ssh_rule() {
       # Check if our SSH ACCEPT rule already exists
-      if iptables -C INPUT $RULE 2>/dev/null; then
+      if $IPT -C INPUT $RULE 2>/dev/null; then
+        echo "$(date): SSH ACCEPT rule already exists"
         return 0
       fi
 
       # Find the first REJECT rule in INPUT chain
-      REJECT_LINE=$(iptables -L INPUT --line-numbers -n | grep -m1 'REJECT' | awk '{print $1}')
+      REJECT_LINE=$($IPT -L INPUT --line-numbers -n | grep -m1 'REJECT' | awk '{print $1}')
 
       if [ -n "$REJECT_LINE" ]; then
         # Insert SSH ACCEPT before the first REJECT
-        iptables -I INPUT "$REJECT_LINE" $RULE
+        $IPT -I INPUT "$REJECT_LINE" $RULE
         echo "$(date): Inserted SSH ACCEPT rule at line $REJECT_LINE (before REJECT)"
       else
         # No REJECT rule found, append to INPUT
-        iptables -A INPUT $RULE
+        $IPT -A INPUT $RULE
         echo "$(date): Appended SSH ACCEPT rule (no REJECT found)"
       fi
     }
@@ -36,16 +40,19 @@ data:
     #!/bin/sh
     set -e
 
+    # Use nsenter to run iptables on the host
+    IPT="nsenter -t 1 -n -- iptables"
+
     RULE="-p tcp --dport 22 -j ACCEPT"
 
     while true; do
-      if ! iptables -C INPUT $RULE 2>/dev/null; then
-        REJECT_LINE=$(iptables -L INPUT --line-numbers -n | grep -m1 'REJECT' | awk '{print $1}')
+      if ! $IPT -C INPUT $RULE 2>/dev/null; then
+        REJECT_LINE=$($IPT -L INPUT --line-numbers -n | grep -m1 'REJECT' | awk '{print $1}')
         if [ -n "$REJECT_LINE" ]; then
-          iptables -I INPUT "$REJECT_LINE" $RULE
+          $IPT -I INPUT "$REJECT_LINE" $RULE
           echo "$(date): Re-inserted SSH ACCEPT rule at line $REJECT_LINE"
         else
-          iptables -A INPUT $RULE
+          $IPT -A INPUT $RULE
           echo "$(date): Re-appended SSH ACCEPT rule"
         fi
       fi
