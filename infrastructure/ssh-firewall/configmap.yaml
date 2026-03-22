@@ -9,7 +9,7 @@ data:
     set -e
 
     # Use nsenter to run iptables on the host
-    IPT="nsenter -t 1 -n -- iptables"
+    IPT="nsenter -t 1 -m -n -- iptables"
 
     RULE="-p tcp --dport 22 -j ACCEPT"
 
@@ -41,7 +41,7 @@ data:
     set -e
 
     # Use nsenter to run iptables on the host
-    IPT="nsenter -t 1 -n -- iptables"
+    IPT="nsenter -t 1 -m -n -- iptables"
 
     RULE="-p tcp --dport 22 -j ACCEPT"
 
