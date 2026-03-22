@@ -31,7 +31,7 @@ spec:
             - -c
             - |
               # The entire ~/.openclaw is the PVC — create all needed dirs
-              mkdir -p /openclaw/config /openclaw/data /openclaw/extensions \
+              mkdir -p /openclaw/config /openclaw/data/extensions \
                        /openclaw/canvas /openclaw/cron /openclaw/devices \
                        /openclaw/identity /openclaw/agents /openclaw/credentials
               # Copy root config (overwrite each start so git changes propagate)
