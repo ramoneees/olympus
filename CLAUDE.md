@@ -60,17 +60,17 @@ An AI orchestration layer using OpenClaw, with agents specialized by role:
 
 | Agent | Role | Model |
 |-------|------|-------|
-| **Hermes** (orchestrator) | Routes tasks, coordinates agents | GLM-5-Turbo (cloud) |
-| **Hephaestus** | Developer/Code | qwen2.5-coder:7b (local) |
-| **Prometheus** | Infrastructure/IaC | qwen2.5-coder:7b (local) |
-| **Athena** | Research/Docs | GLM-5-Turbo (cloud) |
-| **Plutus** | Finance (LOCAL ONLY, no cloud) | deepseek-r1:7b (local) |
-| **Themis** | Strategy & Audit | GLM-5-Turbo (cloud) |
-| **Mnemosyne** | Memory Curator | qwen3:8b (local) |
+| **Hermes** (orchestrator) | Routes tasks, coordinates agents | MiniMax-M2.5 (DashScope cloud) |
+| **Hephaestus** | Developer/Code | qwen3-coder-plus (DashScope cloud) |
+| **Prometheus** | Infrastructure/IaC | qwen3-coder-plus (DashScope cloud) |
+| **Athena** | Research/Docs | MiniMax-M2.5 (DashScope cloud) |
+| **Plutus** | Finance (LOCAL ONLY, no cloud) | deepseek-r1:7b (local Ollama) |
+| **Themis** | Strategy & Audit | MiniMax-M2.5 (DashScope cloud) |
+| **Mnemosyne** | Memory Curator | qwen3:8b (local Ollama) |
 
-**LLM routing**: Ollama (local inference) → LiteLLM (unified proxy) → cloud APIs as fallback.
+**LLM routing**: All traffic through LiteLLM (unified proxy) → Ollama (local) or DashScope/OpenRouter (cloud).
 
-**Memory architecture**: Redis (short-term), PostgreSQL+pgvector with nomic-embed-text-v2 (long-term), Vikunja audit trail (episodic).
+**Memory architecture**: File-based (Markdown in agent workspaces) with SQLite+sqlite-vec vector index. Embeddings via nomic-embed-text-v2 through LiteLLM. Hybrid search (BM25 + vector), memory flush before context compaction, session memory indexing enabled.
 
 ## Key Services Stack
 
@@ -83,6 +83,7 @@ An AI orchestration layer using OpenClaw, with agents specialized by role:
 - **Automation**: n8n
 - **Auth**: Authentik (SSO), Vaultwarden
 - **GPU**: NVIDIA GPU Operator (Helm)
+- **Monitoring**: Prometheus + Grafana (kube-prometheus-stack), Loki + Promtail (logs)
 
 ## Privacy Constraint
 
