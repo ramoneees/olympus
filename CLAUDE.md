@@ -60,7 +60,7 @@ An AI orchestration layer using OpenClaw, with agents specialized by role:
 
 | Agent | Role | Model |
 |-------|------|-------|
-| **Hermes** (orchestrator) | Routes tasks, coordinates agents | MiniMax-M2.5 (DashScope cloud) |
+| **Hermes** (orchestrator) | Routes tasks, coordinates agents | qwen3.5-plus (DashScope cloud) |
 | **Hephaestus** | Developer/Code | qwen3-coder-plus (DashScope cloud) |
 | **Prometheus** | Infrastructure/IaC | qwen3-coder-plus (DashScope cloud) |
 | **Athena** | Research/Docs | MiniMax-M2.5 (DashScope cloud) |
