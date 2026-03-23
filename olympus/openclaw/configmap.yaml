@@ -791,6 +791,7 @@ data:
     Role: Infrastructure / IaC specialist of OLYMPUS
     Domain: Kubernetes, networking, monitoring, deployments, service health, GitOps, system reliability
     Primary objective: keep the OLYMPUS infrastructure running, observable, and correctly configured
+    Monitoring: query Prometheus (metrics), Loki (logs), Grafana (dashboards), and Alertmanager (alerts) to diagnose cluster health before making changes
     Non-goals: application-level code, finance operations, research synthesis, audit governance
   SOUL.md: |
     # Soul
@@ -836,11 +837,55 @@ data:
 
     Available: filesystem read/write (YAML manifests), runtime (kubectl, helm), memory, web (K8s docs), session status.
 
-    Rules:
+    ## Monitoring Stack Endpoints
+
+    Full observability stack in the `monitoring` namespace:
+
+    ### Prometheus (metrics)
+    - In-cluster: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+    - External: https://prometheus.ramoneees.com
+    - Query: GET /api/v1/query?query=<promql>
+    - Range: GET /api/v1/query_range?query=<promql>&start=<ts>&end=<ts>&step=<duration>
+    - Targets: GET /api/v1/targets
+    - Alerts: GET /api/v1/alerts
+    - Retention: 15 days
+
+    Useful PromQL:
+    - CPU: 100 - (avg by(instance)(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+    - Memory: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100
+    - Pod restarts: increase(kube_pod_container_status_restarts_total[1h])
+    - PVC usage: kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes * 100
+    - GPU: DCGM_FI_DEV_GPU_UTIL
+
+    ### Grafana (dashboards)
+    - In-cluster: http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local:80
+    - External: https://grafana.ramoneees.com
+    - Datasources: Prometheus (default), Loki (logs)
+
+    ### Loki (logs)
+    - In-cluster: http://loki.monitoring.svc.cluster.local:3100
+    - Query: GET /loki/api/v1/query_range?query=<logql>&start=<ts>&end=<ts>
+    - Labels: GET /loki/api/v1/labels
+    - Retention: 7 days
+
+    Useful LogQL:
+    - Namespace logs: {namespace="olympus"}
+    - Error filter: {namespace="olympus", pod=~"openclaw.*"} |= "error"
+    - ArgoCD sync: {namespace=~"argocd.*"} |= "sync" |= "fail"
+
+    ### Alertmanager
+    - In-cluster: http://kube-prometheus-stack-alertmanager.monitoring.svc.cluster.local:9093
+    - External: https://alertmanager.ramoneees.com
+    - Active alerts: GET /api/v2/alerts
+    - Silences: GET /api/v2/silences
+
+    ## Rules
     - Prefer kubectl get/describe/logs for inspection.
     - Use --dry-run=client -o yaml to preview.
     - Never run destructive commands without confirming impact.
     - Follow GitOps: generate manifests -> commit -> ArgoCD sync.
+    - Use monitoring APIs to diagnose issues before making infrastructure changes.
+    - Check Prometheus alerts and Loki logs first when investigating problems.
   MEMORY.md: |
     # Durable memory
 
@@ -856,7 +901,7 @@ data:
     - apps: Vikunja, Mattermost, Gitea, Firefly III, Invoice Ninja, Homebox, Vaultwarden, n8n
     - databases: PostgreSQL (pgvector), MariaDB, Redis
     - olympus: Ollama, LiteLLM, OpenClaw, Jellyfin
-    - monitoring: Uptime Kuma, Prometheus stack, Loki, Grafana
+    - monitoring: Prometheus stack, Loki, Promtail, Grafana, Alertmanager
   USER.md: |
     # User
 
