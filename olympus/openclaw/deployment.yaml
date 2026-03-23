@@ -34,7 +34,7 @@ spec:
               mkdir -p /openclaw/config /openclaw/data/extensions \
                        /openclaw/canvas /openclaw/cron /openclaw/devices \
                        /openclaw/identity /openclaw/agents /openclaw/credentials \
-                       /openclaw/homebrew
+                       /openclaw/homebrew /openclaw/npm-global
               # Copy root config (overwrite each start so git changes propagate)
               cp -f /src/root-config/openclaw.json /openclaw/openclaw.json
               # Copy config files from ConfigMap
@@ -87,8 +87,10 @@ spec:
               value: "--max-old-space-size=3584"
             - name: HOMEBREW_PREFIX
               value: "/home/node/.openclaw/homebrew"
+            - name: NPM_CONFIG_PREFIX
+              value: "/home/node/.openclaw/npm-global"
             - name: PATH
-              value: "/home/node/.openclaw/homebrew/bin:/home/node/.openclaw/homebrew/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+              value: "/home/node/.openclaw/npm-global/bin:/home/node/.openclaw/homebrew/bin:/home/node/.openclaw/homebrew/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
             - name: OPENCLAW_GATEWAY_TOKEN
               valueFrom:
                 secretKeyRef:
