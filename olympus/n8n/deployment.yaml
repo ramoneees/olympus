@@ -56,6 +56,8 @@ spec:
                 secretKeyRef:
                   name: n8n-secret
                   key: encryption-key
+            - name: N8N_MCP_SERVER_ENABLED
+              value: "true"
             - name: NODES_EXCLUDE
               value: "[]"
           volumeMounts:
