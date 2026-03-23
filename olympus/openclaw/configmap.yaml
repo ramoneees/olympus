@@ -67,13 +67,14 @@ data:
           "dmPolicy": "pairing",
           "chatmode": "oncall",
           "interactions": {
-            "callbackBaseUrl": "https://openclaw.ramoneees.com"
+            "callbackBaseUrl": "https://openclaw.ramoneees.com",
+            "allowedSourceIps": ["10.42.0.0/16", "10.43.0.0/16", "192.168.50.0/24"]
           }
         }
       },
       "skills": {
         "install": {
-          "preferBrew": false,
+          "preferBrew": true,
           "nodeManager": "npm"
         }
       },

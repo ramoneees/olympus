@@ -33,7 +33,8 @@ spec:
               # The entire ~/.openclaw is the PVC — create all needed dirs
               mkdir -p /openclaw/config /openclaw/data/extensions \
                        /openclaw/canvas /openclaw/cron /openclaw/devices \
-                       /openclaw/identity /openclaw/agents /openclaw/credentials
+                       /openclaw/identity /openclaw/agents /openclaw/credentials \
+                       /openclaw/homebrew
               # Copy root config (overwrite each start so git changes propagate)
               cp -f /src/root-config/openclaw.json /openclaw/openclaw.json
               # Copy config files from ConfigMap
@@ -84,6 +85,10 @@ spec:
               value: "production"
             - name: NODE_OPTIONS
               value: "--max-old-space-size=3584"
+            - name: HOMEBREW_PREFIX
+              value: "/home/node/.openclaw/homebrew"
+            - name: PATH
+              value: "/home/node/.openclaw/homebrew/bin:/home/node/.openclaw/homebrew/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
             - name: OPENCLAW_GATEWAY_TOKEN
               valueFrom:
                 secretKeyRef:
