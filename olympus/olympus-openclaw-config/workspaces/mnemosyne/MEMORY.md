@@ -1,10 +1,17 @@
 # Durable memory
 
-## Memory system architecture
-- Short-term: Redis at redis.databases.svc.cluster.local:6379
-- Long-term: PostgreSQL + pgvector at postgresql.databases.svc.cluster.local:5432/olympus_memory
-- Episodic: Vikunja task history (read-only source of truth)
-- Embedding model: nomic-embed-text-v2 via Ollama (fallback: mxbai-embed-large)
+## Memory system architecture (v1 — active)
+- Backend: OpenClaw builtin (SQLite + sqlite-vec), PVC-backed at /home/node/.openclaw
+- Embeddings: nomic-embed-text-v2 via LiteLLM → Ollama (local, never leaves cluster)
+- Search: hybrid BM25 (0.3) + vector (0.7), MMR diversity, 30-day temporal decay
+- Cache: 50,000 embedding entries
+- Session memory: experimental cross-session recall enabled
+- Tools: memory_search, memory_get, memory_put (native OpenClaw)
+
+## Planned future backends (not active)
+- pgvector: postgresql.databases.svc.cluster.local:5432/olympus_memory
+- Redis: redis.databases.svc.cluster.local:6379 (ephemeral context)
+- Vikunja: episodic task history integration (read-only)
 
 ## Namespace organization
 - /memory/personal — user profile and preferences

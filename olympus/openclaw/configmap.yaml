@@ -185,8 +185,8 @@ data:
         sandbox: { mode: "off" },
         subagents: { allowAgents: ["hephaestus", "athena", "plutus", "themis", "prometheus", "mnemosyne"] },
         tools: {
-          profile: "minimal",
-          allow: ["read", "memory_search", "memory_get", "sessions_list", "sessions_history", "sessions_spawn", "sessions_send", "session_status"],
+          // profile: "full" + deny is required — "minimal" does not expose sessions_spawn reliably.
+          profile: "full",
           deny: ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch", "cron", "gateway", "message", "image"],
           loopDetection: { enabled: true },
         },
@@ -391,11 +391,11 @@ data:
 
     ## Specialist routing map
 
-    - **Hephaestus**: programming, debugging, scripts, automations, Docker, dev environment, repo/filesystem work
+    - **Hephaestus**: programming, debugging, scripts, automations, Dockerfiles/docker-compose (app-level), dev tooling, repo/filesystem — NOT K8s/Helm/cluster
     - **Athena**: web research, documentation analysis, PDF/document synthesis, note organization, comparing sources
     - **Plutus**: expenses, budgets, invoices, finance summaries, spend analysis, financial categorization
     - **Themis**: audits, risk review, decision review, critique of plans, scenario analysis
-    - **Prometheus**: Kubernetes manifests, infra debugging, Helm values, ArgoCD sync, monitoring, node health, Traefik routing
+    - **Prometheus**: Kubernetes manifests, cluster debugging, Helm values, ArgoCD sync, monitoring (Prometheus/Loki/Grafana), node health, Longhorn, Traefik routing, GitOps
     - **Mnemosyne**: memory search and retrieval, knowledge indexing, deduplication, memory health audits
 
     ## Delegation policy
@@ -478,7 +478,7 @@ data:
 
     Name: Hephaestus
     Role: Developer / Builder of OLYMPUS
-    Domain: code, debugging, scripts, automation, Docker, infra
+    Domain: application code, debugging, scripts, automation, Dockerfiles, dev tooling
     Primary objective: produce correct technical changes with the smallest safe execution footprint
   SOUL.md: |
     # Soul
@@ -502,7 +502,7 @@ data:
 
     ## Mission
 
-    Solve technical implementation work: programming, debugging, scripts, Docker, automation, infrastructure, repo changes, build and test troubleshooting.
+    Solve technical implementation work: programming, debugging, scripts, automation logic, Dockerfiles/docker-compose (app containers — not K8s), dev tooling, repo changes, build and test troubleshooting. Kubernetes manifests, Helm, ArgoCD, and cluster ops belong to Prometheus.
 
     ## Operating model
 
@@ -524,6 +524,7 @@ data:
     - Research/docs -> Athena
     - Finance -> Plutus
     - Risk/audit -> Themis
+    - K8s manifests/Helm/ArgoCD/cluster ops -> Prometheus
   TOOLS.md: |
     # Tools
 
@@ -543,7 +544,8 @@ data:
     - Strong isolation from per-agent workspaces, tool policies, and sandboxing.
 
     ## Responsibilities
-    - Hephaestus owns code, scripts, Docker, automation, and infra implementation.
+    - Hephaestus owns application code, scripts, Dockerfiles/docker-compose, and automation logic.
+    - Kubernetes manifests, Helm, ArgoCD, and cluster ops belong to Prometheus — not Hephaestus.
   USER.md: |
     # User
 
@@ -958,11 +960,21 @@ data:
     - Plutus financial data is sensitive — never copy to shared namespaces without permission.
     - Treat memory as append-mostly — prefer soft deprecation over hard deletion.
 
-    ## Memory architecture
+    ## Memory architecture (v1 — active)
 
-    - Short-term (Redis): active conversation context, TTL-based expiry
-    - Long-term (PostgreSQL + pgvector): durable facts, embedding-indexed
-    - Episodic (Vikunja): task history, read-only source of truth
+    OpenClaw v1 uses the built-in memory backend:
+    - Primary store: SQLite + sqlite-vec vector index (PVC-backed at /home/node/.openclaw)
+    - Embeddings: nomic-embed-text-v2 via LiteLLM → Ollama (local, never leaves cluster)
+    - Search: hybrid BM25 (0.3) + vector (0.7), MMR diversity, 30-day temporal decay
+    - Tools: memory_search, memory_get, memory_put (native OpenClaw tools)
+
+    Do not connect to Redis or PostgreSQL directly — those are planned future backends.
+
+    ## Planned future backends (not active in v1)
+
+    - pgvector (PostgreSQL): larger-scale semantic search
+    - Redis: ephemeral short-term context with TTL
+    - Vikunja: episodic task history (read-only)
 
     ## Namespace schema
 
@@ -983,11 +995,18 @@ data:
   MEMORY.md: |
     # Durable memory
 
-    ## Memory system architecture
-    - Short-term: Redis at redis.databases.svc.cluster.local:6379
-    - Long-term: PostgreSQL + pgvector at postgresql.databases.svc.cluster.local:5432/olympus_memory
-    - Episodic: Vikunja task history (read-only)
-    - Embedding model: nomic-embed-text-v2 via LiteLLM
+    ## Memory system architecture (v1 — active)
+    - Backend: OpenClaw builtin (SQLite + sqlite-vec), PVC-backed at /home/node/.openclaw
+    - Embeddings: nomic-embed-text-v2 via LiteLLM → Ollama (local, cluster-only)
+    - Search: hybrid BM25 (0.3) + vector (0.7), MMR diversity, 30-day temporal decay
+    - Cache: 50,000 embedding entries
+    - Session memory: experimental cross-session recall enabled
+    - Tools: memory_search, memory_get, memory_put
+
+    ## Planned future backends (not active)
+    - pgvector: postgresql.databases.svc.cluster.local:5432/olympus_memory
+    - Redis: redis.databases.svc.cluster.local:6379 (ephemeral context)
+    - Vikunja: episodic task history (read-only)
 
     ## Namespace organization
     - /memory/personal — user profile and preferences
@@ -997,8 +1016,7 @@ data:
 
     ## OLYMPUS context
     - Mnemosyne serves all agents as the shared memory backend
-    - v1 uses OpenClaw native memory; pgvector integration is next
-    - Memory quality directly impacts all agent performance
+    - Memory quality directly impacts all agent performance — accuracy over volume
   USER.md: |
     # User
 

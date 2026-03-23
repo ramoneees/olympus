@@ -9,8 +9,9 @@
     sandbox: { mode: "off" },
     subagents: { allowAgents: ["hephaestus", "athena", "plutus", "themis", "prometheus", "mnemosyne"] },
     tools: {
-      profile: "minimal",
-      allow: ["read", "memory_search", "memory_get", "sessions_list", "sessions_history", "sessions_spawn", "sessions_send", "session_status"],
+      // profile: "full" + deny is required — "minimal" does not expose sessions_spawn reliably
+      // even when sessions_spawn is in the explicit allow list. See openclaw/openclaw#47862.
+      profile: "full",
       deny: ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch", "cron", "gateway", "message", "image"],
       loopDetection: { enabled: true },
     },
