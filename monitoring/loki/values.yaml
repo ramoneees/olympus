@@ -23,6 +23,8 @@ loki:
     max_query_series: 500
   compactor:
     retention_enabled: true
+    delete_request_store: filesystem
+    working_directory: /var/loki/compactor
 
 singleBinary:
   replicas: 1
