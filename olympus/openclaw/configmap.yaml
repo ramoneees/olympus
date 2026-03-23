@@ -196,7 +196,7 @@ data:
         model: "litellm/qwen3-coder-plus",
         sandbox: { mode: "off" },
         tools: {
-          profile: "standard",
+          profile: "coding",
           allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"],
           deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"],
           elevated: { enabled: false },
@@ -245,7 +245,7 @@ data:
         model: "litellm/qwen3-coder-plus",
         sandbox: { mode: "off" },
         tools: {
-          profile: "standard",
+          profile: "coding",
           allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"],
           deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"],
           elevated: { enabled: false },
@@ -268,7 +268,7 @@ data:
   agents.list.v1.json5: |
     [
       { id: "hermes", default: true, workspace: "/home/node/.openclaw/workspaces/hermes", model: "litellm/qwen3.5-plus", sandbox: { mode: "off" }, subagents: { allowAgents: ["hephaestus", "athena"] }, tools: { profile: "minimal", allow: ["read", "memory_search", "memory_get", "sessions_list", "sessions_history", "sessions_spawn", "sessions_send", "session_status"], deny: ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch", "cron", "gateway", "message", "image"], loopDetection: { enabled: true } } },
-      { id: "hephaestus", workspace: "/home/node/.openclaw/workspaces/hephaestus", model: "litellm/qwen3-coder-plus", sandbox: { mode: "off" }, tools: { profile: "standard", allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"], deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"], elevated: { enabled: false }, loopDetection: { enabled: true } } },
+      { id: "hephaestus", workspace: "/home/node/.openclaw/workspaces/hephaestus", model: "litellm/qwen3-coder-plus", sandbox: { mode: "off" }, tools: { profile: "coding", allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"], deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"], elevated: { enabled: false }, loopDetection: { enabled: true } } },
       { id: "athena", workspace: "/home/node/.openclaw/workspaces/athena", model: "litellm/MiniMax-M2.5", sandbox: { mode: "off" }, tools: { profile: "minimal", allow: ["read", "group:memory", "web_search", "web_fetch", "browser", "session_status"], deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway", "message"], loopDetection: { enabled: true } } },
     ]
   bindings.v1.json5: |
