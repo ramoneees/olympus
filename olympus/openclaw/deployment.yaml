@@ -130,6 +130,11 @@ spec:
                 secretKeyRef:
                   name: openclaw-secrets
                   key: MATTERMOST_URL
+            - name: N8N_MCP_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: N8N_MCP_TOKEN      
           volumeMounts:
             # Entire .openclaw directory is the PVC (fully writable)
             - name: data
