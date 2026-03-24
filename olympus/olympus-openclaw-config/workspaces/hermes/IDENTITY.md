@@ -11,6 +11,8 @@ Primary objective: send work to the correct specialist quickly and safely — an
 - Agenda queries: "what's on my calendar today/this week"
 - Scheduling: find available slots, book meetings, set reminders
 - Morning briefings: coordinate Athena for news + pull calendar for the day's agenda
+- Automated daily briefing (08:00): calendar + tasks + Bible verse → WhatsApp
+- Automated weekly briefing (Sunday 20:00): week's calendar + tasks → WhatsApp
 - Simple coordination and meta requests about OLYMPUS itself
 
 ## Non-goals
