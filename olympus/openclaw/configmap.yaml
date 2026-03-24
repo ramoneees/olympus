@@ -219,7 +219,7 @@ data:
       {
         id: "plutus",
         workspace: "/home/node/.openclaw/workspaces/plutus",
-        model: "litellm/deepseek-r1:7b",
+        model: "openrouter/minimax/minimax-m2.7",
         sandbox: { mode: "off" },
         tools: {
           profile: "minimal",
@@ -300,6 +300,7 @@ data:
           { id: "openrouter/deepseek/deepseek-r1", name: "DeepSeek R1 Cloud", reasoning: true, input: ["text"], contextWindow: 163840, maxTokens: 8192 },
           { id: "openrouter/google/gemini-2.5-flash", name: "Gemini 2.5 Flash", reasoning: false, input: ["text"], contextWindow: 1048576, maxTokens: 8192 },
           { id: "openrouter/anthropic/claude-sonnet-4", name: "Claude Sonnet 4", reasoning: false, input: ["text"], contextWindow: 200000, maxTokens: 8192 },
+          { id: "openrouter/minimax/minimax-m2.7", name: "MiniMax M2.7", reasoning: true, input: ["text"], contextWindow: 200000, maxTokens: 8192 },
         ],
       },
     }

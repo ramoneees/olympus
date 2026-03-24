@@ -121,9 +121,19 @@ data:
       # Cloud fallback
       - model_name: glm-5-turbo
         litellm_params:
-          model: openai/glm-5-turbo
+          model: zai/glm-5-turbo
           api_base: https://open.bigmodel.cn/api/paas/v4
           api_key: os.environ/GLM_API_KEY
+      - model_name: zai-glm-5
+        litellm_params:
+          model: zai/glm-5
+          api_base: https://open.bigmodel.cn/api/paas/v4
+          api_key: os.environ/GLM_API_KEY    
+      - model_name: glm-4.7
+        litellm_params:
+          model: zai/glm-4.7
+          api_base: https://open.bigmodel.cn/api/paas/v4
+          api_key: os.environ/GLM_API_KEY        
       # Alibaba Cloud (DashScope)
       - model_name: qwen-plus
         litellm_params:
@@ -188,6 +198,10 @@ data:
         litellm_params:
           model: openrouter/anthropic/claude-sonnet-4
           api_key: os.environ/OPENROUTER_API_KEY
+      - model_name: openrouter/minimax/minimax-m2.7
+        litellm_params:
+          model: openrouter/minimax/minimax-m2.7
+          api_key: os.environ/OPENROUTER_API_KEY    
     router_settings:
       routing_strategy: simple-shuffle
     litellm_settings:
