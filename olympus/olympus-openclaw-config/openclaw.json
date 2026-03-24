@@ -83,5 +83,15 @@
   web: { enabled: true },
   memory: { backend: "builtin" },
   commands: { native: "auto" },
-  cron: { enabled: true },
+  cron: {
+    enabled: true,
+    store: "~/.openclaw/cron/jobs.json",
+    maxConcurrentRuns: 2,
+    retry: {
+      maxAttempts: 3,
+      backoffMs: [60000, 120000, 300000],
+      retryOn: ["rate_limit", "overloaded", "network", "server_error"],
+    },
+    sessionRetention: "48h",
+  },
 }

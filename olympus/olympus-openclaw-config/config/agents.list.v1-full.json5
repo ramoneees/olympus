@@ -14,7 +14,7 @@
       // MCP tools from mcporter (ticktick__*, n8n__*, etc.) are individually named and NOT
       // caught by the deny list below — Hermes can use them directly for calendar/task management.
       profile: "full",
-      deny: ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch", "cron", "gateway", "message", "image"],
+      deny: ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch", "gateway", "message", "image"],
       loopDetection: { enabled: true },
     },
   },
@@ -26,7 +26,7 @@
     tools: {
       profile: "coding",
       allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"],
-      deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"],
+      deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "gateway", "message"],
       elevated: { enabled: false },
       loopDetection: { enabled: true },
     },
@@ -39,7 +39,7 @@
     tools: {
       profile: "minimal",
       allow: ["read", "group:memory", "web_search", "web_fetch", "browser", "session_status"],
-      deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway", "message"],
+      deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "gateway", "message"],
       loopDetection: { enabled: true },
     },
   },
@@ -53,7 +53,7 @@
     tools: {
       profile: "minimal",
       allow: ["group:fs", "group:memory", "web_fetch", "session_status"],
-      deny: ["exec", "process", "browser", "web_search", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway", "message"],
+      deny: ["exec", "process", "browser", "web_search", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "gateway", "message"],
       loopDetection: { enabled: true },
     },
   },
@@ -65,7 +65,7 @@
     tools: {
       profile: "minimal",
       allow: ["read", "group:memory", "web_search", "web_fetch", "session_status"],
-      deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"],
+      deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "gateway", "message"],
       loopDetection: { enabled: true },
     },
   },
@@ -77,7 +77,7 @@
     tools: {
       profile: "coding",
       allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"],
-      deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"],
+      deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "gateway", "message"],
       elevated: { enabled: false },
       loopDetection: { enabled: true },
     },
@@ -90,7 +90,7 @@
     tools: {
       profile: "minimal",
       allow: ["read", "group:memory", "memory_search", "memory_get", "memory_put", "session_status"],
-      deny: ["write", "edit", "apply_patch", "exec", "process", "web_search", "web_fetch", "browser", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway", "message"],
+      deny: ["write", "edit", "apply_patch", "exec", "process", "web_search", "web_fetch", "browser", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "gateway", "message"],
       loopDetection: { enabled: true },
     },
   },

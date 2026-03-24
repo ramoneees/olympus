@@ -154,6 +154,42 @@ spec:
                 mkdir -p /openclaw/workspaces/$agent
                 cp -f /src/ws/$agent/* /openclaw/workspaces/$agent/ 2>/dev/null || true
               done
+              # Seed cron jobs (only if jobs.json does not exist yet — preserves runtime changes)
+              if [ ! -f /openclaw/cron/jobs.json ]; then
+                cat > /openclaw/cron/jobs.json << 'CRONEOF'
+              [
+                {
+                  "id": "daily-briefing",
+                  "name": "Daily Briefing",
+                  "schedule": { "kind": "cron", "expr": "0 8 * * *", "tz": "Europe/Lisbon" },
+                  "agentId": "hermes",
+                  "sessionTarget": "session:briefing-daily",
+                  "payload": {
+                    "kind": "agentTurn",
+                    "message": "Run the daily morning briefing per HEARTBEATS.md. Include: (1) all events from BOTH personal and work Google Calendars for today, (2) today's TickTick tasks and calendar items, (3) Bible verse of the day via Athena. Format per your HEARTBEATS.md daily template. Deliver via WhatsApp.",
+                    "lightContext": true
+                  },
+                  "deleteAfterRun": false
+                },
+                {
+                  "id": "weekly-briefing",
+                  "name": "Weekly Briefing",
+                  "schedule": { "kind": "cron", "expr": "0 20 * * 0", "tz": "Europe/Lisbon" },
+                  "agentId": "hermes",
+                  "sessionTarget": "session:briefing-weekly",
+                  "payload": {
+                    "kind": "agentTurn",
+                    "message": "Run the weekly briefing per HEARTBEATS.md. Include: (1) all events from BOTH personal and work Google Calendars for this week (Monday through Sunday), (2) this week's TickTick tasks and calendar items. Format per your HEARTBEATS.md weekly template. Deliver via WhatsApp.",
+                    "lightContext": true
+                  },
+                  "deleteAfterRun": false
+                }
+              ]
+              CRONEOF
+                echo "Cron jobs seeded (first boot)."
+              else
+                echo "Cron jobs already present on PVC — preserving."
+              fi
           volumeMounts:
             - name: data
               mountPath: /openclaw
