@@ -38,6 +38,16 @@ spec:
                 secretKeyRef:
                   name: openclaw-secrets
                   key: POSTGRES_URL
+            - name: Z_AI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: Z_AI_API_KEY
+            - name: TICKTICK_OAUTH_TOKENS
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: TICKTICK_OAUTH_TOKENS
           command:
             - sh
             - -c
@@ -60,6 +70,7 @@ spec:
               cat > /app-config/mcporter.json << 'MCPEOF'
               {
                 "mcpServers": {
+                
                   "n8n": {
                     "transport": "streamable-http",
                     "baseUrl": "http://n8n.olympus.svc.cluster.local:5678/mcp-server/http",
@@ -82,6 +93,34 @@ spec:
                   "postgres": {
                     "command": "npx",
                     "args": ["-y", "@modelcontextprotocol/server-postgres", "PLACEHOLDER_POSTGRES_URL"]
+                  },
+                  "ticktick": {
+                    "description": "TickTick task management (official MCP)",
+                    "url": "https://mcp.ticktick.com",
+                    "transport": "streamable-http",
+                    "auth": "oauth",
+                    "tokenCacheDir": "/home/node/.openclaw/credentials/ticktick"
+                  },
+                  "web-search-prime": {
+                    "transport": "streamable-http",
+                    "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+                    "headers": {
+                      "Authorization": "Bearer PLACEHOLDER_ZAI_KEY"
+                    }
+                  },
+                  "web-reader": {
+                    "transport": "streamable-http",
+                    "url": "https://api.z.ai/api/mcp/web_reader/mcp",
+                    "headers": {
+                      "Authorization": "Bearer PLACEHOLDER_ZAI_KEY"
+                    }
+                  },
+                  "zreader": {
+                    "transport": "streamable-http",
+                    "url": "https://api.z.ai/api/mcp/zread/mcp",
+                    "headers": {
+                      "Authorization": "Bearer PLACEHOLDER_ZAI_KEY"
+                    }
                   }
                 },
                 "imports": []
@@ -90,6 +129,26 @@ spec:
               # Expand secrets in mcporter config
               sed -i "s|PLACEHOLDER_N8N_TOKEN|${N8N_MCP_TOKEN}|g" /app-config/mcporter.json
               sed -i "s|PLACEHOLDER_POSTGRES_URL|${POSTGRES_URL}|g" /app-config/mcporter.json
+              sed -i "s|PLACEHOLDER_ZAI_KEY|${Z_AI_API_KEY}|g" /app-config/mcporter.json
+              # Seed TickTick OAuth tokens from secret (one-time auth obtained locally via mcporter).
+              # This file persists on the PVC; mcporter auto-refreshes tokens on expiry — no re-login needed.
+              # How to obtain (run once on your local machine):
+              #   mcporter config add ticktick https://mcp.ticktick.com --transport streamable-http --auth oauth
+              #   mcporter auth ticktick      # opens browser → log in to TickTick → authorize
+              #   cat ~/.mcporter/credentials/ticktick/tokens.json
+              # Copy the JSON content and store it as the TICKTICK_OAUTH_TOKENS secret value.
+              if [ -n "${TICKTICK_OAUTH_TOKENS}" ] && [ "${TICKTICK_OAUTH_TOKENS}" != "PLACEHOLDER" ]; then
+                mkdir -p /openclaw/credentials/ticktick
+                # Only seed if the file does NOT already exist on the PVC.
+                # mcporter refreshes tokens at runtime and writes back to this file —
+                # overwriting on every restart would clobber the refreshed tokens and break auth.
+                if [ ! -f /openclaw/credentials/ticktick/tokens.json ]; then
+                  echo "${TICKTICK_OAUTH_TOKENS}" > /openclaw/credentials/ticktick/tokens.json
+                  echo "TickTick OAuth tokens seeded (first boot)."
+                else
+                  echo "TickTick OAuth tokens already present on PVC — preserving."
+                fi
+              fi
               # Sync workspace files from ConfigMaps
               for agent in hermes hephaestus athena plutus themis prometheus mnemosyne; do
                 mkdir -p /openclaw/workspaces/$agent
@@ -182,7 +241,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: openclaw-secrets
-                  key: N8N_MCP_TOKEN      
+                  key: N8N_MCP_TOKEN
           volumeMounts:
             # Entire .openclaw directory is the PVC (fully writable)
             - name: data

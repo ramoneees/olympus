@@ -11,6 +11,8 @@
     tools: {
       // profile: "full" + deny is required — "minimal" does not expose sessions_spawn reliably
       // even when sessions_spawn is in the explicit allow list. See openclaw/openclaw#47862.
+      // MCP tools from mcporter (ticktick__*, n8n__*, etc.) are individually named and NOT
+      // caught by the deny list below — Hermes can use them directly for calendar/task management.
       profile: "full",
       deny: ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch", "cron", "gateway", "message", "image"],
       loopDetection: { enabled: true },
