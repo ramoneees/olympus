@@ -29,3 +29,39 @@ spec:
           annotations:
             summary: "No successful {{ $labels.cronjob }} backup in 36 hours"
             description: "The {{ $labels.cronjob }} CronJob has not completed successfully in over 36 hours. Investigate immediately."
+        - alert: RcloneSyncFailed
+          expr: |
+            kube_job_status_failed{namespace="databases", job_name=~"rclone-b2-sync.*"} > 0
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "rclone B2 sync job failed"
+            description: "Off-cluster SQL dump sync to B2 has failed. Check logs: kubectl logs -n databases job/{{ $labels.job_name }}"
+        - alert: RcloneSyncMissing
+          expr: |
+            time() - kube_cronjob_status_last_successful_time{namespace="databases", cronjob="rclone-b2-sync"} > 129600
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "No successful rclone B2 sync in 36 hours"
+            description: "The rclone-b2-sync CronJob has not completed successfully in over 36 hours."
+        - alert: RestoreVerifyFailed
+          expr: |
+            kube_job_status_failed{namespace="databases", job_name=~"restore-verify.*"} > 0
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Weekly restore verification failed"
+            description: "Backup integrity may be compromised. Check logs: kubectl logs -n databases job/{{ $labels.job_name }}"
+        - alert: RestoreVerifyMissing
+          expr: |
+            time() - kube_cronjob_status_last_successful_time{namespace="databases", cronjob="restore-verify"} > 864000
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "No successful restore verification in 10 days"
+            description: "The weekly restore-verify CronJob has not succeeded in over 10 days."

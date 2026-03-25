@@ -1,0 +1,144 @@
+# Weekly restore verification — downloads latest PG backup from B2,
+# restores to temp database, runs integrity checks, cleans up
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: restore-verify
+  namespace: databases
+spec:
+  schedule: "0 6 * * 0"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: 1800
+      template:
+        spec:
+          restartPolicy: Never
+          initContainers:
+            - name: download-backup
+              image: rclone/rclone:latest
+              env:
+                - name: RCLONE_CONFIG_B2_TYPE
+                  value: "s3"
+                - name: RCLONE_CONFIG_B2_PROVIDER
+                  value: "B2"
+                - name: RCLONE_CONFIG_B2_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: rclone-b2-credentials
+                      key: B2_ACCESS_KEY_ID
+                - name: RCLONE_CONFIG_B2_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: rclone-b2-credentials
+                      key: B2_SECRET_ACCESS_KEY
+                - name: RCLONE_CONFIG_B2_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: rclone-b2-credentials
+                      key: B2_ENDPOINT
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -euo pipefail
+                  echo "=== Downloading latest gitea backup from B2 ==="
+                  LATEST=$(rclone lsf B2:olympus-sql-dumps/postgresql/ \
+                    --include "gitea-*.sql.gz" \
+                    --files-only | sort | tail -1)
+
+                  if [ -z "$LATEST" ]; then
+                    echo "ERROR: No gitea backups found in B2"
+                    exit 1
+                  fi
+
+                  echo "Found: $LATEST"
+                  rclone copy "B2:olympus-sql-dumps/postgresql/$LATEST" /restore/
+                  echo "$LATEST" > /restore/BACKUP_FILENAME
+                  ls -lh /restore/
+              volumeMounts:
+                - name: restore-scratch
+                  mountPath: /restore
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 250m
+                  memory: 128Mi
+          containers:
+            - name: verify-restore
+              image: bitnami/postgresql:latest
+              env:
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: db-backup-credentials
+                      key: postgres-password
+                - name: PGHOST
+                  value: "postgresql.databases.svc.cluster.local"
+                - name: PGUSER
+                  value: "postgres"
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  set -euo pipefail
+                  BACKUP_FILE=$(cat /restore/BACKUP_FILENAME)
+                  TEMP_DB="restore_verify_$(date +%s)"
+                  echo "=== Restore Verification ==="
+                  echo "Backup file: $BACKUP_FILE"
+                  echo "Temp database: $TEMP_DB"
+
+                  cleanup() {
+                    echo "Dropping temp database $TEMP_DB..."
+                    psql -h "$PGHOST" -U "$PGUSER" -c "DROP DATABASE IF EXISTS $TEMP_DB;" || true
+                  }
+                  trap cleanup EXIT
+
+                  echo "Creating temp database..."
+                  psql -h "$PGHOST" -U "$PGUSER" -c "CREATE DATABASE $TEMP_DB;"
+
+                  echo "Restoring backup..."
+                  gunzip -c "/restore/$BACKUP_FILE" | psql -h "$PGHOST" -U "$PGUSER" -d "$TEMP_DB" > /dev/null 2>&1
+
+                  echo "Running integrity checks..."
+                  TABLE_COUNT=$(psql -h "$PGHOST" -U "$PGUSER" -d "$TEMP_DB" -t -c \
+                    "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';")
+                  TABLE_COUNT=$(echo "$TABLE_COUNT" | tr -d ' ')
+
+                  echo "Tables restored: $TABLE_COUNT"
+
+                  if [ "$TABLE_COUNT" -lt 1 ]; then
+                    echo "FAIL: No tables found after restore"
+                    exit 1
+                  fi
+
+                  echo "--- Table summary ---"
+                  psql -h "$PGHOST" -U "$PGUSER" -d "$TEMP_DB" -c \
+                    "SELECT schemaname, tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename;"
+
+                  echo "--- Row counts (top tables) ---"
+                  psql -h "$PGHOST" -U "$PGUSER" -d "$TEMP_DB" -c \
+                    "SELECT relname, n_live_tup FROM pg_stat_user_tables ORDER BY n_live_tup DESC LIMIT 10;"
+
+                  echo "=== RESTORE VERIFICATION PASSED ==="
+                  echo "Tables: $TABLE_COUNT | Backup: $BACKUP_FILE"
+              volumeMounts:
+                - name: restore-scratch
+                  mountPath: /restore
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+          volumes:
+            - name: restore-scratch
+              emptyDir:
+                sizeLimit: 1Gi

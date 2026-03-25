@@ -1,0 +1,21 @@
+# Longhorn RecurringJob — MariaDB volume snapshot to B2
+# Volumes opt in with label: recurring-job.longhorn.io/mariadb-backup-recurring: enabled
+#
+# To label the MariaDB volume:
+#   VOL=$(kubectl get pv -o jsonpath='{range .items[?(@.spec.claimRef.name=="data-mariadb-0")]}{.spec.csi.volumeHandle}{end}')
+#   kubectl -n longhorn-system label volume/$VOL recurring-job.longhorn.io/mariadb-backup-recurring=enabled
+---
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: mariadb-backup-recurring
+  namespace: longhorn-system
+spec:
+  name: mariadb-backup-recurring
+  task: backup
+  cron: "15 5 * * *"
+  retain: 7
+  concurrency: 1
+  labels:
+    app: mariadb
+    backup-tier: layer2

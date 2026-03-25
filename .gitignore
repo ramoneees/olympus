@@ -16,3 +16,4 @@ passwords.txt
 !infrastructure/secrets/agent-secrets-template/*.yaml
 !monitoring/**/*secrets*.yaml
 openclaw-previous-config
+.sisyphus

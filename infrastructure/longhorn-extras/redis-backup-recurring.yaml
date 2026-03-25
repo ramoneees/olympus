@@ -1,0 +1,21 @@
+# Longhorn RecurringJob — Redis volume snapshot to B2
+# Volumes opt in with label: recurring-job.longhorn.io/redis-backup-recurring: enabled
+#
+# To label the Redis volume:
+#   VOL=$(kubectl get pv -o jsonpath='{range .items[?(@.spec.claimRef.name=="redis-master-0")]}{.spec.csi.volumeHandle}{end}')
+#   kubectl -n longhorn-system label volume/$VOL recurring-job.longhorn.io/redis-backup-recurring=enabled
+---
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: redis-backup-recurring
+  namespace: longhorn-system
+spec:
+  name: redis-backup-recurring
+  task: backup
+  cron: "30 5 * * *"
+  retain: 7
+  concurrency: 1
+  labels:
+    app: redis
+    backup-tier: layer2

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "ticktick": {
+      "baseUrl": "https://mcp.ticktick.com/",
+      "auth": "oauth"
+    }
+  },
+  "imports": []
+}

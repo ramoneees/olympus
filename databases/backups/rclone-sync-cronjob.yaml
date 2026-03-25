@@ -1,0 +1,77 @@
+# Layer 3: Sync SQL dumps to Backblaze B2 — runs after both backup jobs complete
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: rclone-b2-sync
+  namespace: databases
+spec:
+  schedule: "0 4 * * *"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 3600
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: rclone-sync
+              image: rclone/rclone:latest
+              env:
+                - name: RCLONE_CONFIG_B2_TYPE
+                  value: "s3"
+                - name: RCLONE_CONFIG_B2_PROVIDER
+                  value: "B2"
+                - name: RCLONE_CONFIG_B2_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: rclone-b2-credentials
+                      key: B2_ACCESS_KEY_ID
+                - name: RCLONE_CONFIG_B2_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: rclone-b2-credentials
+                      key: B2_SECRET_ACCESS_KEY
+                - name: RCLONE_CONFIG_B2_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: rclone-b2-credentials
+                      key: B2_ENDPOINT
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -euo pipefail
+                  echo "=== rclone B2 sync started ==="
+                  echo "PostgreSQL dumps:"
+                  ls -lh /backups/postgresql/ 2>/dev/null || echo "  (none)"
+                  echo "MariaDB dumps:"
+                  ls -lh /backups/mariadb/ 2>/dev/null || echo "  (none)"
+
+                  rclone sync /backups/ B2:olympus-sql-dumps/ \
+                    --transfers 4 \
+                    --checkers 8 \
+                    --retries 3 \
+                    --log-level INFO \
+                    --stats 30s
+
+                  echo "=== Sync complete ==="
+                  rclone size B2:olympus-sql-dumps/
+              volumeMounts:
+                - name: backups
+                  mountPath: /backups
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 250m
+                  memory: 128Mi
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: db-backups

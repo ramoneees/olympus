@@ -8,8 +8,10 @@ defaultSettings:
   defaultReplicaCount: 1
   # Default storage class
   defaultDataPath: /var/lib/longhorn
-  # Backup target — configure later for S3/NFS
-  backupTarget: ""
+  # Backup target — Backblaze B2 via S3-compatible API
+  # Replace REGION with your B2 bucket region (e.g., us-west-004)
+  backupTarget: "s3://olympus-longhorn-backups@s3.REGION.backblazeb2.com/"
+  backupTargetCredentialSecret: longhorn-b2-credentials
   # Guaranteed engine manager CPU
   guaranteedInstanceManagerCPU: 12
   # Storage over-provisioning — allow 200% for 2-node homelab
