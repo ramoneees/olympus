@@ -53,11 +53,13 @@ spec:
                 secretKeyRef:
                   name: openclaw-secrets
                   key: GOOGLE_OAUTH_CREDENTIALS
+                  optional: true
             - name: GOOGLE_CALENDAR_TOKENS
               valueFrom:
                 secretKeyRef:
                   name: openclaw-secrets
                   key: GOOGLE_CALENDAR_TOKENS
+                  optional: true
           command:
             - sh
             - -c
