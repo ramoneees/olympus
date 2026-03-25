@@ -1,0 +1,14 @@
+# Pin Traefik LoadBalancer to a fixed MetalLB IP
+# Apply on the k3s server: sudo kubectl apply -f traefik-config.yaml
+# k3s auto-picks this up via HelmChartConfig CRD
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    service:
+      spec:
+        loadBalancerIP: "192.168.50.200"

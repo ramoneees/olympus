@@ -79,3 +79,4 @@ service:
   ssh:
     type: LoadBalancer  # SSH access via MetalLB IP
     port: 2222
+    loadBalancerIP: 192.168.50.210
