@@ -1,0 +1,77 @@
+# PostgreSQL daily logical backup — dumps each database individually
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: pg-backup
+  namespace: databases
+spec:
+  schedule: "0 2 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: Never
+          securityContext:
+            fsGroup: 1001
+          containers:
+            - name: pg-backup
+              image: bitnami/postgresql:latest
+              env:
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: db-backup-credentials
+                      key: postgres-password
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  set -euo pipefail
+                  BACKUP_DIR=/backups/postgresql
+                  TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+                  PGHOST=postgresql.databases.svc.cluster.local
+                  PGUSER=postgres
+
+                  mkdir -p "$BACKUP_DIR"
+
+                  # Retention: delete backups older than 7 days
+                  find "$BACKUP_DIR" -name "*.sql.gz" -mtime +7 -delete
+                  echo "Retention cleanup done."
+
+                  DATABASES="gitea authentik mattermost vikunja litellm n8n mnemosyne"
+                  FAILED=0
+                  for db in $DATABASES; do
+                    echo "Backing up $db..."
+                    if pg_dump -h "$PGHOST" -U "$PGUSER" "$db" 2>/dev/null | gzip > "$BACKUP_DIR/${db}-${TIMESTAMP}.sql.gz"; then
+                      SIZE=$(du -h "$BACKUP_DIR/${db}-${TIMESTAMP}.sql.gz" | cut -f1)
+                      echo "OK: $db ($SIZE)"
+                    else
+                      echo "FAILED: $db"
+                      rm -f "$BACKUP_DIR/${db}-${TIMESTAMP}.sql.gz"
+                      FAILED=1
+                    fi
+                  done
+
+                  echo "---"
+                  echo "Total backup size: $(du -sh "$BACKUP_DIR" | cut -f1)"
+                  ls -lh "$BACKUP_DIR"/*-${TIMESTAMP}.sql.gz 2>/dev/null || true
+                  exit $FAILED
+              volumeMounts:
+                - name: backups
+                  mountPath: /backups
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 256Mi
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: db-backups

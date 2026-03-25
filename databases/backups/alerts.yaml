@@ -1,0 +1,31 @@
+# Backup monitoring alerts — fires when backups fail or go stale
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: db-backup-alerts
+  namespace: databases
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: db-backups
+      rules:
+        - alert: DatabaseBackupFailed
+          expr: |
+            kube_job_status_failed{namespace="databases", job_name=~"pg-backup.*|mariadb-backup.*"} > 0
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Database backup job {{ $labels.job_name }} failed"
+            description: "A database backup CronJob in the databases namespace has failed. Check logs with: kubectl logs -n databases job/{{ $labels.job_name }}"
+        - alert: DatabaseBackupMissing
+          expr: |
+            time() - kube_cronjob_status_last_successful_time{namespace="databases", cronjob=~"pg-backup|mariadb-backup"} > 129600
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "No successful {{ $labels.cronjob }} backup in 36 hours"
+            description: "The {{ $labels.cronjob }} CronJob has not completed successfully in over 36 hours. Investigate immediately."
