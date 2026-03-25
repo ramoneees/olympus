@@ -57,6 +57,27 @@ Edit YAML manifests → commit/push to Gitea (olympus repo) → ArgoCD auto-sync
 - Namespaces: `infrastructure`, `databases`, `apps`, `olympus`, `monitoring`
 - Wildcard TLS secret is reflected across namespaces via kubernetes-reflector
 
+## Backup Strategy
+
+3-layer backup with Backblaze B2 (eu-central-003 region):
+
+| Time (UTC) | Layer | Job | Target |
+|------------|-------|-----|--------|
+| 02:00 daily | L1 | PostgreSQL SQL dump | Local PVC `db-backups` |
+| 03:00 daily | L1 | MariaDB SQL dump | Local PVC `db-backups` |
+| 04:00 daily | L3 | rclone sync dumps → B2 | `olympus-sql-dumps` bucket |
+| 05:00 daily | L2 | Longhorn snapshot PG | `olympus-longhorn-backups` bucket |
+| 05:15 daily | L2 | Longhorn snapshot MariaDB | `olympus-longhorn-backups` bucket |
+| 05:30 daily | L2 | Longhorn snapshot Redis | `olympus-longhorn-backups` bucket |
+| Sun 06:00 | Verify | Restore test from B2 | Temp PostgreSQL DB |
+
+- **Layer 1** (local): CronJobs in `databases/backups/` — 7-day retention, gzipped dumps
+- **Layer 2** (Longhorn → B2): RecurringJobs in `infrastructure/longhorn-extras/` — 7-backup retention, volumes opt in via labels
+- **Layer 3** (off-cluster): rclone CronJob syncs PVC to B2 — `databases/backups/rclone-sync-cronjob.yaml`
+- **Verify**: Weekly restore test — `databases/backups/restore-verify-cronjob.yaml`
+- **Alerts**: PrometheusRules in `databases/backups/alerts.yaml` — fires on job failures and staleness
+- **ArgoCD**: `db-backups` app syncs `databases/backups/`, `longhorn-extras` app syncs `infrastructure/longhorn-extras/`
+
 ## OLYMPUS Multi-Agent Architecture
 
 An AI orchestration layer using OpenClaw, with 7 specialized agents:

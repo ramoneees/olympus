@@ -689,6 +689,103 @@
     </div>
   </div>
 
+  <!-- ── BACKUP STRATEGY ── -->
+  <div class="section-title">Backup Strategy</div>
+  <div class="service-box">
+    <div class="service-name">3-Layer Database Backup</div>
+    <p>All backups run on staggered UTC schedules. ArgoCD manages all manifests via GitOps.</p>
+    <table>
+      <tr>
+        <th>Time (UTC)</th>
+        <th>Layer</th>
+        <th>Job</th>
+        <th>Target</th>
+      </tr>
+      <tr>
+        <td>02:00 daily</td>
+        <td>Layer 1</td>
+        <td>PostgreSQL SQL dump (pg_dump, gzipped)</td>
+        <td>Local PVC <code>db-backups</code> (15Gi)</td>
+      </tr>
+      <tr>
+        <td>03:00 daily</td>
+        <td>Layer 1</td>
+        <td>MariaDB SQL dump (mysqldump, gzipped)</td>
+        <td>Local PVC <code>db-backups</code> (15Gi)</td>
+      </tr>
+      <tr>
+        <td>04:00 daily</td>
+        <td>Layer 3</td>
+        <td>rclone sync SQL dumps to B2</td>
+        <td>B2: <code>olympus-sql-dumps</code></td>
+      </tr>
+      <tr>
+        <td>05:00 daily</td>
+        <td>Layer 2</td>
+        <td>Longhorn snapshot PostgreSQL volume</td>
+        <td>B2: <code>olympus-longhorn-backups</code></td>
+      </tr>
+      <tr>
+        <td>05:15 daily</td>
+        <td>Layer 2</td>
+        <td>Longhorn snapshot MariaDB volume</td>
+        <td>B2: <code>olympus-longhorn-backups</code></td>
+      </tr>
+      <tr>
+        <td>05:30 daily</td>
+        <td>Layer 2</td>
+        <td>Longhorn snapshot Redis volume</td>
+        <td>B2: <code>olympus-longhorn-backups</code></td>
+      </tr>
+      <tr>
+        <td>06:00 Sunday</td>
+        <td>Verify</td>
+        <td>Restore test (download from B2, restore to temp DB, integrity check)</td>
+        <td>PostgreSQL temp database</td>
+      </tr>
+    </table>
+
+    <div class="step">
+      <div class="step-title">Layer 1 — Local SQL Dumps</div>
+      <p>CronJobs in <code>databases</code> namespace dump each database to gzipped files on the <code>db-backups</code> PVC. 7-day retention with automatic cleanup.</p>
+      <p>Databases backed up: gitea, authentik, mattermost, vikunja, litellm, n8n, mnemosyne (PG) and nextcloud, firefly, invoiceninja (MariaDB).</p>
+      <p>Manifests: <code>databases/backups/pg-backup-cronjob.yaml</code>, <code>databases/backups/mariadb-backup-cronjob.yaml</code></p>
+    </div>
+
+    <div class="step">
+      <div class="step-title">Layer 2 — Longhorn Volume Snapshots to B2</div>
+      <p>Longhorn RecurringJobs create block-level volume snapshots and upload to Backblaze B2 (<code>eu-central-003</code> region). 7-backup retention managed by Longhorn (no B2 lifecycle rules).</p>
+      <p>Volumes must opt in via labels: <code>recurring-job.longhorn.io/&lt;job-name&gt;: enabled</code> on the Longhorn Volume CR.</p>
+      <p>Manifests: <code>infrastructure/longhorn-extras/</code> (RecurringJobs + B2 secret), synced by ArgoCD app <code>longhorn-extras</code>.</p>
+      <p>Backup target configured in <code>infrastructure/longhorn/values.yaml</code> via <code>backupTarget</code> + <code>backupTargetCredentialSecret</code>.</p>
+    </div>
+
+    <div class="step">
+      <div class="step-title">Layer 3 — Off-Cluster SQL Dump Sync</div>
+      <p>rclone CronJob syncs the local <code>db-backups</code> PVC to B2 bucket <code>olympus-sql-dumps</code> daily at 04:00 UTC. Uses S3-compatible API with env-var-based rclone configuration.</p>
+      <p>Manifests: <code>databases/backups/rclone-sync-cronjob.yaml</code>, <code>databases/backups/b2-rclone-secret.yaml</code></p>
+    </div>
+
+    <div class="step">
+      <div class="step-title">Restore Verification</div>
+      <p>Weekly CronJob (Sunday 06:00) downloads the latest gitea backup from B2, restores to a temporary PostgreSQL database, runs integrity checks (table count, row counts), then drops the temp database.</p>
+      <p>Manifest: <code>databases/backups/restore-verify-cronjob.yaml</code></p>
+    </div>
+
+    <div class="step">
+      <div class="step-title">Monitoring</div>
+      <p>PrometheusRules in <code>databases/backups/alerts.yaml</code> fire on:</p>
+      <ul>
+        <li><strong>DatabaseBackupFailed</strong> (critical) — SQL dump job failure</li>
+        <li><strong>DatabaseBackupMissing</strong> (warning) — no successful dump in 36h</li>
+        <li><strong>RcloneSyncFailed</strong> (critical) — B2 sync failure</li>
+        <li><strong>RcloneSyncMissing</strong> (warning) — no successful sync in 36h</li>
+        <li><strong>RestoreVerifyFailed</strong> (warning) — restore test failure</li>
+        <li><strong>RestoreVerifyMissing</strong> (warning) — no successful verify in 10 days</li>
+      </ul>
+    </div>
+  </div>
+
   <!-- ── SUMMARY TABLE ── -->
   <div class="section-title">Summary — what to create right now</div>
   <table>

@@ -21,6 +21,11 @@ spec:
       containers:
         - name: cloudbeaver
           image: dbeaver/cloudbeaver:latest
+          env:
+            - name: CLOUDBEAVER_APP_FORWARD_PROXY
+              value: "true"
+            - name: CLOUDBEAVER_FORCE_HTTPS
+              value: "false"
           ports:
             - name: http
               containerPort: 8978
