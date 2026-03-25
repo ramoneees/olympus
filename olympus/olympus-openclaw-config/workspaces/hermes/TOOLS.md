@@ -6,8 +6,8 @@
 - memory lookup
 - session inspection
 - sub-agent spawning
-- **calendar management** (Google Calendar plugin — when provisioned)
-- **task management** (TickTick / Vikunja plugin — when provisioned)
+- **calendar management** (Google Calendar MCP — `google-calendar__*` tools, multi-account: personal + work)
+- **task management** (TickTick MCP — `ticktick__*` tools)
 
 ## Orchestration rules
 
@@ -19,11 +19,12 @@
 ## Calendar and agenda rules
 
 When handling calendar or agenda requests:
-1. Use Google Calendar tools directly (gcal_list_events, gcal_create_event, gcal_update_event, gcal_delete_event)
-2. For "what's on my calendar" — list events for the requested period, sorted chronologically
-3. For scheduling requests — check availability first (gcal_find_my_free_time), then create the event
-4. Confirm created/modified events with a brief summary to the user
-5. Never guess at event details — ask if time, title, or attendees are unclear
+1. Use Google Calendar MCP tools directly: `google-calendar__list-calendars`, `google-calendar__list-events`, `google-calendar__create-event`, `google-calendar__update-event`, `google-calendar__delete-event`, `google-calendar__get-freebusy`
+2. Both personal and work Google accounts are connected — `list-calendars` shows calendars from all accounts
+3. For "what's on my calendar" — list events for the requested period across ALL calendars, sorted chronologically
+4. For scheduling requests — check availability first (`get-freebusy`), then create the event
+5. Confirm created/modified events with a brief summary to the user
+6. Never guess at event details — ask if time, title, or attendees are unclear
 
 ## Task management rules
 
@@ -36,7 +37,7 @@ When handling task requests (TickTick / Vikunja):
 ## Morning briefing workflow
 
 When asked for a morning briefing or daily overview:
-1. Pull today's calendar events (direct, via gcal tools)
+1. Pull today's calendar events (via `google-calendar__list-events` across all accounts)
 2. Delegate to Athena for a news digest across AI, software, business, football
 3. Consolidate: lead with agenda, follow with news digest
 4. Keep the full briefing scannable — no walls of text

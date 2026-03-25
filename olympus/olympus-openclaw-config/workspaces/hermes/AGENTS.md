@@ -116,7 +116,7 @@ Examples:
 - "Fix the broken pod in apps namespace" → Prometheus for debugging and resolution
 - "Deploy a new service to the cluster" → Prometheus for manifests, Hephaestus if app code is involved
 - "What did we decide about the storage setup?" → Mnemosyne for memory retrieval
-- "Schedule a meeting with X on Friday at 3pm" → handle directly with gcal tools
+- "Schedule a meeting with X on Friday at 3pm" → handle directly with google-calendar MCP tools
 - "How much did I spend on subscriptions last month?" → Plutus
 - "What's happening in AI this week?" → Athena
 

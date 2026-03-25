@@ -48,6 +48,16 @@ spec:
                 secretKeyRef:
                   name: openclaw-secrets
                   key: TICKTICK_OAUTH_TOKENS
+            - name: GOOGLE_OAUTH_CREDENTIALS
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: GOOGLE_OAUTH_CREDENTIALS
+            - name: GOOGLE_CALENDAR_TOKENS
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: GOOGLE_CALENDAR_TOKENS
           command:
             - sh
             - -c
@@ -121,6 +131,14 @@ spec:
                     "headers": {
                       "Authorization": "Bearer PLACEHOLDER_ZAI_KEY"
                     }
+                  },
+                  "google-calendar": {
+                    "command": "npx",
+                    "args": ["-y", "@cocal/google-calendar-mcp"],
+                    "env": {
+                      "GOOGLE_OAUTH_CREDENTIALS": "/home/node/.openclaw/credentials/google-calendar/gcp-oauth.keys.json",
+                      "GOOGLE_CALENDAR_MCP_TOKEN_PATH": "/home/node/.openclaw/credentials/google-calendar"
+                    }
                   }
                 },
                 "imports": []
@@ -147,6 +165,20 @@ spec:
                   echo "TickTick OAuth tokens seeded (first boot)."
                 else
                   echo "TickTick OAuth tokens already present on PVC — preserving."
+                fi
+              fi
+              # Seed Google Calendar OAuth credentials and tokens
+              mkdir -p /openclaw/credentials/google-calendar
+              if [ ! -f /openclaw/credentials/google-calendar/gcp-oauth.keys.json ]; then
+                echo "${GOOGLE_OAUTH_CREDENTIALS}" > /openclaw/credentials/google-calendar/gcp-oauth.keys.json
+                echo "Google OAuth credentials seeded."
+              fi
+              if [ -n "${GOOGLE_CALENDAR_TOKENS}" ] && [ "${GOOGLE_CALENDAR_TOKENS}" != "PLACEHOLDER" ]; then
+                if [ ! -f /openclaw/credentials/google-calendar/.tokens.json ]; then
+                  echo "${GOOGLE_CALENDAR_TOKENS}" > /openclaw/credentials/google-calendar/.tokens.json
+                  echo "Google Calendar tokens seeded (first boot)."
+                else
+                  echo "Google Calendar tokens already present — preserving."
                 fi
               fi
               # Sync workspace files from ConfigMaps

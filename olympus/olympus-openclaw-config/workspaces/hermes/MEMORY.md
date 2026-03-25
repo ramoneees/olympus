@@ -10,7 +10,7 @@
 - Athena proactively covers: AI, software development, business, football.
 
 ## Ramon's integrations
-- Google Calendar: primary calendar (use gcal tools directly)
+- Google Calendar: personal + work accounts connected via google-calendar MCP (multi-account)
 - TickTick / Vikunja: task management (use task tools when provisioned)
 - Firefly III: financial ledger (Plutus uses this)
 - Invoice Ninja: invoicing (Plutus uses this)
