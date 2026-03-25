@@ -9,10 +9,10 @@ OLYMPUS is a personal homelab Kubernetes infrastructure project with an integrat
 ## Infrastructure
 
 - **Cluster**: k3s v1.34.5+k3s1, two nodes
-  - **Server 1 (control plane)**: NiPoGi N100, 192.168.50.70, 16GB RAM
+  - **Server 1 (control plane)**: NiPoGi N100, 192.168.50.10, 16GB RAM
   - **Server 2 (GPU worker)**: Ryzen 5600X, 64GB RAM, RTX 2080 8GB
 - **Ingress**: Traefik (bundled with k3s)
-- **Development machine**: macOS with kubectl v1.35.2, Helm, k9s, kubeconfig pointing to 192.168.50.70:6443
+- **Development machine**: macOS with kubectl v1.35.2, Helm, k9s, kubeconfig pointing to 192.168.50.10:6443
 
 ## Commands
 

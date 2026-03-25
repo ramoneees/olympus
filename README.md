@@ -6,7 +6,7 @@ A personal homelab Kubernetes infrastructure with an integrated multi-agent AI o
 
 | Node | Hardware | IP | Role |
 |------|----------|----|------|
-| Server 1 | NiPoGi N100, 16GB RAM | 192.168.50.70 | Control plane |
+| Server 1 | NiPoGi N100, 16GB RAM | 192.168.50.10 | Control plane |
 | Server 2 | Ryzen 5600X, 64GB RAM, RTX 2080 8GB | — | GPU worker |
 
 - **Cluster**: k3s v1.34.5+k3s1
@@ -136,7 +136,7 @@ Plutus (finance agent) must use **local models exclusively** — financial data 
 - Two servers on the same network
 - k3s installed on both nodes
 - `kubectl`, `helm`, and `k9s` on your dev machine
-- Kubeconfig pointing to the control plane (192.168.50.70:6443)
+- Kubeconfig pointing to the control plane (192.168.50.10:6443)
 
 ### Bootstrap
 
