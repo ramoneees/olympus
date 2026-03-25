@@ -47,7 +47,7 @@ spec:
                 - |
                   set -euo pipefail
                   echo "=== Downloading latest gitea backup from B2 ==="
-                  LATEST=$(rclone lsf B2:olympus-sql-dumps/postgresql/ \
+                  LATEST=$(rclone lsf B2:ramoneees-olympus-sql-dumps/postgresql/ \
                     --include "gitea-*.sql.gz" \
                     --files-only | sort | tail -1)
 
@@ -57,7 +57,7 @@ spec:
                   fi
 
                   echo "Found: $LATEST"
-                  rclone copy "B2:olympus-sql-dumps/postgresql/$LATEST" /restore/
+                  rclone copy "B2:ramoneees-olympus-sql-dumps/postgresql/$LATEST" /restore/
                   echo "$LATEST" > /restore/BACKUP_FILENAME
                   ls -lh /restore/
               volumeMounts:

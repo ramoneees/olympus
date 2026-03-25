@@ -9,7 +9,7 @@ defaultSettings:
   # Default storage class
   defaultDataPath: /var/lib/longhorn
   # Backup target — Backblaze B2 via S3-compatible API
-  backupTarget: "s3://olympus-longhorn-backups@s3.eu-central-003.backblazeb2.com/"
+  backupTarget: "s3://ramoneees-olympus-longhorn-backups@eu-central-003/"
   backupTargetCredentialSecret: longhorn-b2-credentials
   # Guaranteed engine manager CPU
   guaranteedInstanceManagerCPU: 12

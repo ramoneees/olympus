@@ -51,7 +51,7 @@ spec:
                   echo "MariaDB dumps:"
                   ls -lh /backups/mariadb/ 2>/dev/null || echo "  (none)"
 
-                  rclone sync /backups/ B2:olympus-sql-dumps/ \
+                  rclone sync /backups/ B2:ramoneees-olympus-sql-dumps/ \
                     --transfers 4 \
                     --checkers 8 \
                     --retries 3 \
@@ -59,7 +59,7 @@ spec:
                     --stats 30s
 
                   echo "=== Sync complete ==="
-                  rclone size B2:olympus-sql-dumps/
+                  rclone size B2:ramoneees-olympus-sql-dumps/
               volumeMounts:
                 - name: backups
                   mountPath: /backups
