@@ -235,7 +235,7 @@ data:
         sandbox: { mode: "off" },
         tools: {
           profile: "minimal",
-          allow: ["read", "group:memory", "web_search", "web_fetch", "session_status"],
+          allow: ["read", "group:memory", "web_search", "web_fetch", "session_status", "mcp:sequential-thinking"],
           deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"],
           loopDetection: { enabled: true },
         },

@@ -13,6 +13,7 @@
       // even when sessions_spawn is in the explicit allow list. See openclaw/openclaw#47862.
       // MCP tools from mcporter (ticktick__*, n8n__*, etc.) are individually named and NOT
       // caught by the deny list below — Hermes can use them directly for calendar/task management.
+      // sequential-thinking MCP available for complex orchestration reasoning.
       profile: "full",
       deny: ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch", "gateway", "message", "image"],
       loopDetection: { enabled: true },
@@ -64,7 +65,7 @@
     sandbox: { mode: "off" },
     tools: {
       profile: "minimal",
-      allow: ["read", "group:memory", "web_search", "web_fetch", "session_status"],
+      allow: ["read", "group:memory", "web_search", "web_fetch", "session_status", "mcp:sequential-thinking"],
       deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "gateway", "message"],
       loopDetection: { enabled: true },
     },
