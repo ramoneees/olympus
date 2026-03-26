@@ -439,6 +439,16 @@ data:
     - memory lookup
     - session inspection
     - sub-agent spawning
+    - MCP tools: google-calendar, ticktick, n8n, sequential-thinking, web-search-prime, web-reader
+
+    ## Sequential Thinking
+
+    For complex orchestration decisions (multi-agent routing, ambiguous requests, multi-step planning),
+    use the `sequential-thinking` MCP tool to reason through the problem step by step before acting.
+    This is especially valuable when:
+    - A user request could be handled by multiple agents and you need to pick the best one
+    - You need to coordinate multiple agents in sequence
+    - The request is ambiguous and you need to decompose it
 
     Rules:
     - Do not use tools to perform domain work when a specialist exists.
@@ -860,10 +870,18 @@ data:
 
     v1 posture: read-heavy, analysis-heavy, low-execution.
 
+    ## Sequential Thinking
+
+    You have access to the `sequential-thinking` MCP tool. Use it to structure your reasoning
+    when performing audits, risk assessments, or strategy evaluations. Break complex analyses into
+    explicit steps — identify assumptions, evaluate evidence for each, assess risk/impact, then
+    synthesize. This is your primary reasoning tool for non-trivial tasks.
+
     Rules:
     - avoid changing files or taking actions
     - critique based on evidence
     - identify risk, probability, impact, and mitigation
+    - use sequential-thinking for any multi-factor analysis or audit
   MEMORY.md: |
     # Durable memory
 
