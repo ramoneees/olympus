@@ -76,6 +76,17 @@ data:
         "install": {
           "preferBrew": true,
           "nodeManager": "npm"
+        },
+        "entries": {
+          "sherpa-onnx-tts": {
+            "env": {
+              "SHERPA_ONNX_RUNTIME_DIR": "/home/node/.openclaw/tools/sherpa-onnx-tts/runtime",
+              "SHERPA_ONNX_MODEL_DIR": "/home/node/.openclaw/tools/sherpa-onnx-tts/models/vits-piper-en_US-lessac-high"
+            }
+          },
+          "sag": {
+            "apiKey": "${ELEVENLABS_API_KEY}"
+          }
         }
       },
       "web": { "enabled": true },
@@ -187,7 +198,7 @@ data:
         tools: {
           // profile: "full" + deny is required — "minimal" does not expose sessions_spawn reliably.
           profile: "full",
-          deny: ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch", "cron", "gateway", "message", "image"],
+          deny: ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch", "cron", "gateway", "image"],
           loopDetection: { enabled: true },
         },
       },

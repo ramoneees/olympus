@@ -312,6 +312,12 @@ spec:
                 secretKeyRef:
                   name: openclaw-secrets
                   key: N8N_MCP_TOKEN
+            - name: ELEVENLABS_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: ELEVENLABS_API_KEY
+                  optional: true
           volumeMounts:
             # Entire .openclaw directory is the PVC (fully writable)
             - name: data
