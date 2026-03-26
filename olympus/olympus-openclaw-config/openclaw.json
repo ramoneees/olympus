@@ -37,7 +37,7 @@
     path: "/hooks",
     token: "${OPENCLAW_HOOKS_TOKEN}",
     defaultSessionKey: "hook:ingress",
-    allowedAgentIds: ["hermes", "hephaestus", "athena", "plutus", "themis", "prometheus", "mnemosyne"],
+    allowedAgentIds: ["hermes", "hephaestus", "athena", "plutus", "themis", "nemesis", "iris", "asclepius", "argus", "prometheus", "mnemosyne", "calliope", "persephone"],
     internal: {
       enabled: true,
       entries: {

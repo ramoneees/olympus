@@ -1,13 +1,13 @@
 [
-  // v1 full = all 7 agents: Hermes + Hephaestus + Athena + Plutus + Themis + Prometheus + Mnemosyne
+  // v1 full = all 13 agents: Hermes + Hephaestus + Athena + Plutus + Themis + Nemesis + Iris + Asclepius + Argus + Prometheus + Mnemosyne + Calliope + Persephone
   // All models route through LiteLLM. Sandbox disabled for K8s v1.
   {
     id: "hermes",
     default: true,
     workspace: "/home/node/.openclaw/workspaces/hermes",
-    model: "litellm/qwen3.5-plus",
+    model: "litellm/glm-5-turbo",
     sandbox: { mode: "off" },
-    subagents: { allowAgents: ["hephaestus", "athena", "plutus", "themis", "prometheus", "mnemosyne"] },
+    subagents: { allowAgents: ["hephaestus", "athena", "plutus", "themis", "nemesis", "iris", "asclepius", "argus", "prometheus", "mnemosyne", "calliope", "persephone"] },
     tools: {
       // profile: "full" + deny is required — "minimal" does not expose sessions_spawn reliably
       // even when sessions_spawn is in the explicit allow list. See openclaw/openclaw#47862.
@@ -93,6 +93,90 @@
       profile: "minimal",
       allow: ["read", "group:memory", "memory_search", "memory_get", "memory_put", "session_status"],
       deny: ["write", "edit", "apply_patch", "exec", "process", "web_search", "web_fetch", "browser", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway", "message"],
+      loopDetection: { enabled: true },
+    },
+  },
+  {
+    // NEMESIS: Critique, bias detection, and decision stress-testing agent.
+    // Minimal profile + memory, sessions_spawn, message, sequential-thinking MCP.
+    id: "nemesis",
+    workspace: "/home/node/.openclaw/workspaces/nemesis",
+    model: "litellm/MiniMax-M2.5",
+    sandbox: { mode: "off" },
+    tools: {
+      profile: "minimal",
+      allow: ["group:memory", "sessions_spawn", "session_status", "message", "mcp:sequential-thinking"],
+      deny: ["read", "write", "edit", "apply_patch", "exec", "process", "web_search", "web_fetch", "browser", "sessions_list", "sessions_history", "sessions_send", "canvas", "cron", "gateway"],
+      loopDetection: { enabled: true },
+    },
+  },
+  {
+    // CALLIOPE: Writing, knowledge capture, and content agent.
+    // Minimal profile + read, message, sessions_spawn for research delegation.
+    id: "calliope",
+    workspace: "/home/node/.openclaw/workspaces/calliope",
+    model: "litellm/MiniMax-M2.5",
+    sandbox: { mode: "off" },
+    tools: {
+      profile: "minimal",
+      allow: ["read", "group:memory", "sessions_spawn", "session_status", "message", "mcp:sequential-thinking"],
+      deny: ["write", "edit", "apply_patch", "exec", "process", "web_search", "web_fetch", "browser", "sessions_list", "sessions_history", "sessions_send", "canvas", "cron", "gateway"],
+      loopDetection: { enabled: true },
+    },
+  },
+  {
+    // IRIS: Communication and messaging agent.
+    // Minimal profile + memory, sessions_spawn, message, sequential-thinking MCP.
+    id: "iris",
+    workspace: "/home/node/.openclaw/workspaces/iris",
+    model: "litellm/MiniMax-M2.5",
+    sandbox: { mode: "off" },
+    tools: {
+      profile: "minimal",
+      allow: ["read", "group:memory", "sessions_spawn", "session_status", "message", "mcp:sequential-thinking"],
+      deny: ["write", "edit", "apply_patch", "exec", "process", "web_search", "web_fetch", "browser", "sessions_list", "sessions_history", "sessions_send", "canvas", "cron", "gateway"],
+      loopDetection: { enabled: true },
+    },
+  },
+  {
+    // ASCLEPIUS: Health, recovery, and wellness agent.
+    // Minimal profile + memory, sessions_spawn, message, sequential-thinking MCP.
+    id: "asclepius",
+    workspace: "/home/node/.openclaw/workspaces/asclepius",
+    model: "litellm/MiniMax-M2.5",
+    sandbox: { mode: "off" },
+    tools: {
+      profile: "minimal",
+      allow: ["group:memory", "sessions_spawn", "session_status", "message", "mcp:sequential-thinking"],
+      deny: ["read", "write", "edit", "apply_patch", "exec", "process", "web_search", "web_fetch", "browser", "sessions_list", "sessions_history", "sessions_send", "canvas", "cron", "gateway"],
+      loopDetection: { enabled: true },
+    },
+  },
+  {
+    // ARGUS: Monitoring, alerts, and watchlists agent.
+    // Minimal profile + memory, sessions_spawn, message, sequential-thinking + kubernetes MCPs.
+    id: "argus",
+    workspace: "/home/node/.openclaw/workspaces/argus",
+    model: "litellm/MiniMax-M2.5",
+    sandbox: { mode: "off" },
+    tools: {
+      profile: "minimal",
+      allow: ["group:memory", "sessions_spawn", "session_status", "message", "mcp:sequential-thinking", "mcp:kubernetes"],
+      deny: ["read", "write", "edit", "apply_patch", "exec", "process", "web_search", "web_fetch", "browser", "sessions_list", "sessions_history", "sessions_send", "canvas", "cron", "gateway"],
+      loopDetection: { enabled: true },
+    },
+  },
+  {
+    // PERSEPHONE: Planning, organization, and GTD agent.
+    // Minimal profile + memory_search, sessions_spawn, message, sequential-thinking MCP.
+    id: "persephone",
+    workspace: "/home/node/.openclaw/workspaces/persephone",
+    model: "litellm/MiniMax-M2.5",
+    sandbox: { mode: "off" },
+    tools: {
+      profile: "minimal",
+      allow: ["group:memory", "sessions_spawn", "session_status", "message", "mcp:sequential-thinking"],
+      deny: ["read", "write", "edit", "apply_patch", "exec", "process", "web_search", "web_fetch", "browser", "sessions_list", "sessions_history", "sessions_send", "canvas", "cron", "gateway"],
       loopDetection: { enabled: true },
     },
   },

@@ -184,7 +184,7 @@ spec:
                 fi
               fi
               # Sync workspace files from ConfigMaps
-              for agent in hermes hephaestus athena plutus themis prometheus mnemosyne; do
+              for agent in hermes hephaestus athena plutus themis nemesis iris asclepius argus prometheus mnemosyne calliope persephone; do
                 mkdir -p /openclaw/workspaces/$agent
                 cp -f /src/ws/$agent/* /openclaw/workspaces/$agent/ 2>/dev/null || true
               done
@@ -250,11 +250,29 @@ spec:
             - name: ws-themis
               mountPath: /src/ws/themis
               readOnly: true
+            - name: ws-nemesis
+              mountPath: /src/ws/nemesis
+              readOnly: true
+            - name: ws-iris
+              mountPath: /src/ws/iris
+              readOnly: true
+            - name: ws-asclepius
+              mountPath: /src/ws/asclepius
+              readOnly: true
+            - name: ws-argus
+              mountPath: /src/ws/argus
+              readOnly: true
             - name: ws-prometheus
               mountPath: /src/ws/prometheus
               readOnly: true
             - name: ws-mnemosyne
               mountPath: /src/ws/mnemosyne
+              readOnly: true
+            - name: ws-calliope
+              mountPath: /src/ws/calliope
+              readOnly: true
+            - name: ws-persephone
+              mountPath: /src/ws/persephone
               readOnly: true
       containers:
         - name: openclaw
@@ -373,12 +391,30 @@ spec:
         - name: ws-themis
           configMap:
             name: openclaw-ws-themis
+        - name: ws-nemesis
+          configMap:
+            name: openclaw-ws-nemesis
+        - name: ws-iris
+          configMap:
+            name: openclaw-ws-iris
+        - name: ws-asclepius
+          configMap:
+            name: openclaw-ws-asclepius
+        - name: ws-argus
+          configMap:
+            name: openclaw-ws-argus
         - name: ws-prometheus
           configMap:
             name: openclaw-ws-prometheus
         - name: ws-mnemosyne
           configMap:
             name: openclaw-ws-mnemosyne
+        - name: ws-calliope
+          configMap:
+            name: openclaw-ws-calliope
+        - name: ws-persephone
+          configMap:
+            name: openclaw-ws-persephone
         - name: mcporter-config
           emptyDir: {}
         - name: data
