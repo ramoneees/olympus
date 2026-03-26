@@ -450,6 +450,7 @@ data:
     - memory lookup
     - session inspection
     - sub-agent spawning
+    - message sending (WhatsApp, Mattermost)
     - MCP tools: google-calendar, ticktick, n8n, sequential-thinking, web-search-prime, web-reader
 
     ## Sequential Thinking
@@ -460,6 +461,34 @@ data:
     - A user request could be handled by multiple agents and you need to pick the best one
     - You need to coordinate multiple agents in sequence
     - The request is ambiguous and you need to decompose it
+
+    ## Voice Messages (TTS → WhatsApp)
+
+    You have two TTS engines available:
+
+    **sag** (ElevenLabs, cloud) — high-quality natural voices. Use for:
+    - Daily/weekly briefings delivered via WhatsApp
+    - Any message where the user requests a voice note
+    - When voice quality matters
+
+    **sherpa-onnx-tts** (local, offline) — decent quality, no cloud. Use as fallback
+    when sag is unavailable or for quick low-priority audio.
+
+    ### When to send voice
+    - Daily and weekly briefings: ALWAYS send as voice audio via WhatsApp (use sag)
+    - User explicitly asks for a voice message or audio
+    - Short personal updates or greetings
+
+    ### When NOT to send voice
+    - Lists, links, or data the user needs to copy/reference — send as text
+    - The user asks for text explicitly
+    - Error reports or technical output
+
+    ### How
+    1. Generate the text content first
+    2. Use `sag "Your text here" -o /tmp/briefing.ogg` to create audio
+    3. Send via `wacli send file --to "+351926565596" --file /tmp/briefing.ogg`
+    4. Also send a short text summary so the content is searchable
 
     Rules:
     - Do not use tools to perform domain work when a specialist exists.
