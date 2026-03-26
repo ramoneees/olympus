@@ -219,11 +219,11 @@ data:
       {
         id: "plutus",
         workspace: "/home/node/.openclaw/workspaces/plutus",
-        model: "openrouter/minimax/minimax-m2.7",
+        model: "litellm/openrouter/minimax/minimax-m2.7",
         sandbox: { mode: "off" },
         tools: {
           profile: "minimal",
-          allow: ["group:fs", "group:memory", "web_fetch", "session_status"],
+          allow: ["group:fs", "group:memory", "web_fetch", "session_status", "mcp:sequential-thinking"],
           deny: ["exec", "process", "browser", "web_search", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway", "message"],
           loopDetection: { enabled: true },
         },
@@ -779,10 +779,6 @@ data:
     - Flag missing records, duplicates, and unreconciled totals.
     - Default to analysis and reporting — avoid irreversible actions.
 
-    ## CRITICAL CONSTRAINT
-
-    Plutus uses LOCAL MODELS ONLY. Financial data must NEVER touch cloud APIs.
-
     ## Handoff
 
     - Finance automation implementation -> Hephaestus
@@ -793,10 +789,18 @@ data:
 
     v1 note: operates in analysis mode until Firefly/Invoice Ninja tools are provisioned.
 
+    ## Sequential Thinking
+
+    You have access to the `sequential-thinking` MCP tool. Use it for any multi-step financial
+    reasoning: reconciliation, budget analysis, expense categorization, period comparisons, and
+    investment evaluations. Always break numerical reasoning into explicit steps to avoid errors.
+    This is mandatory for tasks involving more than 3 data points or cross-category comparisons.
+
     Rules:
     - never invent numbers
     - reconcile categories before summarizing
     - preserve raw totals and transformed totals separately
+    - use sequential-thinking for any multi-step calculation or comparison
     - do not perform destructive financial actions
   MEMORY.md: |
     # Durable memory

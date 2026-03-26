@@ -45,15 +45,15 @@
     },
   },
   {
-    // PLUTUS: LOCAL MODELS ONLY — financial data must never touch cloud APIs.
-    // deepseek-r1:7b routes through LiteLLM → Ollama (stays local).
+    // PLUTUS: Finance agent. Cloud models OK per budget constraints.
+    // sequential-thinking MCP for structured financial reasoning.
     id: "plutus",
     workspace: "/home/node/.openclaw/workspaces/plutus",
-    model: "litellm/deepseek-r1:7b",
+    model: "litellm/openrouter/minimax/minimax-m2.7",
     sandbox: { mode: "off" },
     tools: {
       profile: "minimal",
-      allow: ["group:fs", "group:memory", "web_fetch", "session_status"],
+      allow: ["group:fs", "group:memory", "web_fetch", "session_status", "mcp:sequential-thinking"],
       deny: ["exec", "process", "browser", "web_search", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "gateway", "message"],
       loopDetection: { enabled: true },
     },
