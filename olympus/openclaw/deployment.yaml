@@ -125,7 +125,7 @@ spec:
                     "url": "https://api.z.ai/api/mcp/web_reader/mcp",
                     "headers": {
                       "Authorization": "Bearer PLACEHOLDER_ZAI_KEY"
-                    }
+                    }   
                   },
                   "zreader": {
                     "transport": "streamable-http",
@@ -139,7 +139,7 @@ spec:
                     "args": ["-y", "@cocal/google-calendar-mcp"],
                     "env": {
                       "GOOGLE_OAUTH_CREDENTIALS": "/home/node/.openclaw/credentials/google-calendar/gcp-oauth.keys.json",
-                      "GOOGLE_CALENDAR_MCP_TOKEN_PATH": "/home/node/.openclaw/credentials/google-calendar"
+                      "GOOGLE_CALENDAR_MCP_TOKEN_PATH": "/home/node/.openclaw/credentials/google-calendar/.tokens.json"
                     }
                   }
                 },
@@ -150,23 +150,27 @@ spec:
               sed -i "s|PLACEHOLDER_N8N_TOKEN|${N8N_MCP_TOKEN}|g" /app-config/mcporter.json
               sed -i "s|PLACEHOLDER_POSTGRES_URL|${POSTGRES_URL}|g" /app-config/mcporter.json
               sed -i "s|PLACEHOLDER_ZAI_KEY|${Z_AI_API_KEY}|g" /app-config/mcporter.json
-              # Seed TickTick OAuth tokens from secret (one-time auth obtained locally via mcporter).
-              # This file persists on the PVC; mcporter auto-refreshes tokens on expiry — no re-login needed.
+              # Seed TickTick OAuth credentials from secret (one-time auth obtained locally via mcporter).
+              # These files persist on the PVC; mcporter auto-refreshes tokens on expiry — no re-login needed.
               # How to obtain (run once on your local machine):
-              #   mcporter config add ticktick https://mcp.ticktick.com --transport streamable-http --auth oauth
               #   mcporter auth ticktick      # opens browser → log in to TickTick → authorize
-              #   cat ~/.mcporter/credentials/ticktick/tokens.json
-              # Copy the JSON content and store it as the TICKTICK_OAUTH_TOKENS secret value.
+              #   cat ~/.mcporter/credentials.json   # grab the ticktick entry
+              # Store the full JSON entry as the TICKTICK_OAUTH_TOKENS secret value.
+              # mcporter expects 4 files in tokenCacheDir: client.json, tokens.json, state.txt, code_verifier.txt
               if [ -n "${TICKTICK_OAUTH_TOKENS}" ] && [ "${TICKTICK_OAUTH_TOKENS}" != "PLACEHOLDER" ]; then
                 mkdir -p /openclaw/credentials/ticktick
-                # Only seed if the file does NOT already exist on the PVC.
-                # mcporter refreshes tokens at runtime and writes back to this file —
+                # Only seed if tokens.json does NOT already exist on the PVC.
+                # mcporter refreshes tokens at runtime and writes back to these files —
                 # overwriting on every restart would clobber the refreshed tokens and break auth.
                 if [ ! -f /openclaw/credentials/ticktick/tokens.json ]; then
-                  echo "${TICKTICK_OAUTH_TOKENS}" > /openclaw/credentials/ticktick/tokens.json
-                  echo "TickTick OAuth tokens seeded (first boot)."
+                  # Extract sub-objects from the full credentials JSON using busybox-compatible parsing
+                  echo "${TICKTICK_OAUTH_TOKENS}" | sed -n 's/.*"clientInfo":\({[^}]*}\).*/\1/p' > /openclaw/credentials/ticktick/client.json
+                  echo "${TICKTICK_OAUTH_TOKENS}" | sed -n 's/.*"tokens":\({[^}]*}\).*/\1/p' > /openclaw/credentials/ticktick/tokens.json
+                  echo "${TICKTICK_OAUTH_TOKENS}" | sed -n 's/.*"state":"\([^"]*\)".*/"\1"/p' > /openclaw/credentials/ticktick/state.txt
+                  echo "${TICKTICK_OAUTH_TOKENS}" | sed -n 's/.*"codeVerifier":"\([^"]*\)".*/\1/p' > /openclaw/credentials/ticktick/code_verifier.txt
+                  echo "TickTick OAuth credentials seeded (first boot — 4 files)."
                 else
-                  echo "TickTick OAuth tokens already present on PVC — preserving."
+                  echo "TickTick OAuth credentials already present on PVC — preserving."
                 fi
               fi
               # Seed Google Calendar OAuth credentials and tokens
@@ -336,6 +340,12 @@ spec:
                   name: openclaw-secrets
                   key: ELEVENLABS_API_KEY
                   optional: true
+            # Google Calendar MCP — env vars for @cocal/google-calendar-mcp
+            # These must be on the main container so mcporter's spawned npx process inherits them.
+            - name: GOOGLE_OAUTH_CREDENTIALS
+              value: "/home/node/.openclaw/credentials/google-calendar/gcp-oauth.keys.json"
+            - name: GOOGLE_CALENDAR_MCP_TOKEN_PATH
+              value: "/home/node/.openclaw/credentials/google-calendar/.tokens.json"
           volumeMounts:
             # Entire .openclaw directory is the PVC (fully writable)
             - name: data
