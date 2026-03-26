@@ -40,7 +40,7 @@
     sandbox: { mode: "off" },
     tools: {
       profile: "minimal",
-      allow: ["read", "group:memory", "web_search", "web_fetch", "browser", "session_status"],
+      allow: ["read", "group:memory", "web_search", "web_fetch", "browser", "session_status", "mcp:web-search-prime", "mcp:web-reader", "mcp:zreader"],
       deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "gateway", "message"],
       loopDetection: { enabled: true },
     },
