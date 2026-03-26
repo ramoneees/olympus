@@ -197,7 +197,9 @@ data:
         subagents: { allowAgents: ["hephaestus", "athena", "plutus", "themis", "nemesis", "iris", "asclepius", "argus", "prometheus", "mnemosyne", "calliope", "persephone"] },
         tools: {
           // profile: "full" + deny is required — "minimal" does not expose sessions_spawn reliably.
+          // MCP tools MUST be explicitly listed in allow[] to be visible to the agent.
           profile: "full",
+          allow: ["mcp:google-calendar", "mcp:ticktick", "mcp:n8n", "mcp:sequential-thinking"],
           deny: ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch", "cron", "gateway", "image"],
           loopDetection: { enabled: true },
         },
@@ -521,24 +523,56 @@ data:
   TOOLS.md: |
     # Tools
 
-    You are intentionally tool-constrained.
+    ## Tool families available in v1
 
-    Available tool families in v1:
     - read-only workspace inspection
     - memory lookup
     - session inspection
     - sub-agent spawning
     - message sending (WhatsApp, Mattermost)
-    - MCP tools: google-calendar, ticktick, n8n, sequential-thinking, web-search-prime, web-reader
+    - **calendar management** (Google Calendar MCP — `google-calendar__*` tools, multi-account: personal + work)
+    - **task management** (TickTick MCP — `ticktick__*` tools)
+    - **workflow automation** (n8n MCP — `n8n__*` tools)
+    - **reasoning** (sequential-thinking MCP)
+
+    ## CRITICAL: MCP tools are YOUR tools — use them directly
+
+    You have direct access to MCP tools. **Do NOT delegate calendar, task, or MCP tool calls to subagents.**
+    Subagents (Hephaestus, Athena, etc.) do NOT have access to google-calendar or ticktick MCPs — only you do.
+
+    When you need calendar data → call `google-calendar__list-events` yourself.
+    When you need task data → call `ticktick__*` tools yourself.
+    When you need to trigger n8n workflows → call `n8n__*` tools yourself.
+
+    **Never** spawn a subagent for work that requires MCP tools you already have.
+
+    ## Orchestration rules
+
+    - Use MCP tools (calendar, tasks, n8n) directly — they are yours, not delegatable.
+    - Delegate domain work (coding, research, finance) to specialists who have the right tools.
+    - Use session tools only to delegate or inspect child runs.
+    - Treat your own lack of coding/research/finance tools as intentional architecture, not as a limitation to work around.
+    - Never attempt to browse, execute code, or modify files directly.
+
+    ## Calendar and agenda rules
+
+    When handling calendar or agenda requests:
+    1. Use Google Calendar MCP tools directly: `google-calendar__list-calendars`, `google-calendar__list-events`, `google-calendar__create-event`, `google-calendar__update-event`, `google-calendar__delete-event`, `google-calendar__get-freebusy`
+    2. Both personal and work Google accounts are connected — `list-calendars` shows calendars from all accounts
+    3. For "what's on my calendar" — list events for the requested period across ALL calendars, sorted chronologically
+    4. For scheduling requests — check availability first (`get-freebusy`), then create the event
+
+    ## Task management rules
+
+    When handling task requests:
+    1. Call TickTick MCP tools directly — do NOT delegate
+    2. Add tasks with title, due date (if specified), and priority (if specified)
+    3. For "what are my tasks" — list pending tasks grouped by due date
 
     ## Sequential Thinking
 
     For complex orchestration decisions (multi-agent routing, ambiguous requests, multi-step planning),
     use the `sequential-thinking` MCP tool to reason through the problem step by step before acting.
-    This is especially valuable when:
-    - A user request could be handled by multiple agents and you need to pick the best one
-    - You need to coordinate multiple agents in sequence
-    - The request is ambiguous and you need to decompose it
 
     ## Voice Messages (TTS → WhatsApp)
 
@@ -567,11 +601,6 @@ data:
     2. Use `sag "Your text here" -o /tmp/briefing.ogg` to create audio
     3. Send via `wacli send file --to "+351926565596" --file /tmp/briefing.ogg`
     4. Also send a short text summary so the content is searchable
-
-    Rules:
-    - Do not use tools to perform domain work when a specialist exists.
-    - Use session tools only to delegate or inspect child runs.
-    - Never attempt to browse, execute code, or modify files directly.
   MEMORY.md: |
     # Durable memory
 
@@ -616,11 +645,13 @@ data:
 
     ### Steps
 
-    1. `google-calendar__list-calendars` → discover all calendar IDs
-    2. For EACH calendar (personal + work): `google-calendar__list-events` with today's date range
-    3. TickTick MCP tools → today's tasks and calendar items
-    4. Spawn Athena: "Find today's Bible verse of the day. Return only the verse reference and full text, nothing else."
-    5. Consolidate and deliver via WhatsApp
+    **You (Hermes) must call these MCP tools directly — do NOT delegate to subagents.**
+
+    1. Call `google-calendar__list-calendars` → discover all calendar IDs (both personal and work accounts)
+    2. For EACH calendar: call `google-calendar__list-events` with today's date range (timeMin/timeMax as ISO 8601)
+    3. Call TickTick MCP tools directly (`ticktick__list_projects`, then relevant task queries) → today's tasks
+    4. Spawn Athena (the ONLY delegation step): "Find today's Bible verse of the day. Return only the verse reference and full text, nothing else."
+    5. Consolidate all results and deliver via WhatsApp
 
     ### Format
 
@@ -661,9 +692,11 @@ data:
 
     ### Steps
 
-    1. `google-calendar__list-calendars` → discover all calendar IDs
-    2. For EACH calendar (personal + work): `google-calendar__list-events` for the full week (Monday–Sunday)
-    3. TickTick MCP tools → this week's tasks
+    **You (Hermes) must call these MCP tools directly — do NOT delegate to subagents.**
+
+    1. Call `google-calendar__list-calendars` → discover all calendar IDs (both personal and work accounts)
+    2. For EACH calendar: call `google-calendar__list-events` for the full week (Monday–Sunday, ISO 8601 timeMin/timeMax)
+    3. Call TickTick MCP tools directly → this week's tasks
     4. Consolidate by day of week and deliver via WhatsApp
 
     ### Format

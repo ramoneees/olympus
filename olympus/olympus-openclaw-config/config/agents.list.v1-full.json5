@@ -11,11 +11,11 @@
     tools: {
       // profile: "full" + deny is required — "minimal" does not expose sessions_spawn reliably
       // even when sessions_spawn is in the explicit allow list. See openclaw/openclaw#47862.
-      // MCP tools from mcporter (ticktick__*, n8n__*, etc.) are individually named and NOT
-      // caught by the deny list below — Hermes can use them directly for calendar/task management.
-      // sequential-thinking MCP available for complex orchestration reasoning.
+      // MCP tools MUST be explicitly listed in allow[] — profile: "full" alone does not
+      // guarantee MCP tool visibility. Without explicit allow, agents cannot see or call them.
       // "message" removed from deny to allow WhatsApp audio/text delivery via TTS pipeline.
       profile: "full",
+      allow: ["mcp:google-calendar", "mcp:ticktick", "mcp:n8n", "mcp:sequential-thinking"],
       deny: ["write", "edit", "apply_patch", "exec", "process", "browser", "canvas", "web_search", "web_fetch", "cron", "gateway", "image"],
       loopDetection: { enabled: true },
     },

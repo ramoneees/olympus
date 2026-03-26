@@ -14,11 +14,13 @@ Automated routines managed via OpenClaw native cron. Jobs are seeded on first bo
 
 ### Steps
 
-1. `google-calendar__list-calendars` → discover all calendar IDs
-2. For EACH calendar (personal + work): `google-calendar__list-events` with today's date range
-3. TickTick MCP tools → today's tasks and calendar items
-4. Spawn Athena: "Find today's Bible verse of the day. Return only the verse reference and full text, nothing else."
-5. Consolidate and deliver via WhatsApp
+**You (Hermes) must call these MCP tools directly — do NOT delegate to subagents.**
+
+1. Call `google-calendar__list-calendars` → discover all calendar IDs (both personal and work accounts)
+2. For EACH calendar: call `google-calendar__list-events` with today's date range (timeMin/timeMax as ISO 8601)
+3. Call TickTick MCP tools directly (`ticktick__list_projects`, then relevant task queries) → today's tasks
+4. Spawn Athena (the ONLY delegation step): "Find today's Bible verse of the day. Return only the verse reference and full text, nothing else."
+5. Consolidate all results and deliver via WhatsApp
 
 ### Format
 
@@ -59,9 +61,11 @@ Have a good day.
 
 ### Steps
 
-1. `google-calendar__list-calendars` → discover all calendar IDs
-2. For EACH calendar (personal + work): `google-calendar__list-events` for the full week (Monday–Sunday)
-3. TickTick MCP tools → this week's tasks
+**You (Hermes) must call these MCP tools directly — do NOT delegate to subagents.**
+
+1. Call `google-calendar__list-calendars` → discover all calendar IDs (both personal and work accounts)
+2. For EACH calendar: call `google-calendar__list-events` for the full week (Monday–Sunday, ISO 8601 timeMin/timeMax)
+3. Call TickTick MCP tools directly → this week's tasks
 4. Consolidate by day of week and deliver via WhatsApp
 
 ### Format
