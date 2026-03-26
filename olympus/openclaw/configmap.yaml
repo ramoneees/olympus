@@ -328,9 +328,13 @@ data:
   plugins.v1.json5: |
     {
       enabled: true,
-      allow: ["memory-core", "qwen-portal-auth"],
+      allow: ["memory-core", "qwen-portal-auth", "mattermost", "whatsapp"],
       load: { paths: ["~/.openclaw/data/extensions"] },
-      entries: { "qwen-portal-auth": { enabled: true } },
+      entries: {
+        "qwen-portal-auth": { enabled: true },
+        "mattermost": { enabled: true },
+        "whatsapp": { enabled: true },
+      },
       slots: { memory: "memory-core", contextEngine: "legacy" },
     }
 ---

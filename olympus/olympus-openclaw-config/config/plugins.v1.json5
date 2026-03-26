@@ -6,6 +6,8 @@
   allow: [
     "memory-core",
     "qwen-portal-auth",
+    "mattermost",
+    "whatsapp",
   ],
   load: {
     paths: [
@@ -14,6 +16,12 @@
   },
   entries: {
     "qwen-portal-auth": {
+      enabled: true,
+    },
+    "mattermost": {
+      enabled: true,
+    },
+    "whatsapp": {
       enabled: true,
     },
   },
