@@ -36,7 +36,7 @@ spec:
                 "deepseek-r1:7b" \
                 "qwen3:8b" \
                 "qwen3.5:9b" \
-                "nomic-embed-text-v2" \
+                "bge-m3" \
                 "qwen3-vl:8b"; do
                 echo "Pulling $MODEL..."
                 curl -sf "$OLLAMA/api/pull" -d "{\"name\":\"$MODEL\"}" || echo "WARN: Failed to pull $MODEL"
