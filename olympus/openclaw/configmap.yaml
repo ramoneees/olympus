@@ -629,102 +629,53 @@ data:
 
     System project: OLYMPUS (Greek mythology theme)
   HEARTBEATS.md: |
-    # Heartbeats
+    # Heartbeat Tasks
 
-    Automated routines managed via OpenClaw native cron. Jobs are seeded on first boot and persist at `~/.openclaw/cron/jobs.json`.
+    ## Daily Briefing (07:00, Monday–Friday)
 
-    ---
-
-    ## Daily Briefing
-
-    - **Cron job name**: `daily-briefing`
-    - **Schedule**: `0 8 * * *` (Europe/Lisbon), every day
-    - **Agent**: hermes
-    - **Session**: `session:briefing-daily` (persistent across runs)
-    - **Deliver via**: WhatsApp
-
-    ### Steps
+    When the heartbeat poll arrives between 06:50–07:20 on a weekday:
 
     **You (Hermes) must call these MCP tools directly — do NOT delegate to subagents.**
 
-    1. Call `google-calendar__list-calendars` → discover all calendar IDs (both personal and work accounts)
-    2. For EACH calendar: call `google-calendar__list-events` with today's date range (timeMin/timeMax as ISO 8601)
-    3. Call TickTick MCP tools directly (`ticktick__list_projects`, then relevant task queries) → today's tasks
-    4. Spawn Athena (the ONLY delegation step): "Find today's Bible verse of the day. Return only the verse reference and full text, nothing else."
-    5. Consolidate all results and deliver via WhatsApp
+    1. Call Google Calendar MCP tools → today's events (all accounts)
+    2. Call TickTick MCP tools → pending tasks due today + overdue tasks
+    3. Build a concise briefing **in Portuguese**:
+       - 📅 Agenda do dia (events, times)
+       - ✅ Tarefas pendentes (by priority)
+       - ⚠️ Itens vencidos (overdue)
+    4. Deliver as voice (sag) + text summary via WhatsApp to +351926565596
+    5. Respond HEARTBEAT_OK
 
-    ### Format
-
-    ```
-    Good morning, Ramon.
-
-    **Today's Agenda** (Day, DD Month YYYY)
-
-    📅 Calendar
-    - HH:MM — Event title [Calendar Name]
-    - HH:MM — Event title [Calendar Name]
-    (or "No events today.")
-
-    ✅ Tasks
-    - Task title (due/priority if set)
-    (or "No tasks due today.")
-
-    📖 Verse of the Day
-    > "Verse text" — Book Chapter:Verse
-
-    Have a good day.
-    ```
-
-    ### Rules
-
-    - If any data source fails (gcal, TickTick, Athena), include what you have and note the failure briefly.
-    - Do NOT include news — that is a separate on-demand workflow.
+    If outside 06:50–07:20 or not a weekday → respond HEARTBEAT_OK.
 
     ---
 
-    ## Weekly Briefing
+    ## Weekly Briefing (08:00, Monday)
 
-    - **Cron job name**: `weekly-briefing`
-    - **Schedule**: `0 20 * * 0` (Europe/Lisbon), every Sunday
-    - **Agent**: hermes
-    - **Session**: `session:briefing-weekly` (persistent across runs)
-    - **Deliver via**: WhatsApp
-
-    ### Steps
+    When the heartbeat poll arrives between 07:50–08:20 on a Monday:
 
     **You (Hermes) must call these MCP tools directly — do NOT delegate to subagents.**
 
-    1. Call `google-calendar__list-calendars` → discover all calendar IDs (both personal and work accounts)
-    2. For EACH calendar: call `google-calendar__list-events` for the full week (Monday–Sunday, ISO 8601 timeMin/timeMax)
-    3. Call TickTick MCP tools directly → this week's tasks
-    4. Consolidate by day of week and deliver via WhatsApp
+    1. Call Google Calendar MCP tools → this week's events (all accounts)
+    2. Call TickTick MCP tools → this week's tasks + overdue tasks
+    3. Build a weekly briefing **in Portuguese**:
+       - 📅 Visão da semana (events by day)
+       - ✅ Tarefas da semana (by day/priority)
+       - ⚠️ Débitos acumulados (overdue backlog)
+       - 📊 Resumo de progresso
+    4. Deliver as voice (sag) + text summary via WhatsApp to +351926565596
+    5. Respond HEARTBEAT_OK
 
-    ### Format
+    If not Monday or outside 07:50–08:20 → respond HEARTBEAT_OK.
 
-    ```
-    **Week Ahead** (DD Mon – DD Mon YYYY)
+    ---
 
-    **Monday**
-    - HH:MM — Event [Calendar]
-    - Task
+    ## General Rules
 
-    **Tuesday**
-    - HH:MM — Event [Calendar]
-    ...
-    (skip empty days or mark "Free")
-
-    **Summary**
-    - N events, N tasks
-    - Busiest day: Day (N items)
-    - Free days: Day, Day
-
-    Have a good week.
-    ```
-
-    ### Rules
-
-    - Group events and tasks by day of week. Skip empty days or mark them as "Free."
-    - If any data source fails, include what you have and note the failure.
+    - Outside the time windows above → HEARTBEAT_OK
+    - If MCP tools are unavailable → send error message via WhatsApp and HEARTBEAT_OK
+    - Use `sag` for voice generation, `wacli` to send the audio file
+    - All briefing content must be written in Portuguese (PT)
 ---
 apiVersion: v1
 kind: ConfigMap
