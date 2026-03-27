@@ -110,9 +110,9 @@ data:
         litellm_params:
           model: ollama/qwen3.5:9b
           api_base: http://ollama.olympus.svc.cluster.local:11434
-      - model_name: nomic-embed-text-v2
+      - model_name: bge-m3
         litellm_params:
-          model: ollama/nomic-embed-text-v2
+          model: ollama/bge-m3
           api_base: http://ollama.olympus.svc.cluster.local:11434
       - model_name: qwen3-vl:8b
         litellm_params:
