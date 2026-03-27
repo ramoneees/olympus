@@ -23,16 +23,17 @@ spec:
         fsGroup: 1000
       initContainers:
         - name: install-qpdf
-          image: alpine:3.21
+          image: debian:bookworm-slim
           command:
             - sh
             - -c
             - |
-              apk add --no-cache qpdf
+              apt-get update && apt-get install -y --no-install-recommends qpdf
               cp /usr/bin/qpdf /tools/
-              for lib in libqpdf libjpeg; do
-                cp /usr/lib/${lib}*.so* /tools/ 2>/dev/null || true
-              done
+              # Copy all required shared libraries
+              ldd /usr/bin/qpdf | grep -o '/lib[^ ]*' | xargs -I{} cp -v {} /tools/ 2>/dev/null || true
+              cp /usr/lib/x86_64-linux-gnu/libqpdf*.so* /tools/ 2>/dev/null || true
+              apt-get clean && rm -rf /var/lib/apt/lists/*
           volumeMounts:
             - name: tools
               mountPath: /tools
