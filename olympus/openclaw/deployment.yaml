@@ -75,7 +75,7 @@ spec:
                        /openclaw/homebrew/share /openclaw/homebrew/var \
                        /openclaw/npm-global
               # Copy root config (overwrite each start so git changes propagate)
-              cp -f /src/root-config/openclaw.json /openclaw/openclaw.json
+              cp -f /src/root-config/openclaw.json5 /openclaw/openclaw.json5
               # Copy config files from ConfigMap
               cp -f /src/config-files/* /openclaw/config/ 2>/dev/null || true
               # Generate mcporter config with expanded secrets

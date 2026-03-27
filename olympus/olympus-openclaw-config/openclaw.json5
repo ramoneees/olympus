@@ -94,4 +94,62 @@
     },
     sessionRetention: "48h",
   },
+
+  // MCP servers — must be declared here for OpenClaw to expose them to agents.
+  // mcporter.json handles the runtime transport; this section makes them visible in the agent tool list.
+  mcp: {
+    servers: {
+      "google-calendar": {
+        command: "npx",
+        args: ["-y", "@cocal/google-calendar-mcp"],
+        env: {
+          GOOGLE_OAUTH_CREDENTIALS: "/home/node/.openclaw/credentials/google-calendar/gcp-oauth.keys.json",
+          GOOGLE_CALENDAR_MCP_TOKEN_PATH: "/home/node/.openclaw/credentials/google-calendar/.tokens.json",
+        },
+      },
+      ticktick: {
+        description: "TickTick task management (official MCP)",
+        url: "https://mcp.ticktick.com",
+        transport: "streamable-http",
+        auth: "oauth",
+        tokenCacheDir: "/home/node/.openclaw/credentials/ticktick",
+      },
+      n8n: {
+        transport: "streamable-http",
+        baseUrl: "http://n8n.olympus.svc.cluster.local:5678/mcp-server/http",
+        headers: { Authorization: "Bearer ${N8N_MCP_TOKEN}" },
+      },
+      "sequential-thinking": {
+        command: "npx",
+        args: ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      },
+      kubernetes: {
+        command: "npx",
+        args: ["-y", "kubernetes-mcp-server@latest", "--disable-destructive"],
+      },
+      filesystem: {
+        command: "npx",
+        args: ["-y", "@modelcontextprotocol/server-filesystem", "/home/node/.openclaw/workspaces"],
+      },
+      postgres: {
+        command: "npx",
+        args: ["-y", "@modelcontextprotocol/server-postgres", "${POSTGRES_URL}"],
+      },
+      "web-search-prime": {
+        transport: "streamable-http",
+        url: "https://api.z.ai/api/mcp/web_search_prime/mcp",
+        headers: { Authorization: "Bearer ${Z_AI_API_KEY}" },
+      },
+      "web-reader": {
+        transport: "streamable-http",
+        url: "https://api.z.ai/api/mcp/web_reader/mcp",
+        headers: { Authorization: "Bearer ${Z_AI_API_KEY}" },
+      },
+      zreader: {
+        transport: "streamable-http",
+        url: "https://api.z.ai/api/mcp/zread/mcp",
+        headers: { Authorization: "Bearer ${Z_AI_API_KEY}" },
+      },
+    },
+  },
 }
