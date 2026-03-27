@@ -30,9 +30,9 @@ spec:
             - |
               apt-get update && apt-get install -y --no-install-recommends qpdf
               cp /usr/bin/qpdf /tools/
-              # Copy all required shared libraries
-              ldd /usr/bin/qpdf | grep -o '/lib[^ ]*' | xargs -I{} cp -v {} /tools/ 2>/dev/null || true
+              # Copy only qpdf-specific libs (NOT core system libs like libc, libstdc++, ld-linux)
               cp /usr/lib/x86_64-linux-gnu/libqpdf*.so* /tools/ 2>/dev/null || true
+              cp /usr/lib/x86_64-linux-gnu/libjpeg*.so* /tools/ 2>/dev/null || true
               apt-get clean && rm -rf /var/lib/apt/lists/*
           volumeMounts:
             - name: tools
