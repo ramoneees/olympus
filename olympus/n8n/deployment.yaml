@@ -21,6 +21,21 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
+      initContainers:
+        - name: install-qpdf
+          image: alpine:3.21
+          command:
+            - sh
+            - -c
+            - |
+              apk add --no-cache qpdf
+              cp /usr/bin/qpdf /tools/
+              for lib in libqpdf libjpeg; do
+                cp /usr/lib/${lib}*.so* /tools/ 2>/dev/null || true
+              done
+          volumeMounts:
+            - name: tools
+              mountPath: /tools
       containers:
         - name: n8n
           image: n8nio/n8n:latest
@@ -28,6 +43,10 @@ spec:
             - name: http
               containerPort: 5678
           env:
+            - name: PATH
+              value: "/opt/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            - name: LD_LIBRARY_PATH
+              value: "/opt/tools"
             - name: N8N_HOST
               value: "n8n.ramoneees.com"
             - name: N8N_PROTOCOL
@@ -63,6 +82,8 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /home/node/.n8n
+            - name: tools
+              mountPath: /opt/tools
           resources:
             requests:
               cpu: 100m
@@ -83,6 +104,8 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 15
       volumes:
+        - name: tools
+          emptyDir: {}
         - name: data
           persistentVolumeClaim:
             claimName: n8n-data
