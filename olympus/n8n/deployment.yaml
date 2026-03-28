@@ -290,10 +290,11 @@ metadata:
   name: n8n
   namespace: olympus
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: n8n
   ports:
     - name: http
       port: 5678
       targetPort: 5678
+      nodePort: 30567
