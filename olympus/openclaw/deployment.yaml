@@ -75,7 +75,7 @@ spec:
                        /openclaw/homebrew/share /openclaw/homebrew/var \
                        /openclaw/npm-global
               # Copy root config (overwrite each start so git changes propagate)
-              cp -f /src/root-config/openclaw.json5 /openclaw/openclaw.json5
+              cp -f /src/root-config/openclaw.json5 /openclaw/openclaw.json
               # Copy config files from ConfigMap
               cp -f /src/config-files/* /openclaw/config/ 2>/dev/null || true
               # Generate mcporter config with expanded secrets
@@ -278,6 +278,28 @@ spec:
             - name: ws-persephone
               mountPath: /src/ws/persephone
               readOnly: true
+        # Pre-install MCP npm packages so npx finds them cached on the PVC.
+        # Prevents crash-looping on fresh deployments where npx downloads take >3 min.
+        - name: init-mcp-npm
+          image: node:20-alpine
+          command:
+            - sh
+            - -c
+            - |
+              export NPM_CONFIG_PREFIX=/openclaw/npm-global
+              export PATH="/openclaw/npm-global/bin:$PATH"
+              echo "Pre-installing MCP npm packages..."
+              npm install -g \
+                @modelcontextprotocol/server-sequential-thinking \
+                kubernetes-mcp-server@latest \
+                @modelcontextprotocol/server-filesystem \
+                @modelcontextprotocol/server-postgres \
+                @cocal/google-calendar-mcp \
+                2>&1 || echo "WARN: some npm installs failed (non-fatal — npx will retry at runtime)"
+              echo "MCP npm packages installed."
+          volumeMounts:
+            - name: data
+              mountPath: /openclaw
       containers:
         - name: openclaw
           image: ghcr.io/openclaw/openclaw:latest
@@ -334,6 +356,16 @@ spec:
                 secretKeyRef:
                   name: openclaw-secrets
                   key: N8N_MCP_TOKEN
+            - name: POSTGRES_URL
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: POSTGRES_URL
+            - name: Z_AI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: Z_AI_API_KEY
             - name: ELEVENLABS_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -372,7 +404,7 @@ spec:
           livenessProbe:
             tcpSocket:
               port: http
-            initialDelaySeconds: 30
+            initialDelaySeconds: 180
             periodSeconds: 60
           readinessProbe:
             tcpSocket:
