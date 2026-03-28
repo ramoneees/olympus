@@ -13,15 +13,22 @@ OLYMPUS is a GitOps-managed k3s Kubernetes cluster with:
 
 ```
 bootstrap/              One-time setup (MetalLB, cert-manager, ArgoCD)
-infrastructure/         Longhorn, Traefik, GPU Operator, AdGuard
+infrastructure/         Longhorn, Traefik, GPU Operator, AdGuard, secrets/
 databases/              PostgreSQL, MariaDB, Redis + backup jobs
 apps/                   Application workloads (one dir per app)
-olympus/                GPU-pinned workloads (Ollama, LiteLLM, OpenClaw, n8n)
-  └── olympus-openclaw-config/   Agent configs (JSON5 + workspace prompts)
+olympus/                GPU-pinned workloads
+  ├── olympus-openclaw-config/   Agent configs (see olympus-openclaw-config/AGENTS.md)
+  ├── openclaw/                 OpenClaw K8s manifests (deployment, configmap, secrets)
+  ├── ollama/                   Local LLM inference
+  ├── litellm/                  Unified LLM proxy
+  ├── n8n/                      Workflow automation
+  └── openwebui/                LLM chat UI
 monitoring/             Prometheus, Grafana, Loki, Promtail
-argocd/                 App-of-apps Application manifests
+argocd/                 App-of-apps Application manifests (see argocd/AGENTS.md)
 scripts/                Utility scripts
 ```
+
+**Subdirectory guides:** `olympus/olympus-openclaw-config/AGENTS.md`, `argocd/AGENTS.md`
 
 ## Making Changes
 
@@ -67,6 +74,16 @@ No manual `kubectl apply` after bootstrap. The cluster watches this repo.
 - Reference external secrets via `${VAR}` syntax where supported
 - Document non-default values with comments
 
+### App Structure Pattern
+
+Most apps follow this structure:
+```
+apps/<app-name>/
+├── deployment.yaml    # or values.yaml for Helm charts
+├── ingress.yaml       # Traefik IngressRoute
+└── secrets.yaml       # Template with PLACEHOLDER values
+```
+
 ## Validation
 
 Before considering a change complete:
@@ -97,11 +114,12 @@ kubectl top pods -A
 
 ## Hard Constraints
 
-1. **Never commit real secrets** — use placeholder templates
-2. **Never use `kubectl apply` directly** — all changes via git
+1. **Never commit real secrets** — use placeholder templates (see `infrastructure/secrets/agent-secrets-template/`)
+2. **Never use `kubectl apply` directly** — all changes via git push to Gitea
 3. **Never bypass Longhorn** for persistent storage
 4. **GPU workloads must have resource limits** — prevent node starvation
 5. **Plutus agent must use local models only** — no cloud APIs for financial data
+6. **Hermes MCP tools are non-delegatable** — calendar/tasks/n8n MCPs are Hermes-only
 
 ## Key Services
 
@@ -128,9 +146,17 @@ OLYMPUS runs specialized AI agents via OpenClaw:
 | Plutus | Finance | deepseek-r1:7b (local only) |
 | Themis | Strategy/Audit | MiniMax-M2.5 (cloud) |
 | Mnemosyne | Memory Curator | qwen3:8b (local) |
+| Nemesis | Bias/Critique | MiniMax-M2.5 (cloud) |
+| Calliope | Writing | MiniMax-M2.5 (cloud) |
+| Iris | Communication | MiniMax-M2.5 (cloud) |
+| Asclepius | Wellness | MiniMax-M2.5 (cloud) |
+| Argus | Monitoring | MiniMax-M2.5 (cloud) |
+| Persephone | Planning/GTD | MiniMax-M2.5 (cloud) |
 
 Agent configs: `olympus/olympus-openclaw-config/config/`
 Workspace prompts: `olympus/olympus-openclaw-config/workspaces/<agent>/`
+
+See `olympus/olympus-openclaw-config/AGENTS.md` for full architecture.
 
 ## Backup Architecture
 

@@ -21,33 +21,194 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
-      initContainers:
-        - name: install-qpdf
-          image: debian:bookworm-slim
-          command:
-            - sh
-            - -c
-            - |
-              apt-get update && apt-get install -y --no-install-recommends qpdf
-              cp /usr/bin/qpdf /tools/
-              # Copy only qpdf-specific libs (NOT core system libs like libc, libstdc++, ld-linux)
-              cp /usr/lib/x86_64-linux-gnu/libqpdf*.so* /tools/ 2>/dev/null || true
-              cp /usr/lib/x86_64-linux-gnu/libjpeg*.so* /tools/ 2>/dev/null || true
-              apt-get clean && rm -rf /var/lib/apt/lists/*
-          volumeMounts:
-            - name: tools
-              mountPath: /tools
       containers:
+        # PDF toolkit sidecar: /decrypt, /to-images, /extract-text, /metadata, /extract-pages
+        - name: pdf-tool
+          image: python:3.12-slim
+          ports:
+            - name: pdf-api
+              containerPort: 5000
+          env:
+            - name: FLASK_ENV
+              value: "production"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update && apt-get install -y --no-install-recommends poppler-utils && rm -rf /var/lib/apt/lists/*
+              pip install --no-cache-dir pikepdf pdf2image pdfminer.six flask gunicorn
+              cat > /app/server.py << 'PYEOF'
+              from flask import Flask, request, send_file, jsonify, Response
+              import pikepdf
+              from pdf2image import convert_from_bytes
+              from pdfminer.high_level import extract_text_to_fp
+              import tempfile
+              import io
+              import base64
+              import logging
+              import zipfile
+
+              app = Flask(__name__)
+              logging.basicConfig(level=logging.INFO)
+
+              def get_pdf_from_request():
+                  if 'file' not in request.files:
+                      raise ValueError('No file provided')
+                  file = request.files['file']
+                  password = request.form.get('password', '') or None
+                  return file.read(), password
+
+              @app.route('/health', methods=['GET'])
+              def health():
+                  return jsonify(status='healthy')
+
+              @app.route('/decrypt', methods=['POST'])
+              def decrypt():
+                  try:
+                      data, password = get_pdf_from_request()
+                      pdf = pikepdf.open(io.BytesIO(data), password=password)
+                      output = io.BytesIO()
+                      pdf.save(output)
+                      output.seek(0)
+                      return send_file(output, mimetype='application/pdf')
+                  except pikepdf.PasswordError:
+                      return jsonify(error='Incorrect or missing password'), 401
+                  except pikepdf.PdfError as e:
+                      return jsonify(error=f'PDF error: {str(e)}'), 400
+                  except ValueError as e:
+                      return jsonify(error=str(e)), 400
+                  except Exception as e:
+                      return jsonify(error=f'Error: {str(e)}'), 500
+
+              @app.route('/metadata', methods=['POST'])
+              def metadata():
+                  try:
+                      data, password = get_pdf_from_request()
+                      pdf = pikepdf.open(io.BytesIO(data), password=password)
+                      info = {
+                          'pages': len(pdf.pages),
+                          'encrypted': pdf.is_encrypted,
+                          'metadata': dict(pdf.docinfo) if pdf.docinfo else {}
+                      }
+                      return jsonify(info)
+                  except pikepdf.PasswordError:
+                      return jsonify(error='Incorrect or missing password'), 401
+                  except Exception as e:
+                      return jsonify(error=f'Error: {str(e)}'), 500
+
+              @app.route('/to-images', methods=['POST'])
+              def to_images():
+                  try:
+                      data, password = get_pdf_from_request()
+                      if password:
+                          pdf = pikepdf.open(io.BytesIO(data), password=password)
+                          decrypted = io.BytesIO()
+                          pdf.save(decrypted)
+                          decrypted.seek(0)
+                          data = decrypted.read()
+
+                      fmt = request.form.get('format', 'png').lower()
+                      dpi = int(request.form.get('dpi', 150))
+                      pages_str = request.form.get('pages', '')
+
+                      page_range = None
+                      if pages_str:
+                          parts = [int(p.strip()) for p in pages_str.split(',')]
+                          page_range = (min(parts) - 1, max(parts))
+
+                      images = convert_from_bytes(data, dpi=dpi, first_page=page_range[0] + 1 if page_range else None, last_page=page_range[1] if page_range else None)
+
+                      results = []
+                      for i, img in enumerate(images, 1):
+                          buf = io.BytesIO()
+                          img.save(buf, format=fmt.upper())
+                          buf.seek(0)
+                          results.append({
+                              'page': i,
+                              'image': base64.b64encode(buf.read()).decode('utf-8'),
+                              'format': fmt
+                          })
+
+                      return jsonify(images=results)
+                  except pikepdf.PasswordError:
+                      return jsonify(error='Incorrect or missing password'), 401
+                  except Exception as e:
+                      return jsonify(error=f'Error: {str(e)}'), 500
+
+              @app.route('/extract-text', methods=['POST'])
+              def extract_text():
+                  try:
+                      data, password = get_pdf_from_request()
+                      if password:
+                          pdf = pikepdf.open(io.BytesIO(data), password=password)
+                          decrypted = io.BytesIO()
+                          pdf.save(decrypted)
+                          decrypted.seek(0)
+                          data = decrypted.read()
+
+                      output = io.StringIO()
+                      extract_text_to_fp(io.BytesIO(data), output)
+                      return jsonify(text=output.getvalue())
+                  except pikepdf.PasswordError:
+                      return jsonify(error='Incorrect or missing password'), 401
+                  except Exception as e:
+                      return jsonify(error=f'Error: {str(e)}'), 500
+
+              @app.route('/extract-pages', methods=['POST'])
+              def extract_pages():
+                  try:
+                      data, password = get_pdf_from_request()
+                      pages_str = request.form.get('pages', '1')
+                      pages = sorted(set(int(p.strip()) for p in pages_str.split(',')))
+
+                      pdf = pikepdf.open(io.BytesIO(data), password=password)
+                      new_pdf = pikepdf.New()
+
+                      for p in pages:
+                          if 1 <= p <= len(pdf.pages):
+                              new_pdf.pages.append(pdf.pages[p - 1])
+
+                      output = io.BytesIO()
+                      new_pdf.save(output)
+                      output.seek(0)
+                      return send_file(output, mimetype='application/pdf')
+                  except pikepdf.PasswordError:
+                      return jsonify(error='Incorrect or missing password'), 401
+                  except Exception as e:
+                      return jsonify(error=f'Error: {str(e)}'), 500
+
+              if __name__ == '__main__':
+                  app.run(host='0.0.0.0', port=5000)
+              PYEOF
+              gunicorn --bind 0.0.0.0:5000 --workers 1 --threads 2 --chdir /app server:app
+          volumeMounts:
+            - name: pdf-temp
+              mountPath: /tmp/pdf
+          resources:
+            requests:
+              cpu: 50m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: pdf-api
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: pdf-api
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
         - name: n8n
           image: n8nio/n8n:latest
           ports:
             - name: http
               containerPort: 5678
           env:
-            - name: PATH
-              value: "/opt/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-            - name: LD_LIBRARY_PATH
-              value: "/opt/tools"
             - name: N8N_HOST
               value: "n8n.ramoneees.com"
             - name: N8N_PROTOCOL
@@ -83,8 +244,6 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /home/node/.n8n
-            - name: tools
-              mountPath: /opt/tools
           resources:
             requests:
               cpu: 100m
@@ -105,7 +264,7 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 15
       volumes:
-        - name: tools
+        - name: pdf-temp
           emptyDir: {}
         - name: data
           persistentVolumeClaim:
