@@ -1,0 +1,66 @@
+{
+  "$schema": "https://raw.githubusercontent.com/steipete/mcporter/main/mcporter.schema.json",
+  "mcpServers": {
+    "google-calendar": {
+      "description": "Google Calendar (OAuth)",
+      "command": "npx",
+      "args": ["-y", "@cocal/google-calendar-mcp"],
+      "env": {
+        "GOOGLE_OAUTH_CREDENTIALS": "/home/ramoneees/.openclaw/credentials/google-calendar/gcp-oauth.keys.json",
+        "GOOGLE_CALENDAR_MCP_TOKEN_PATH": "/home/ramoneees/.openclaw/credentials/google-calendar/.tokens.json"
+      }
+    },
+    "ticktick": {
+      "description": "TickTick task management (OAuth)",
+      "baseUrl": "https://mcp.ticktick.com"
+    },
+    "n8n": {
+      "description": "n8n workflow automation",
+      "baseUrl": "http://192.168.50.11:30567/mcp-server/http",
+      "headers": {
+        "Authorization": "Bearer ${N8N_MCP_TOKEN}"
+      }
+    },
+    "sequential-thinking": {
+      "description": "Sequential thinking for complex reasoning",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "kubernetes": {
+      "description": "Kubernetes cluster management (read-only)",
+      "command": "npx",
+      "args": ["-y", "kubernetes-mcp-server@latest", "--disable-destructive"]
+    },
+    "filesystem": {
+      "description": "Filesystem access to OpenClaw workspaces",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/ramoneees/.openclaw/workspaces"]
+    },
+    "postgres": {
+      "description": "PostgreSQL database access",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "${POSTGRES_URL}"]
+    },
+    "web-search-prime": {
+      "description": "Web search via Z AI",
+      "baseUrl": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+      "headers": {
+        "Authorization": "Bearer ${Z_AI_API_KEY}"
+      }
+    },
+    "web-reader": {
+      "description": "Web page reader via Z AI",
+      "baseUrl": "https://api.z.ai/api/mcp/web_reader/mcp",
+      "headers": {
+        "Authorization": "Bearer ${Z_AI_API_KEY}"
+      }
+    },
+    "zreader": {
+      "description": "Document reader via Z AI",
+      "baseUrl": "https://api.z.ai/api/mcp/zread/mcp",
+      "headers": {
+        "Authorization": "Bearer ${Z_AI_API_KEY}"
+      }
+    }
+  }
+}

@@ -49,7 +49,7 @@ apps/               Application workloads
 olympus/            GPU-pinned workloads
 ├── ollama/         Local LLM inference
 ├── litellm/        Unified LLM proxy
-├── openclaw/       Multi-agent orchestrator
+├── openclaw/       Multi-agent orchestrator (baremetal, ingress routing only)
 ├── openwebui/      LLM chat interface
 ├── jellyfin/       Media server
 ├── n8n/            Workflow automation
@@ -91,13 +91,14 @@ docs/               Architecture documentation
 | Authentik | — | SSO / Identity (ingress pending) |
 | Grafana | — | Dashboards & monitoring (ingress pending) |
 | Open WebUI | — | LLM chat interface (ingress pending) |
+| OpenClaw | openclaw.ramoneees.com | Multi-agent AI orchestrator (baremetal) |
 | Jellyfin | — | Media server (ingress pending) |
 | n8n | — | Workflow automation (ingress pending) |
 | Nextcloud | — | File sync (ingress pending) |
 
 ## OLYMPUS Multi-Agent System
 
-An AI orchestration layer powered by OpenClaw, with specialized agents communicating through Mattermost and coordinated by a central orchestrator.
+An AI orchestration layer powered by OpenClaw (running as baremetal systemd on the olympus node), with specialized agents communicating through Mattermost and coordinated by a central orchestrator.
 
 ### Agents
 

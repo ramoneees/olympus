@@ -17,3 +17,6 @@ passwords.txt
 !monitoring/**/*secrets*.yaml
 openclaw-previous-config
 .sisyphus
+
+olympus/openclaw/deployment.yaml
+olympus/openclaw/configmap.yaml

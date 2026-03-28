@@ -18,7 +18,7 @@ argocd/
 ├── infrastructure.yaml # Longhorn, GPU operator, Traefik, secrets
 ├── databases.yaml      # PostgreSQL, MariaDB, Redis, backups
 ├── monitoring.yaml     # kube-prometheus-stack, Loki, Promtail
-├── olympus.yaml        # GPU workloads: Ollama, LiteLLM, OpenClaw, n8n, Open WebUI
+├── olympus.yaml        # GPU workloads: Ollama, LiteLLM, n8n, Open WebUI + OpenClaw ingress routing
 └── adguard.yaml        # AdGuard DNS
 ```
 
@@ -80,7 +80,7 @@ Some apps (e.g., Gitea) use multiple sources:
 | infrastructure.yaml | longhorn, gpu-operator, traefik, sealed-secrets |
 | databases.yaml | postgresql, mariadb, redis, db-backups |
 | monitoring.yaml | kube-prometheus-stack, loki, promtail, monitoring-ingress |
-| olympus.yaml | ollama, litellm, openclaw, n8n, openwebui |
+| olympus.yaml | ollama, litellm, openclaw (ingress routing only), n8n, openwebui |
 | adguard.yaml | adguard |
 
 ## REPOSITORY SOURCE

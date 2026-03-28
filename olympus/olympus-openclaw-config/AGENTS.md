@@ -5,7 +5,7 @@
 
 ## OVERVIEW
 
-OpenClaw v1 multi-agent orchestration system — 13 specialized AI agents coordinated by Hermes, with MCP tool integrations for calendar, tasks, and workflows.
+OpenClaw v1 multi-agent orchestration system — 13 specialized AI agents coordinated by Hermes, with MCP tool integrations for calendar, tasks, and workflows. Runs as a baremetal systemd service on the olympus node (192.168.50.11:18789).
 
 ## STRUCTURE
 
@@ -37,9 +37,9 @@ olympus-openclaw-config/
 
 ## CONVENTIONS
 
-- **Hermes** is default entrypoint (default: true), workspace at /home/node/.openclaw/workspaces/hermes
+- **Hermes** is default entrypoint (default: true), workspace at /home/ramoneees/.openclaw/workspaces/hermes
 - **MCP tools** (google-calendar, ticktick, n8n) are HERMES-ONLY — subagents cannot access them
-- **Plutus** uses LOCAL models only (deepseek-r1:7b) — financial data never leaves cluster
+- **Plutus** uses LOCAL models only (deepseek-r1:7b) — financial data never leaves the node
 - **Agent prompts** use 6-file pack: AGENTS.md, SOUL.md, TOOLS.md, IDENTITY.md, USER.md, MEMORY.md
 - **Memory**: builtin backend, embeddings via nomic-embed-text-v2 through LiteLLM (local)
 
@@ -66,7 +66,7 @@ olympus-openclaw-config/
 Defined in openclaw.json lines 100-154:
 - google-calendar: npx @cocal/google-calendar-mcp (OAuth)
 - ticktick: https://mcp.ticktick.com (streamable-http, OAuth)
-- n8n: http://n8n.olympus.svc.cluster.local:5678/mcp-server/http
+- n8n: http://192.168.50.11:30567/mcp-server/http
 - sequential-thinking: npx @modelcontextprotocol/server-sequential-thinking
 - kubernetes: npx kubernetes-mcp-server --disable-destructive
 - filesystem/postgres/web-search-prime/web-reader/zreader

@@ -18,7 +18,7 @@ databases/              PostgreSQL, MariaDB, Redis + backup jobs
 apps/                   Application workloads (one dir per app)
 olympus/                GPU-pinned workloads
   ├── olympus-openclaw-config/   Agent configs (see olympus-openclaw-config/AGENTS.md)
-  ├── openclaw/                 OpenClaw K8s manifests (deployment, configmap, secrets)
+  ├── openclaw/                 Ingress routing only — baremetal systemd service on olympus node
   ├── ollama/                   Local LLM inference
   ├── litellm/                  Unified LLM proxy
   ├── n8n/                      Workflow automation
@@ -120,6 +120,7 @@ kubectl top pods -A
 4. **GPU workloads must have resource limits** — prevent node starvation
 5. **Plutus agent must use local models only** — no cloud APIs for financial data
 6. **Hermes MCP tools are non-delegatable** — calendar/tasks/n8n MCPs are Hermes-only
+7. **OpenClaw is baremetal** — do not re-add a K8s Deployment for OpenClaw; it runs as systemd on olympus node
 
 ## Key Services
 
@@ -131,11 +132,12 @@ kubectl top pods -A
 | Vikunja | tasks.ramoneees.com | Task management |
 | Firefly III | firefly.ramoneees.com | Finance tracking |
 | Open WebUI | ai.ramoneees.com | LLM chat interface |
+| OpenClaw | openclaw.ramoneees.com | Multi-agent AI orchestrator (baremetal) |
 | Grafana | grafana.ramoneees.com | Monitoring dashboards |
 
 ## Multi-Agent System (OpenClaw)
 
-OLYMPUS runs specialized AI agents via OpenClaw:
+OLYMPUS runs specialized AI agents via OpenClaw (baremetal systemd service on olympus node, port 18789):
 
 | Agent | Role | Model |
 |-------|------|-------|
