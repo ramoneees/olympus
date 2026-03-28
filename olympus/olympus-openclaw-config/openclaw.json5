@@ -1,6 +1,6 @@
 {
   // OLYMPUS v1 root config for OpenClaw — K8s deployment.
-  // Mounted at /home/node/.openclaw/openclaw.json via ConfigMap.
+  // Mounted at /home/ramoneees/.openclaw/openclaw.json via ConfigMap.
 
   agents: {
     defaults: { $include: "./config/agents.defaults.json5" },
@@ -26,7 +26,7 @@
       mode: "token",
       token: "${OPENCLAW_GATEWAY_TOKEN}",
     },
-    trustedProxies: ["10.42.0.0/16", "10.43.0.0/16"],
+    trustedProxies: ["10.42.0.0/16", "10.43.0.0/16", "192.168.50.0/24"],
     controlUi: {
       allowedOrigins: ["https://openclaw.ramoneees.com"],
     },
@@ -103,8 +103,8 @@
         command: "npx",
         args: ["-y", "@cocal/google-calendar-mcp"],
         env: {
-          GOOGLE_OAUTH_CREDENTIALS: "/home/node/.openclaw/credentials/google-calendar/gcp-oauth.keys.json",
-          GOOGLE_CALENDAR_MCP_TOKEN_PATH: "/home/node/.openclaw/credentials/google-calendar/.tokens.json",
+          GOOGLE_OAUTH_CREDENTIALS: "/home/ramoneees/.openclaw/credentials/google-calendar/gcp-oauth.keys.json",
+          GOOGLE_CALENDAR_MCP_TOKEN_PATH: "/home/ramoneees/.openclaw/credentials/google-calendar/.tokens.json",
         },
       },
       ticktick: {
@@ -112,11 +112,11 @@
         url: "https://mcp.ticktick.com",
         transport: "streamable-http",
         auth: "oauth",
-        tokenCacheDir: "/home/node/.openclaw/credentials/ticktick",
+        tokenCacheDir: "/home/ramoneees/.openclaw/credentials/ticktick",
       },
       n8n: {
         transport: "streamable-http",
-        baseUrl: "http://n8n.olympus.svc.cluster.local:5678/mcp-server/http",
+        baseUrl: "http://192.168.50.11:30567/mcp-server/http",
         headers: { Authorization: "Bearer ${N8N_MCP_TOKEN}" },
       },
       "sequential-thinking": {
@@ -129,7 +129,7 @@
       },
       filesystem: {
         command: "npx",
-        args: ["-y", "@modelcontextprotocol/server-filesystem", "/home/node/.openclaw/workspaces"],
+        args: ["-y", "@modelcontextprotocol/server-filesystem", "/home/ramoneees/.openclaw/workspaces"],
       },
       postgres: {
         command: "npx",

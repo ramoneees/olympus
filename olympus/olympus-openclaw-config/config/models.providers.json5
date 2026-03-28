@@ -4,7 +4,7 @@
   // LiteLLM handles Ollama dispatch and cloud API fallback internally.
 
   litellm: {
-    baseUrl: "http://litellm.olympus.svc.cluster.local:4000",
+    baseUrl: "http://192.168.50.10:30400",
     apiKey: "${LITELLM_API_KEY}",
     api: "openai-completions",
     models: [
