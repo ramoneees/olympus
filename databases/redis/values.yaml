@@ -33,6 +33,12 @@ master:
     limits:
       cpu: 200m
       memory: 256Mi
+  service:
+    type: NodePort
+    ports:
+      redis: 6379
+    nodePorts:
+      redis: 30637
 
 metrics:
   enabled: true

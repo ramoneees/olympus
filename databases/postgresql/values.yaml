@@ -41,6 +41,12 @@ primary:
     enabled: true
   readinessProbe:
     enabled: true
+  service:
+    type: NodePort
+    ports:
+      postgresql: 5432
+    nodePorts:
+      postgresql: 30432
 
 # Single node — no replication needed for homelab
 architecture: standalone
