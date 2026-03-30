@@ -207,12 +207,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: n8n
-  namespace: olympus
+  name: firefly-iii-nodeport
+  namespace: apps
 spec:
   type: NodePort
   selector:
-    app: n8n
+    app: firefly-iii
   ports:
     - name: http
       port: 8080
