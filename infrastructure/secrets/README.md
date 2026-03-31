@@ -128,6 +128,17 @@ kubectl create secret generic redis-agent-secrets \
   --from-literal=REDIS_PASSWORD=<TOKEN_VALUE>
 ```
 
+### olympus namespace — container registry pull secret
+
+```bash
+# Gitea container registry — imagePullSecret for private images
+kubectl create secret docker-registry gitea-registry-pull \
+  --namespace olympus \
+  --docker-server=git.ramoneees.com \
+  --docker-username=ramoneees \
+  --docker-password=<GITEA_ACCESS_TOKEN>
+```
+
 ### olympus namespace — per-agent runtime secrets
 
 ```bash

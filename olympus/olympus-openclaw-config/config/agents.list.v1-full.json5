@@ -24,7 +24,21 @@
     id: "hephaestus",
     workspace: "/home/node/.openclaw/workspaces/hephaestus",
     model: "litellm/qwen3-coder-plus",
-    sandbox: { mode: "off" },
+    sandbox: {
+      mode: "all",
+      scope: "agent",
+      workspaceAccess: "rw",
+      docker: {
+        image: "git.ramoneees.com/ramoneees/hephaestus-sandbox:latest",
+        network: "bridge",
+        env: ["NODE_ENV=development"],
+        binds: [
+          "/home/ramoneees/repos:/repos:rw",
+          "/home/ramoneees/.gitconfig:/etc/gitconfig:ro",
+          "/home/ramoneees/.ssh:/home/node/.ssh:ro",
+        ],
+      },
+    },
     tools: {
       profile: "coding",
       allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"],
