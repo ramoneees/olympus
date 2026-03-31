@@ -49,6 +49,11 @@ spec:
                 secretKeyRef:
                   name: firefly-secret
                   key: app-key
+            - name: STATIC_CRON_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: firefly-secret
+                  key: cron-token
           volumeMounts:
             - name: upload
               mountPath: /var/www/html/storage/upload
