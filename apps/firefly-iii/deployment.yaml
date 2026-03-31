@@ -54,6 +54,8 @@ spec:
                 secretKeyRef:
                   name: firefly-secret
                   key: cron-token
+            - name: ENABLE_EXCHANGE_RATES
+              value: "true"
           volumeMounts:
             - name: upload
               mountPath: /var/www/html/storage/upload
