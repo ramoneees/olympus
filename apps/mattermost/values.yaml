@@ -26,6 +26,7 @@ externalDB:
 
 config:
   MM_SERVICESETTINGS_SITEURL: "https://chat.ramoneees.com"
+  MM_SERVICESETTINGS_ALLOWUNTRUSTEDINTERNALCONNECTIONS: "true"
   MM_SQLSETTINGS_DRIVERNAME: "postgres"
   MM_SQLSETTINGS_DATASOURCE: "postgres://mattermost:mm_Rj3wN8yT5kB6@postgresql.databases.svc.cluster.local:5432/mattermost?sslmode=disable"
 
