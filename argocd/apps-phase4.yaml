@@ -136,12 +136,19 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: apps
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      name: firefly-secret
+      jsonPointers:
+        - /data/api-token
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - RespectIgnoreDifferences=true
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
