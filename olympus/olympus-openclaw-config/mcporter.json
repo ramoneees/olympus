@@ -61,6 +61,15 @@
       "headers": {
         "Authorization": "Bearer ${Z_AI_API_KEY}"
       }
+    },
+    "firefly-iii": {
+      "description": "Firefly III personal finance manager",
+      "command": "npx",
+      "args": ["-y", "@firefly-iii-mcp/local"],
+      "env": {
+        "FIREFLY_III_BASE_URL": "${FIREFLY_III_BASE_URL}",
+        "FIREFLY_III_PAT": "${FIREFLY_III_PAT}"
+      }
     }
   }
 }

@@ -19,6 +19,8 @@ spec:
       labels:
         app: n8n
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
       securityContext:
         fsGroup: 1000
       containers:

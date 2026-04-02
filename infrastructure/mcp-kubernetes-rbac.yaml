@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mcp-kubernetes
+  namespace: kube-system
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mcp-kubernetes-token
+  namespace: kube-system
+  annotations:
+    kubernetes.io/service-account.name: mcp-kubernetes
+type: kubernetes.io/service-account-token
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: mcp-kubernetes-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: mcp-kubernetes
+    namespace: kube-system

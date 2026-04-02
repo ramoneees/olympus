@@ -19,6 +19,8 @@ spec:
       labels:
         app: openwebui
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
       containers:
         - name: openwebui
           image: ghcr.io/open-webui/open-webui:main

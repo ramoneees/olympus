@@ -20,7 +20,7 @@
 
   agentToAgent: {
     enabled: true,
-    allow: ["hermes", "hephaestus", "athena", "plutus", "themis", "prometheus", "mnemosyne"],
+    allow: ["hermes", "hephaestus", "athena", "plutus", "themis", "prometheus", "mnemosyne", "nemesis", "iris", "calliope", "asclepius", "argus", "persephone"],
   },
 
   sessions: {

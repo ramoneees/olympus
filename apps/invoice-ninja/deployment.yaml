@@ -18,6 +18,8 @@ spec:
       labels:
         app: invoice-ninja
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
       initContainers:
         - name: fix-permissions
           image: busybox:latest

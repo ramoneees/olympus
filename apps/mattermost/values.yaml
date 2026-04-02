@@ -71,4 +71,3 @@ extraDeploy:
           targetPort: http
           protocol: TCP
           name: mattermost
-          nodePort: 32065

@@ -37,6 +37,8 @@ server:
     limits:
       cpu: 500m
       memory: 512Mi
+  nodeSelector:
+    kubernetes.io/hostname: olympus
 
 worker:
   env:
@@ -57,6 +59,8 @@ worker:
     limits:
       cpu: 300m
       memory: 512Mi
+  nodeSelector:
+    kubernetes.io/hostname: olympus
 
 postgresql:
   enabled: false

@@ -29,7 +29,7 @@
       scope: "agent",
       workspaceAccess: "rw",
       docker: {
-        image: "git.ramoneees.com/ramoneees/hephaestus-sandbox:latest",
+        image: "git.ramoneees.com/ramoneees/hephaestus-dev:latest",
         network: "bridge",
         env: ["NODE_ENV=development"],
         binds: [
@@ -41,8 +41,8 @@
     },
     tools: {
       profile: "coding",
-      allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"],
-      deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"],
+      allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status", "message", "sessions_spawn"],
+      deny: ["sessions_list", "sessions_history", "sessions_send", "browser", "canvas", "cron", "gateway"],
       elevated: { enabled: false },
       loopDetection: { enabled: true },
     },
@@ -54,22 +54,23 @@
     sandbox: { mode: "off" },
     tools: {
       profile: "minimal",
-      allow: ["read", "group:memory", "web_search", "web_fetch", "browser", "session_status", "mcp:web-search-prime", "mcp:web-reader", "mcp:zreader"],
-      deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway", "message"],
+      allow: ["read", "group:memory", "web_search", "web_fetch", "browser", "session_status", "message", "mcp:web-search-prime", "mcp:web-reader", "mcp:zreader"],
+      deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway"],
       loopDetection: { enabled: true },
     },
   },
   {
-    // PLUTUS: Finance agent. Cloud models OK per budget constraints.
-    // sequential-thinking MCP for structured financial reasoning.
+    // PLUTUS: Finance agent. Cloud model (budget constraint) — hardened:
+    // no web_fetch (prevents data exfiltration), no broad fs writes,
+    // firefly-iii MCP for structured finance queries.
     id: "plutus",
     workspace: "/home/node/.openclaw/workspaces/plutus",
     model: "litellm/openrouter/minimax/minimax-m2.7",
     sandbox: { mode: "off" },
     tools: {
       profile: "minimal",
-      allow: ["group:fs", "group:memory", "web_fetch", "session_status", "mcp:sequential-thinking"],
-      deny: ["exec", "process", "browser", "web_search", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway", "message"],
+      allow: ["read", "write", "group:memory", "session_status", "message", "sessions_spawn", "mcp:sequential-thinking", "mcp:firefly-iii"],
+      deny: ["edit", "apply_patch", "exec", "process", "browser", "web_search", "web_fetch", "sessions_list", "sessions_history", "sessions_send", "canvas", "cron", "gateway"],
       loopDetection: { enabled: true },
     },
   },
@@ -80,8 +81,8 @@
     sandbox: { mode: "off" },
     tools: {
       profile: "minimal",
-      allow: ["read", "group:memory", "web_search", "web_fetch", "session_status", "mcp:sequential-thinking"],
-      deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"],
+      allow: ["read", "group:memory", "web_search", "web_fetch", "session_status", "message", "mcp:sequential-thinking"],
+      deny: ["write", "edit", "apply_patch", "exec", "process", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway"],
       loopDetection: { enabled: true },
     },
   },
@@ -92,8 +93,8 @@
     sandbox: { mode: "off" },
     tools: {
       profile: "coding",
-      allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status"],
-      deny: ["sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "browser", "canvas", "cron", "gateway", "message"],
+      allow: ["group:fs", "group:runtime", "group:memory", "web_search", "web_fetch", "session_status", "message", "sessions_spawn"],
+      deny: ["sessions_list", "sessions_history", "sessions_send", "browser", "canvas", "cron", "gateway"],
       elevated: { enabled: false },
       loopDetection: { enabled: true },
     },
@@ -105,8 +106,8 @@
     sandbox: { mode: "off" },
     tools: {
       profile: "minimal",
-      allow: ["read", "group:memory", "memory_search", "memory_get", "memory_put", "session_status"],
-      deny: ["write", "edit", "apply_patch", "exec", "process", "web_search", "web_fetch", "browser", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway", "message"],
+      allow: ["read", "group:memory", "memory_search", "memory_get", "memory_put", "session_status", "message"],
+      deny: ["write", "edit", "apply_patch", "exec", "process", "web_search", "web_fetch", "browser", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "canvas", "cron", "gateway"],
       loopDetection: { enabled: true },
     },
   },

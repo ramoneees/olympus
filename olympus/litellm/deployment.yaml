@@ -19,6 +19,8 @@ spec:
       labels:
         app: litellm
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
       containers:
         - name: litellm
           image: ghcr.io/berriai/litellm:main-latest

@@ -1,0 +1,280 @@
+# pgvector Reindex Job: Migrate from nomic-embed-text-v2 to bge-m3
+# This job regenerates all embeddings using the new bge-m3 model (1024 dimensions)
+# 
+# Usage:
+#   kubectl apply -f databases/postgresql/pgvector-reindex-job.yaml
+#   kubectl logs -f job/pgvector-reindex-bge-m3 -n databases
+#
+# IMPORTANT: This requires bge-m3 to be pulled in Ollama first:
+#   kubectl exec -it deployment/ollama -n olympus -- ollama pull bge-m3
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pgvector-reindex-bge-m3
+  namespace: databases
+  labels:
+    app: pgvector-reindex
+    migration: bge-m3
+spec:
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app: pgvector-reindex
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: reindex
+          image: postgres:16-alpine
+          env:
+            - name: PGHOST
+              value: postgresql.databases.svc.cluster.local
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              value: postgres
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-secret
+                  key: postgres-password
+            - name: OLLAMA_URL
+              value: http://ollama.olympus.svc.cluster.local:11434
+            - name: EMBEDDING_MODEL
+              value: bge-m3
+            - name: EMBEDDING_DIMENSIONS
+              value: "1024"
+            - name: BATCH_SIZE
+              value: "100"
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              echo "=== pgvector Reindex: nomic-embed-text-v2 → bge-m3 ==="
+              echo "Target: PostgreSQL ${PGHOST}:${PGPORT}"
+              echo "Ollama: ${OLLAMA_URL}"
+              echo "Model: ${EMBEDDING_MODEL} (${EMBEDDING_DIMENSIONS} dimensions)"
+              echo ""
+              
+              export PGPASSWORD="${PGPASSWORD}"
+              
+              # Install curl and jq
+              echo "Installing dependencies..."
+              apk add --no-cache curl jq > /dev/null 2>&1
+              
+              # Wait for PostgreSQL
+              echo "Waiting for PostgreSQL..."
+              until pg_isready -h ${PGHOST} -p ${PGPORT} -U ${PGUSER}; do
+                sleep 2
+              done
+              echo "PostgreSQL is ready"
+              
+              # Create mnemosyne database if it doesn't exist
+              echo "Creating mnemosyne database if needed..."
+              psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'mnemosyne'" | grep -q 1 || \
+                psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d postgres -c "CREATE DATABASE mnemosyne"
+              echo "Database ready"
+              
+              # Create pgvector extension in mnemosyne database
+              echo "Enabling pgvector extension..."
+              psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d mnemosyne -c "CREATE EXTENSION IF NOT EXISTS vector;"
+              
+              # Wait for Ollama
+              echo "Waiting for Ollama..."
+              until curl -sf "${OLLAMA_URL}/api/tags" > /dev/null 2>&1; do
+                sleep 5
+              done
+              echo "Ollama is ready"
+              
+              # Verify bge-m3 is available
+              echo "Checking if ${EMBEDDING_MODEL} model exists..."
+              if ! curl -sf "${OLLAMA_URL}/api/tags" | grep -q "${EMBEDDING_MODEL}"; then
+                echo "ERROR: ${EMBEDDING_MODEL} not found in Ollama. Please pull it first:"
+                echo "  kubectl exec -it deployment/ollama -n olympus -- ollama pull ${EMBEDDING_MODEL}"
+                exit 1
+              fi
+              echo "✓ ${EMBEDDING_MODEL} is available"
+              
+              # Run the migration schema script in mnemosyne database
+              echo ""
+              echo "Running migration schema..."
+              psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d mnemosyne -f /scripts/migrate-to-bge-m3.sql
+              
+              # Check if there's data to migrate
+              TOTAL_RECORDS=$(psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d mnemosyne -tc "SELECT COUNT(*) FROM memory_entries_backup" 2>/dev/null | xargs || echo "0")
+              if [ "${TOTAL_RECORDS}" -eq "0" ]; then
+                echo ""
+                echo "No existing data to migrate. Schema is ready for new entries."
+                echo ""
+                echo "=== Migration Complete ==="
+                echo "Status: Schema created, no data migration needed"
+                exit 0
+              fi
+              
+              echo ""
+              echo "Found ${TOTAL_RECORDS} records to reindex"
+              echo "Starting batch reindexing (batch size: ${BATCH_SIZE})..."
+              
+              # Update migration status
+              psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d mnemosyne -c "UPDATE embedding_migrations SET status = 'in_progress', records_total = ${TOTAL_RECORDS} WHERE status = 'pending'"
+              
+              # Process in batches
+              PROCESSED=0
+              FAILED=0
+              OFFSET=0
+              
+              while [ ${OFFSET} -lt ${TOTAL_RECORDS} ]; do
+                echo ""
+                echo "Processing batch: offset=${OFFSET}, limit=${BATCH_SIZE}"
+                
+                # Get batch of records
+                BATCH=$(psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d mnemosyne -tc "SELECT id || '|||' || REPLACE(content, E'\n', ' ') FROM memory_entries_backup ORDER BY timestamp LIMIT ${BATCH_SIZE} OFFSET ${OFFSET}")
+                
+                # For each record, generate embedding and insert
+                while IFS='|||' read -r ID CONTENT; do
+                  if [ -z "${ID}" ] || [ -z "${CONTENT}" ]; then
+                    continue
+                  fi
+                  
+                  ID=$(echo "${ID}" | xargs)
+                  CONTENT=$(echo "${CONTENT}" | xargs)
+                  
+                  if [ -z "${CONTENT}" ]; then
+                    echo "  ✗ Empty content for ID: ${ID}, skipping"
+                    FAILED=$((FAILED + 1))
+                    continue
+                  fi
+                  
+                  # Generate embedding via Ollama
+                  EMBEDDING_RESPONSE=$(curl -sf "${OLLAMA_URL}/api/embeddings" \
+                    -H "Content-Type: application/json" \
+                    -d "{\"model\": \"${EMBEDDING_MODEL}\", \"prompt\": \"${CONTENT}\"}" 2>/dev/null || echo '{"embedding":null}')
+                  
+                  EMBEDDING=$(echo "${EMBEDDING_RESPONSE}" | jq -r '.embedding | if type == "array" then "[" + (map(tostring) | join(",")) + "]" else null end' 2>/dev/null || echo "null")
+                  
+                  if [ -n "${EMBEDDING}" ] && [ "${EMBEDDING}" != "null" ]; then
+                    # Convert JSON array to pgvector format [a,b,c] -> {a b c}
+                    VECTOR=$(echo "${EMBEDDING}" | sed 's/^\[/{/' | sed 's/\]$/}/' | tr ',' ' ')
+                    
+                    # Insert into new table with embedding
+                    psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d mnemosyne -c "
+                      INSERT INTO memory_entries (id, content, embedding, namespace, source_agent, timestamp, confidence, metadata) 
+                      SELECT id, content, '${VECTOR}'::vector(1024), namespace, source_agent, timestamp, confidence, metadata 
+                      FROM memory_entries_backup WHERE id = '${ID}'
+                    " 2>/dev/null && echo "  ✓ Reindexed: ${ID}" || echo "  ✗ Failed to insert: ${ID}"
+                    
+                    PROCESSED=$((PROCESSED + 1))
+                  else
+                    echo "  ✗ Failed to generate embedding for: ${ID}"
+                    FAILED=$((FAILED + 1))
+                  fi
+                done <<< "${BATCH}"
+                
+                OFFSET=$((OFFSET + BATCH_SIZE))
+                
+                # Update progress
+                psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d mnemosyne -c "UPDATE embedding_migrations SET records_processed = ${PROCESSED}, records_failed = ${FAILED} WHERE status = 'in_progress'"
+                echo "Progress: ${PROCESSED}/${TOTAL_RECORDS} (${FAILED} failed)"
+              done
+              
+              # Mark migration complete
+              psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d mnemosyne -c "UPDATE embedding_migrations SET status = 'completed', completed_at = NOW() WHERE status = 'in_progress'"
+              
+              echo ""
+              echo "=== Migration Complete ==="
+              echo "Total records: ${TOTAL_RECORDS}"
+              echo "Successfully reindexed: ${PROCESSED}"
+              echo "Failed: ${FAILED}"
+              psql -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d mnemosyne -c "SELECT * FROM migration_status LIMIT 1"
+          volumeMounts:
+            - name: migration-scripts
+              mountPath: /scripts
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+      volumes:
+        - name: migration-scripts
+          configMap:
+            name: pgvector-migration-scripts
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgvector-migration-scripts
+  namespace: databases
+data:
+  migrate-to-bge-m3.sql: |
+    SELECT 1;
+    
+    DO $$
+    BEGIN
+        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'memory_entries') THEN
+            CREATE TABLE IF NOT EXISTS memory_entries_backup AS
+            SELECT * FROM memory_entries WHERE 1=0;
+            
+            INSERT INTO memory_entries_backup (id, namespace, content, source_agent, timestamp, confidence, metadata)
+            SELECT id, namespace, content, source_agent, timestamp, confidence, metadata
+            FROM memory_entries;
+            
+            DROP TABLE IF EXISTS memory_entries CASCADE;
+        END IF;
+    END $$;
+    
+    CREATE TABLE IF NOT EXISTS memory_entries (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        namespace VARCHAR(255) NOT NULL,
+        content TEXT NOT NULL,
+        embedding vector(1024) NOT NULL,
+        source_agent VARCHAR(100) NOT NULL,
+        timestamp TIMESTAMPTZ DEFAULT NOW(),
+        confidence FLOAT CHECK (confidence >= 0 AND confidence <= 1),
+        metadata JSONB DEFAULT '{}',
+        CONSTRAINT valid_namespace CHECK (namespace LIKE '/memory/%')
+    );
+    
+    CREATE INDEX IF NOT EXISTS idx_memory_embedding ON memory_entries 
+    USING ivfflat (embedding vector_cosine_ops) WITH (lists = 256);
+    
+    CREATE INDEX IF NOT EXISTS idx_memory_namespace ON memory_entries (namespace);
+    CREATE INDEX IF NOT EXISTS idx_memory_timestamp ON memory_entries (timestamp DESC);
+    CREATE INDEX IF NOT EXISTS idx_memory_ns_time ON memory_entries (namespace, timestamp DESC);
+    CREATE INDEX IF NOT EXISTS idx_memory_source ON memory_entries (source_agent);
+    
+    CREATE TABLE IF NOT EXISTS embedding_migrations (
+        id SERIAL PRIMARY KEY,
+        from_model VARCHAR(100) NOT NULL,
+        to_model VARCHAR(100) NOT NULL,
+        from_dimensions INTEGER NOT NULL,
+        to_dimensions INTEGER NOT NULL,
+        started_at TIMESTAMPTZ DEFAULT NOW(),
+        completed_at TIMESTAMPTZ,
+        records_total INTEGER DEFAULT 0,
+        records_processed INTEGER DEFAULT 0,
+        records_failed INTEGER DEFAULT 0,
+        status VARCHAR(50) DEFAULT 'pending',
+        error_message TEXT,
+        notes TEXT
+    );
+    
+    INSERT INTO embedding_migrations (from_model, to_model, from_dimensions, to_dimensions, status, notes)
+    SELECT 'nomic-embed-text-v2', 'bge-m3', 768, 1024, 'pending', 
+           'Migration from nomic-embed-text-v2 (768d) to bge-m3 (1024d)'
+    WHERE NOT EXISTS (SELECT 1 FROM embedding_migrations);
+    
+    CREATE OR REPLACE VIEW migration_status AS
+    SELECT 
+        id, from_model, to_model, from_dimensions, to_dimensions, status,
+        records_total, records_processed, records_failed,
+        CASE WHEN records_total > 0 THEN ROUND((records_processed::numeric / records_total::numeric) * 100, 2) ELSE 0 END as progress_percent,
+        started_at, completed_at,
+        EXTRACT(EPOCH FROM (COALESCE(completed_at, NOW()) - started_at))/60 as duration_minutes,
+        error_message, notes
+    FROM embedding_migrations
+    ORDER BY started_at DESC;

@@ -1,9 +1,17 @@
 [
-  // Intentionally empty for v1.
-  // Hermes is the default agent, so unbound inbound traffic falls back to Hermes.
-  // Add channel-specific bindings later if you want per-channel behavior.
-  // Examples:
-  // { agentId: "hermes", match: { channel: "slack" } },
-  // { agentId: "hermes", match: { channel: "telegram" } },
-  // { agentId: "hermes", match: { channel: "discord" } },
+  // Route @mentions in Mattermost channels to the corresponding agent.
+  // Unbound traffic (no mention or unknown mention) falls back to Hermes (default: true).
+  { agentId: "hermes",      match: { channel: "mattermost", mention: "hermes" } },
+  { agentId: "hephaestus",  match: { channel: "mattermost", mention: "hephaestus" } },
+  { agentId: "athena",      match: { channel: "mattermost", mention: "athena" } },
+  { agentId: "plutus",      match: { channel: "mattermost", mention: "plutus" } },
+  { agentId: "themis",      match: { channel: "mattermost", mention: "themis" } },
+  { agentId: "prometheus",  match: { channel: "mattermost", mention: "prometheus" } },
+  { agentId: "mnemosyne",   match: { channel: "mattermost", mention: "mnemosyne" } },
+  { agentId: "nemesis",     match: { channel: "mattermost", mention: "nemesis" } },
+  { agentId: "iris",        match: { channel: "mattermost", mention: "iris" } },
+  { agentId: "calliope",    match: { channel: "mattermost", mention: "calliope" } },
+  { agentId: "asclepius",   match: { channel: "mattermost", mention: "asclepius" } },
+  { agentId: "argus",       match: { channel: "mattermost", mention: "argus" } },
+  { agentId: "persephone",  match: { channel: "mattermost", mention: "persephone" } },
 ]

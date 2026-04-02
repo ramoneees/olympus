@@ -80,17 +80,23 @@ Edit YAML manifests → commit/push to Gitea (olympus repo) → ArgoCD auto-sync
 
 ## OLYMPUS Multi-Agent Architecture
 
-An AI orchestration layer using OpenClaw, with 7 specialized agents:
+An AI orchestration layer using OpenClaw, with 13 specialized agents:
 
 | Agent | Role | Model | Tool Profile |
 |-------|------|-------|-------------|
-| **Hermes** (orchestrator) | Routes tasks, coordinates agents | qwen3.5-plus (cloud) | minimal + sessions |
-| **Hephaestus** | Developer/Code | qwen3-coder-plus (cloud) | coding |
+| **Hermes** (orchestrator) | Routes tasks, coordinates agents | glm-5-turbo (cloud) | full (deny exec/write) + sessions |
+| **Hephaestus** | Developer/Code | qwen3-coder-plus (cloud) | coding (sandboxed) |
 | **Prometheus** | Infrastructure/IaC | qwen3-coder-plus (cloud) | coding |
-| **Athena** | Research/Docs | MiniMax-M2.5 (cloud) | minimal + web |
-| **Plutus** | Finance (LOCAL ONLY) | deepseek-r1:7b (local Ollama) | minimal + fs |
-| **Themis** | Strategy & Audit | MiniMax-M2.5 (cloud) | minimal + web |
+| **Athena** | Research/Docs | MiniMax-M2.5 (cloud) | minimal + web + MCP web readers |
+| **Plutus** | Finance | MiniMax-M2.7 (cloud, hardened) | minimal + read/write + MCP firefly-iii |
+| **Themis** | Strategy & Audit | MiniMax-M2.5 (cloud) | minimal + read + web |
 | **Mnemosyne** | Memory Curator | qwen3:8b (local Ollama) | minimal + memory |
+| **Nemesis** | Critique & Bias Detection | MiniMax-M2.5 (cloud) | minimal + memory + sessions_spawn |
+| **Iris** | Communication & Messaging | MiniMax-M2.5 (cloud) | minimal + read + memory + message |
+| **Calliope** | Writing & Content | MiniMax-M2.5 (cloud) | minimal + read + memory + sessions_spawn |
+| **Asclepius** | Health & Wellness | MiniMax-M2.5 (cloud) | minimal + memory + message |
+| **Argus** | Monitoring & Alerts | MiniMax-M2.5 (cloud) | minimal + memory + MCP kubernetes |
+| **Persephone** | Planning & GTD | MiniMax-M2.5 (cloud) | minimal + memory + sessions_spawn |
 
 ### LLM Routing
 
@@ -146,7 +152,7 @@ All model traffic through LiteLLM (unified proxy) → Ollama (local) or DashScop
 
 ## Privacy Constraint
 
-Plutus (finance agent) must use LOCAL models exclusively — never route financial data through cloud APIs. Memory embeddings use local Ollama (nomic-embed-text-v2 via LiteLLM), so Plutus memory search is also local-safe.
+Plutus (finance agent) uses a cloud model (MiniMax-M2.7 via OpenRouter) for budget reasons. To mitigate data exposure: `web_fetch` is denied (no outbound HTTP to arbitrary URLs), filesystem access is limited to `read`+`write` (no `edit`/`apply_patch`), and financial queries go through the `firefly-iii` MCP (structured API, not raw data). Memory embeddings use local Ollama (nomic-embed-text-v2 via LiteLLM), so Plutus memory search remains local-safe.
 
 ## Architecture Documentation
 
