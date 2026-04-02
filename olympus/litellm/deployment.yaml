@@ -23,7 +23,7 @@ spec:
         kubernetes.io/hostname: olympus
       containers:
         - name: litellm
-          image: ghcr.io/berriai/litellm:main-v1.82.6
+          image: ghcr.io/berriai/litellm:main-v1.82.3-stable.patch.2
           imagePullPolicy: IfNotPresent  # pinned — do not update until compromise resolved
           args:
             - "--config"
