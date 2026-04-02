@@ -130,7 +130,12 @@ data:
         litellm_params:
           model: zai/glm-5
           api_base: https://api.z.ai/api/coding/paas/v4
-          api_key: os.environ/GLM_API_KEY    
+          api_key: os.environ/GLM_API_KEY   
+      - model_name: zai-glm-5.1
+        litellm_params:
+          model: zai/glm-5.1
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY        
       - model_name: glm-4.7
         litellm_params:
           model: zai/glm-4.7
