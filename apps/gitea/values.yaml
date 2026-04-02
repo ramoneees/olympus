@@ -76,8 +76,9 @@ resources:
 
 service:
   http:
-    type: ClusterIP
+    type: NodePort
     port: 3000
+    nodePort: 30300
   ssh:
     type: LoadBalancer  # SSH access via MetalLB IP
     port: 2222
