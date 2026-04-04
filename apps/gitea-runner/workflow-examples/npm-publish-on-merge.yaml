@@ -1,0 +1,48 @@
+# .gitea/workflows/npm-publish.yaml
+# Publishes an npm package to Gitea's built-in registry when a PR is merged to main.
+#
+# Prerequisites:
+#   1. In the repo, go to Settings → Secrets and add:
+#      - GITEA_NPM_TOKEN: a Gitea access token with `package:write` scope
+#   2. Add a .npmrc to the project root (or let this workflow create it):
+#      @<owner>:registry=https://git.ramoneees.com/api/packages/<owner>/npm/
+#      //git.ramoneees.com/api/packages/<owner>/npm/:_authToken=${GITEA_NPM_TOKEN}
+
+name: Publish npm Package
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  publish:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Configure Gitea npm registry
+        run: |
+          cat > .npmrc << 'EOF'
+          @ramoneees:registry=https://git.ramoneees.com/api/packages/ramoneees/npm/
+          //git.ramoneees.com/api/packages/ramoneees/npm/:_authToken=${GITEA_NPM_TOKEN}
+          EOF
+        env:
+          GITEA_NPM_TOKEN: ${{ secrets.GITEA_NPM_TOKEN }}
+
+      - name: Publish package
+        run: npm publish
+        env:
+          GITEA_NPM_TOKEN: ${{ secrets.GITEA_NPM_TOKEN }}
