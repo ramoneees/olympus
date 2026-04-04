@@ -6,15 +6,15 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/ramoneees/olympus
-    targetRevision: HEAD
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
     path: apps/tenacitos
   destination:
     server: https://kubernetes.default.svc
-    namespace: tenacitos
+    namespace: olympus
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-    - CreateNamespace=true
+    - CreateNamespace=false  # olympus namespace already exists
