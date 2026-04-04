@@ -3,10 +3,10 @@
 #
 # Prerequisites:
 #   1. In the repo, go to Settings → Secrets and add:
-#      - GITEA_NPM_TOKEN: a Gitea access token with `package:write` scope
+#      - NPM_REGISTRY_TOKEN: a Gitea access token with `package:write` scope
 #   2. Add a .npmrc to the project root (or let this workflow create it):
 #      @<owner>:registry=https://git.ramoneees.com/api/packages/<owner>/npm/
-#      //git.ramoneees.com/api/packages/<owner>/npm/:_authToken=${GITEA_NPM_TOKEN}
+#      //git.ramoneees.com/api/packages/<owner>/npm/:_authToken=${NPM_REGISTRY_TOKEN}
 
 name: Publish npm Package
 
@@ -37,12 +37,12 @@ jobs:
         run: |
           cat > .npmrc << 'EOF'
           @ramoneees:registry=https://git.ramoneees.com/api/packages/ramoneees/npm/
-          //git.ramoneees.com/api/packages/ramoneees/npm/:_authToken=${GITEA_NPM_TOKEN}
+          //git.ramoneees.com/api/packages/ramoneees/npm/:_authToken=${NPM_REGISTRY_TOKEN}
           EOF
         env:
-          GITEA_NPM_TOKEN: ${{ secrets.GITEA_NPM_TOKEN }}
+          NPM_REGISTRY_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
 
       - name: Publish package
         run: npm publish
         env:
-          GITEA_NPM_TOKEN: ${{ secrets.GITEA_NPM_TOKEN }}
+          NPM_REGISTRY_TOKEN: ${{ secrets.NPM_REGISTRY_TOKEN }}
