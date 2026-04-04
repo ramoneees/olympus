@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: tenacitos-mission-control
-  namespace: tenacitos
+  namespace: olympus
   labels:
     app: tenacitos-mission-control
 spec:
@@ -12,4 +12,5 @@ spec:
   - name: http
     port: 80
     targetPort: 3000
+    protocol: TCP
   type: ClusterIP
