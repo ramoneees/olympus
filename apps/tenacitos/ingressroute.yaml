@@ -2,7 +2,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: tenacitos-mission-control
-  namespace: tenacitos
+  namespace: olympus
 spec:
   entryPoints:
     - websecure
