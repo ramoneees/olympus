@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: tenacitos-mission-control
+  namespace: tenacitos
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`mission-control.ramoneees.com`)
+    kind: Rule
+    services:
+    - name: tenacitos-mission-control
+      port: 80
+  tls:
+    secretName: wildcard-ramoneees-com-tls
