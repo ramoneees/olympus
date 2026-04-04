@@ -190,22 +190,6 @@ data:
           api_base: https://coding-intl.dashscope.aliyuncs.com/v1
           api_key: os.environ/DASHSCOPE_API_KEY
       # OpenRouter (access to many models)
-      - model_name: openrouter/auto
-        litellm_params:
-          model: openrouter/auto
-          api_key: os.environ/OPENROUTER_API_KEY
-      - model_name: openrouter/google/gemini-2.5-flash
-        litellm_params:
-          model: openrouter/google/gemini-2.5-flash
-          api_key: os.environ/OPENROUTER_API_KEY
-      - model_name: openrouter/deepseek/deepseek-r1
-        litellm_params:
-          model: openrouter/deepseek/deepseek-r1
-          api_key: os.environ/OPENROUTER_API_KEY
-      - model_name: openrouter/anthropic/claude-sonnet-4
-        litellm_params:
-          model: openrouter/anthropic/claude-sonnet-4
-          api_key: os.environ/OPENROUTER_API_KEY
       - model_name: openrouter/minimax/minimax-m2.7
         litellm_params:
           model: openrouter/minimax/minimax-m2.7
