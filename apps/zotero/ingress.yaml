@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: zotero
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`zotero.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: zotero-library
+          port: 8080
+  tls:
+    secretName: wildcard-ramoneees-com-tls

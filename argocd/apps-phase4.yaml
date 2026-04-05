@@ -226,3 +226,45 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: zotero
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: apps/zotero
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: obsidian
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitea-web.apps.svc.cluster.local:3000/ramoneees/olympus.git
+    targetRevision: main
+    path: apps/obsidian
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
