@@ -28,10 +28,14 @@ data:
       enabled: true
       dir: /data/cache
     container:
-      network: bridge
+      network: host
       privileged: false
       docker_host: tcp://localhost:2376
-      options: -v /certs/client:/certs/client
+      options: >-
+        -v /certs/client:/certs/client
+        -e DOCKER_HOST=tcp://localhost:2376
+        -e DOCKER_TLS_VERIFY=1
+        -e DOCKER_CERT_PATH=/certs/client
       env:
         DOCKER_HOST: tcp://localhost:2376
         DOCKER_TLS_VERIFY: "1"
