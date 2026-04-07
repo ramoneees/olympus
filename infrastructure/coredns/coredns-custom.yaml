@@ -1,0 +1,16 @@
+# CoreDNS custom configuration for k3s
+# Resolves *.ramoneees.com via AdGuard DNS so that in-cluster
+# workloads (e.g. Gitea Actions DinD builds) can reach internal domains.
+# k3s auto-imports this ConfigMap — no restart needed.
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data:
+  ramoneees.server: |
+    ramoneees.com {
+      forward . 192.168.50.2:53
+      cache 30
+    }
