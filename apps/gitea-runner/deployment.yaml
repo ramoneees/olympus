@@ -30,9 +30,15 @@ data:
     container:
       network: bridge
       privileged: false
-      options:
+      docker_host: tcp://host.docker.internal:2376
+      options: -v /certs/client:/certs/client
+      env:
+        DOCKER_HOST: tcp://host.docker.internal:2376
+        DOCKER_TLS_VERIFY: "1"
+        DOCKER_CERT_PATH: /certs/client
       valid_volumes:
         - /data/cache
+        - /certs/client
 ---
 apiVersion: apps/v1
 kind: Deployment
