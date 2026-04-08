@@ -101,6 +101,8 @@ spec:
             # OpenClaw data (read-only) for file browsing, memory, skills, config
             - name: OPENCLAW_HOME
               value: "/openclaw"
+            - name: OPENCLAW_CONFIG_PATH
+              value: "/openclaw/openclaw.json"
             # Network access
             - name: MC_ALLOWED_HOSTS
               value: "mission-control.ramoneees.com,localhost,127.0.0.1"
