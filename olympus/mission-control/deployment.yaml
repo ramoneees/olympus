@@ -1,4 +1,29 @@
-# Mission Control — OpenClaw agent dashboard
+# Mission Control — builderz-labs/mission-control
+# Open-source AI agent orchestration dashboard
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mission-control-secret
+  namespace: olympus
+type: Opaque
+stringData:
+  admin-password: "CHANGE_ME"
+  auth-secret: "CHANGE_ME"
+  gateway-token: "CHANGE_ME"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mission-control-data
+  namespace: olympus
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 2Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -21,19 +46,28 @@ spec:
     spec:
       nodeSelector:
         kubernetes.io/hostname: olympus
-      securityContext:
-        fsGroup: 1000
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ['sh', '-c', 'chown -R 1001:1001 /data']
+          volumeMounts:
+            - name: mc-data
+              mountPath: /data
       containers:
         - name: mission-control
-          image: git.ramoneees.com/ramoneees/olympus-mission-control/tenacitos:latest
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
+          image: git.ramoneees.com/ramoneees/mission-control/mission-control:latest
           ports:
             - name: http
               containerPort: 3000
           env:
-            - name: ADMIN_PASSWORD
+            - name: PORT
+              value: "3000"
+            - name: HOSTNAME
+              value: "0.0.0.0"
+            # Auth — visit /setup on first run or set AUTH_USER/AUTH_PASS
+            - name: AUTH_USER
+              value: "admin"
+            - name: AUTH_PASS
               valueFrom:
                 secretKeyRef:
                   name: mission-control-secret
@@ -43,44 +77,63 @@ spec:
                 secretKeyRef:
                   name: mission-control-secret
                   key: auth-secret
-            - name: OPENCLAW_DIR
+            # OpenClaw gateway — server-side (MC backend → gateway)
+            - name: OPENCLAW_GATEWAY_HOST
+              value: "127.0.0.1"
+            - name: OPENCLAW_GATEWAY_PORT
+              value: "18789"
+            - name: OPENCLAW_GATEWAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: mission-control-secret
+                  key: gateway-token
+            # OpenClaw gateway — browser-side (auto-detect from browser)
+            - name: NEXT_PUBLIC_GATEWAY_OPTIONAL
+              value: "true"
+            # OpenClaw home directory (mounted read-only)
+            - name: OPENCLAW_HOME
               value: "/openclaw"
-            - name: NEXT_PUBLIC_AGENT_NAME
-              value: "Mission Control"
-            - name: NEXT_PUBLIC_AGENT_EMOJI
-              value: "\U0001F916"
-            - name: NEXT_PUBLIC_APP_TITLE
-              value: "Mission Control"
-            - name: NEXT_PUBLIC_COMPANY_NAME
-              value: "OLYMPUS, INC."
+            # Network access
+            - name: MC_ALLOWED_HOSTS
+              value: "mission-control.ramoneees.com,localhost,127.0.0.1"
+            # Data directory (persistent volume)
+            - name: MISSION_CONTROL_DATA_DIR
+              value: "/data"
           volumeMounts:
             - name: openclaw-data
               mountPath: /openclaw
               readOnly: true
+            - name: mc-data
+              mountPath: /data
           resources:
             requests:
               cpu: 100m
               memory: 256Mi
             limits:
-              cpu: 500m
+              cpu: "1"
               memory: 512Mi
           livenessProbe:
-            httpGet:
-              path: /api/health
+            tcpSocket:
               port: http
             initialDelaySeconds: 30
             periodSeconds: 60
           readinessProbe:
             httpGet:
-              path: /api/health
+              path: /api/status?action=health
               port: http
             initialDelaySeconds: 15
             periodSeconds: 15
+            httpHeaders:
+              - name: Host
+                value: "localhost"
       volumes:
         - name: openclaw-data
           hostPath:
             path: /home/ramoneees/.openclaw
             type: Directory
+        - name: mc-data
+          persistentVolumeClaim:
+            claimName: mission-control-data
 ---
 apiVersion: v1
 kind: Service

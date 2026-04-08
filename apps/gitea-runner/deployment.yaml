@@ -30,19 +30,14 @@ data:
     container:
       network: host
       privileged: false
-      docker_host: tcp://localhost:2376
+      docker_host: "-"
       options: >-
-        -v /certs/client:/certs/client
-        -e DOCKER_HOST=tcp://localhost:2376
-        -e DOCKER_TLS_VERIFY=1
-        -e DOCKER_CERT_PATH=/certs/client
+        -v /run/docker/docker.sock:/var/run/docker.sock
       env:
-        DOCKER_HOST: tcp://localhost:2376
-        DOCKER_TLS_VERIFY: "1"
-        DOCKER_CERT_PATH: /certs/client
+        DOCKER_HOST: unix:///var/run/docker.sock
       valid_volumes:
         - /data/cache
-        - /certs/client
+        - /run/docker/docker.sock
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -78,20 +73,15 @@ spec:
             - name: CONFIG_FILE
               value: /config/config.yaml
             - name: DOCKER_HOST
-              value: "tcp://localhost:2376"
-            - name: DOCKER_TLS_VERIFY
-              value: "1"
-            - name: DOCKER_CERT_PATH
-              value: /certs/client
+              value: "unix:///run/docker/docker.sock"
           volumeMounts:
             - name: runner-data
               mountPath: /data
             - name: runner-config
               mountPath: /config
               readOnly: true
-            - name: docker-certs
-              mountPath: /certs
-              readOnly: true
+            - name: docker-socket
+              mountPath: /run/docker
           resources:
             requests:
               cpu: 100m
@@ -105,10 +95,14 @@ spec:
             privileged: true
           env:
             - name: DOCKER_TLS_CERTDIR
-              value: /certs
+              value: ""
+          command:
+            - "dockerd-entrypoint.sh"
+          args:
+            - "--host=unix:///run/docker/docker.sock"
           volumeMounts:
-            - name: docker-certs
-              mountPath: /certs
+            - name: docker-socket
+              mountPath: /run/docker
             - name: dind-storage
               mountPath: /var/lib/docker
           resources:
@@ -125,7 +119,7 @@ spec:
         - name: runner-config
           configMap:
             name: gitea-runner-config
-        - name: docker-certs
+        - name: docker-socket
           emptyDir: {}
         - name: dind-storage
           emptyDir: {}
