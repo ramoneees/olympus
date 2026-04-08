@@ -1,0 +1,92 @@
+# Mission Control — OpenClaw agent dashboard
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mission-control
+  namespace: olympus
+  labels:
+    app: mission-control
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mission-control
+  template:
+    metadata:
+      labels:
+        app: mission-control
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
+      containers:
+        - name: mission-control
+          image: git.ramoneees.com/ramoneees/olympus-mission-control/tenacitos:latest
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mission-control-secret
+                  key: admin-password
+            - name: AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mission-control-secret
+                  key: auth-secret
+            - name: OPENCLAW_DIR
+              value: "/openclaw"
+            - name: NEXT_PUBLIC_AGENT_NAME
+              value: "Mission Control"
+            - name: NEXT_PUBLIC_AGENT_EMOJI
+              value: "\U0001F916"
+            - name: NEXT_PUBLIC_APP_TITLE
+              value: "Mission Control"
+            - name: NEXT_PUBLIC_COMPANY_NAME
+              value: "OLYMPUS, INC."
+          volumeMounts:
+            - name: openclaw-data
+              mountPath: /openclaw
+              readOnly: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 15
+      volumes:
+        - name: openclaw-data
+          hostPath:
+            path: /root/.openclaw
+            type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mission-control
+  namespace: olympus
+spec:
+  type: ClusterIP
+  selector:
+    app: mission-control
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
