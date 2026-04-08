@@ -92,9 +92,6 @@ spec:
               value: "true"
             - name: NEXT_PUBLIC_GATEWAY_URL
               value: "wss://openclaw.ramoneees.com"
-            # OpenClaw home directory (mounted read-only)
-            - name: OPENCLAW_HOME
-              value: "/openclaw"
             # Network access
             - name: MC_ALLOWED_HOSTS
               value: "mission-control.ramoneees.com,localhost,127.0.0.1"
@@ -102,9 +99,6 @@ spec:
             - name: MISSION_CONTROL_DATA_DIR
               value: "/data"
           volumeMounts:
-            - name: openclaw-data
-              mountPath: /openclaw
-              readOnly: true
             - name: mc-data
               mountPath: /data
           resources:
@@ -125,10 +119,6 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 15
       volumes:
-        - name: openclaw-data
-          hostPath:
-            path: /home/ramoneees/.openclaw
-            type: Directory
         - name: mc-data
           persistentVolumeClaim:
             claimName: mission-control-data
