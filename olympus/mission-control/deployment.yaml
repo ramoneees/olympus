@@ -74,7 +74,7 @@ spec:
       volumes:
         - name: openclaw-data
           hostPath:
-            path: /root/.openclaw
+            path: /home/ramoneees/.openclaw
             type: Directory
 ---
 apiVersion: v1
