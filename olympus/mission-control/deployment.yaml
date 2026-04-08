@@ -79,7 +79,7 @@ spec:
                   key: auth-secret
             # OpenClaw gateway — server-side (MC backend → gateway)
             - name: OPENCLAW_GATEWAY_HOST
-              value: "127.0.0.1"
+              value: "192.168.50.11"
             - name: OPENCLAW_GATEWAY_PORT
               value: "18789"
             - name: OPENCLAW_GATEWAY_TOKEN
