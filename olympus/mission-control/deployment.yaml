@@ -118,14 +118,10 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 60
           readinessProbe:
-            httpGet:
-              path: /api/status?action=health
+            tcpSocket:
               port: http
             initialDelaySeconds: 15
             periodSeconds: 15
-            httpHeaders:
-              - name: Host
-                value: "localhost"
       volumes:
         - name: openclaw-data
           hostPath:
