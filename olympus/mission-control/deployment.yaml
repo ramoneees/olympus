@@ -90,6 +90,8 @@ spec:
             # OpenClaw gateway — browser-side (auto-detect from browser)
             - name: NEXT_PUBLIC_GATEWAY_OPTIONAL
               value: "true"
+            - name: NEXT_PUBLIC_GATEWAY_URL
+              value: "wss://openclaw.ramoneees.com"
             # OpenClaw home directory (mounted read-only)
             - name: OPENCLAW_HOME
               value: "/openclaw"
