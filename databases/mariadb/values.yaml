@@ -33,12 +33,7 @@ primary:
     enabled: true
 
 metrics:
-  enabled: true
-  image:
-    tag: latest
-  extraArgs:
-    primary:
-      - "--mysqld.address=127.0.0.1:3306"
+  enabled: false
   resources:
     requests:
       cpu: 25m
