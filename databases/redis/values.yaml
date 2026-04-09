@@ -38,7 +38,7 @@ master:
     ports:
       redis: 6379
     nodePorts:
-      redis: 30637
+      redis: "30637"
 
 metrics:
   enabled: true
