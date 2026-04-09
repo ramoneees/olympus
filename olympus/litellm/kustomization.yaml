@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - ingress.yaml
-  - secrets.yaml
+# secrets.yaml excluded — applied manually (not tracked in git)
