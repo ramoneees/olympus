@@ -61,6 +61,7 @@ spec:
             - |
               cp -a /src/openclaw.json /src/workspaces /src/agents /src/config /src/CLAUDE.md /src/memory /dest/ 2>/dev/null || true
               mkdir -p /dest/workspace 2>/dev/null || true
+              sed -i 's|/home/ramoneees/.openclaw|/openclaw|g' /dest/openclaw.json 2>/dev/null || true
               chown -R 1001:1001 /dest/
           volumeMounts:
             - name: openclaw-data-host
@@ -159,7 +160,7 @@ spec:
               memory: 256Mi
             limits:
               cpu: "1"
-              memory: 1Gi
+              memory: 4Gi
           livenessProbe:
             tcpSocket:
               port: http
