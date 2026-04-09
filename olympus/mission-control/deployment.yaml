@@ -53,6 +53,20 @@ spec:
           volumeMounts:
             - name: mc-data
               mountPath: /data
+        - name: copy-openclaw-config
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              cp -a /src/openclaw.json /src/workspaces /src/agents /src/config /src/CLAUDE.md /dest/ 2>/dev/null || true
+              chown -R 1001:1001 /dest/
+          volumeMounts:
+            - name: openclaw-data-host
+              mountPath: /src
+              readOnly: true
+            - name: openclaw-config
+              mountPath: /dest
       containers:
         - name: mission-control
           image: git.ramoneees.com/ramoneees/mission-control/mission-control:latest
@@ -60,7 +74,7 @@ spec:
             - name: http
               containerPort: 3000
           volumeMounts:
-            - name: openclaw-data
+            - name: openclaw-config
               mountPath: /openclaw
               readOnly: true
             - name: mc-data
@@ -133,10 +147,12 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 15
       volumes:
-        - name: openclaw-data
+        - name: openclaw-data-host
           hostPath:
             path: /home/ramoneees/.openclaw
             type: Directory
+        - name: openclaw-config
+          emptyDir: {}
         - name: mc-data
           persistentVolumeClaim:
             claimName: mission-control-data
