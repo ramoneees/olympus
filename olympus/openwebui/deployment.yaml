@@ -37,6 +37,10 @@ spec:
                   key: litellm-api-key
             - name: OLLAMA_BASE_URL
               value: ""
+            - name: ENABLE_MODEL_FILTERING
+              value: "true"
+            - name: API_MODEL_LIST_DISABLE_CACHE
+              value: "true"
             - name: WEBUI_AUTH
               value: "true"
             - name: WEBUI_NAME
