@@ -87,6 +87,16 @@ spec:
               value: "/openclaw-cli/bin/openclaw"
             - name: NODE_PATH
               value: "/openclaw-cli/lib/node_modules"
+            # OpenClaw CLI gateway connection (for task dispatch)
+            - name: OPENCLAW_ALLOW_INSECURE_PRIVATE_WS
+              value: "1"
+            - name: OPENCLAW_GATEWAY_URL
+              value: "ws://192.168.50.11:18789"
+            - name: OPENCLAW_GATEWAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: mission-control-secret
+                  key: gateway-token
             - name: PORT
               value: "3000"
             - name: HOSTNAME
