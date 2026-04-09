@@ -224,7 +224,7 @@ data:
     general_settings:
       database_url: os.environ/DATABASE_URL
       master_key: os.environ/LITELLM_MASTER_KEY
-      store_model_in_db: true
+      store_model_in_db: false
 ---
 apiVersion: v1
 kind: Service
