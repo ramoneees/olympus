@@ -83,6 +83,12 @@ spec:
                 secretKeyRef:
                   name: mission-control-secret
                   key: auth-secret
+            # API key for MCP server + REST API auth
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mission-control-secret
+                  key: api-key
             # OpenClaw gateway — server-side (MC backend → gateway)
             - name: OPENCLAW_GATEWAY_HOST
               value: "192.168.50.11"
