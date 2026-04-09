@@ -18,6 +18,8 @@ spec:
     metadata:
       labels:
         app: litellm
+      annotations:
+        reloader.stakater.com/auto: "true"
     spec:
       nodeSelector:
         kubernetes.io/hostname: olympus

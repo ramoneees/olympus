@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # OLYMPUS Bootstrap Script
-# Run this ONCE to bootstrap the cluster. After this, ArgoCD manages everything.
+# Run this ONCE to bootstrap the cluster. After this, Flux CD manages everything.
 #
 # Prerequisites:
 #   - kubectl configured and pointing to the k3s cluster
 #   - helm installed
+#   - flux CLI installed (curl -s https://fluxcd.io/install.sh | bash)
 #   - Cloudflare API token ready
 #
 # Usage: ./bootstrap/install.sh
@@ -89,32 +90,43 @@ kubectl annotate secret wildcard-ramoneees-com-tls -n cert-manager \
   --overwrite
 
 # -------------------------------------------------------------------
-# 4. ArgoCD
+# 4. Flux CD
 # -------------------------------------------------------------------
-info "Installing ArgoCD..."
-helm repo add argo https://argoproj.github.io/argo-helm || true
-helm repo update argo
-helm upgrade --install argocd argo/argo-cd \
-  --namespace argocd --create-namespace \
-  -f "$SCRIPT_DIR/argocd/values.yaml" \
-  --wait
+info "Installing Flux CD..."
 
-info "Applying ArgoCD IngressRoute..."
-kubectl apply -f "$SCRIPT_DIR/argocd/ingress.yaml"
+if ! command -v flux &>/dev/null; then
+  warn "flux CLI not found. Install it first:"
+  warn "  curl -s https://fluxcd.io/install.sh | bash"
+  exit 1
+fi
 
-# Print initial admin password
-ARGOCD_PASS=$(kubectl -n argocd get secret argocd-initial-admin-secret \
-  -o jsonpath="{.data.password}" 2>/dev/null | base64 -d || echo "not found")
+flux install --namespace=flux-system
+
+info "Waiting for Flux controllers to be ready..."
+kubectl rollout status deployment/source-controller -n flux-system --timeout=120s
+kubectl rollout status deployment/kustomize-controller -n flux-system --timeout=120s
+kubectl rollout status deployment/helm-controller -n flux-system --timeout=120s
+
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+info "Applying Flux sources..."
+kubectl apply -f "$REPO_ROOT/clusters/olympus/sources.yaml"
+
+info "Applying Flux Kustomizations (layer by layer)..."
+kubectl apply -f "$REPO_ROOT/clusters/olympus/namespaces.yaml"
+kubectl apply -f "$REPO_ROOT/clusters/olympus/infrastructure.yaml"
+kubectl apply -f "$REPO_ROOT/clusters/olympus/databases.yaml"
+kubectl apply -f "$REPO_ROOT/clusters/olympus/apps.yaml"
+kubectl apply -f "$REPO_ROOT/clusters/olympus/olympus.yaml"
+kubectl apply -f "$REPO_ROOT/clusters/olympus/monitoring.yaml"
 
 info "=========================================="
 info "Bootstrap complete!"
 info "=========================================="
 info ""
-info "ArgoCD UI: https://argocd.ramoneees.com"
-info "ArgoCD admin password: $ARGOCD_PASS"
+info "Flux dashboard: flux get kustomizations"
 info ""
 info "Next steps:"
 info "  1. Set up AdGuard Home DNS rewrite: *.ramoneees.com → $(kubectl get svc -A -o jsonpath='{.items[?(@.spec.type=="LoadBalancer")].status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo '<MetalLB IP>')"
-info "  2. Log into ArgoCD and change the admin password"
-info "  3. Add your Gitea repo as an ArgoCD repository"
-info "  4. Apply the ArgoCD Application manifests from argocd/"
+info "  2. Verify all Kustomizations are Ready: flux get kustomizations"
+info "  3. Verify all HelmReleases are Ready: flux get helmreleases -A"

@@ -1,0 +1,15 @@
+# Flux Kustomization — Namespaces (applied first, no dependencies)
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: namespaces
+  namespace: flux-system
+spec:
+  interval: 10m
+  sourceRef:
+    kind: GitRepository
+    name: olympus
+  path: ./clusters/olympus/namespace-resources
+  prune: true
+  timeout: 1m
