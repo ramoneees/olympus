@@ -25,10 +25,10 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: HostSNI(`chat.ramoneees.com`) && PathPrefix(`/api/v4/websocket`)
-      kind: Rule
+    - match: HostSNI(`chat.ramoneees.com`)
       services:
         - name: mattermost-team-edition
           port: 8065
   tls:
     secretName: wildcard-ramoneees-com-tls
+    passthrough: false

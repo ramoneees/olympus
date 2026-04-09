@@ -1,16 +1,6 @@
 # Mission Control — builderz-labs/mission-control
 # Open-source AI agent orchestration dashboard
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: mission-control-secret
-  namespace: olympus
-type: Opaque
-stringData:
-  admin-password: "CHANGE_ME"
-  auth-secret: "CHANGE_ME"
-  gateway-token: "CHANGE_ME"
+# Secret is in secrets.yaml (applied manually, not tracked in git)
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
