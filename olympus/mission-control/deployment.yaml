@@ -117,11 +117,6 @@ spec:
               value: "192.168.50.11"
             - name: OPENCLAW_GATEWAY_PORT
               value: "18789"
-            - name: OPENCLAW_GATEWAY_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: mission-control-secret
-                  key: gateway-token
             # OpenClaw gateway — browser-side (auto-detect from browser)
             - name: NEXT_PUBLIC_GATEWAY_OPTIONAL
               value: "true"
