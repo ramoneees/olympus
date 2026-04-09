@@ -36,6 +36,9 @@ metrics:
   enabled: true
   image:
     tag: latest
+  extraArgs:
+    primary:
+      - "--mysqld.address=127.0.0.1:3306"
   resources:
     requests:
       cpu: 25m
