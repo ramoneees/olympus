@@ -7,3 +7,4 @@ resources:
   - gpu-operator/
   - reloader/
   - traefik/
+  - weave-gitops/

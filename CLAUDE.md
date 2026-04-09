@@ -17,11 +17,16 @@ OLYMPUS is a personal homelab Kubernetes infrastructure project with an integrat
 ## Commands
 
 ```bash
-# Bootstrap (one-time, before ArgoCD exists)
+# Bootstrap (one-time, before Flux exists)
 ./bootstrap/install.sh
 
-# Day-to-day — all changes go through git, ArgoCD syncs automatically
-git commit && git push   # ArgoCD auto-syncs from Gitea
+# Day-to-day — all changes go through git, Flux syncs automatically
+git commit && git push   # Flux auto-syncs from Gitea
+
+# Flux status
+flux get kustomizations            # Layer-level sync status
+flux get helmreleases -A           # Helm release status
+flux reconcile source git olympus  # Force immediate sync
 
 # Debugging
 k9s                                # Interactive cluster monitor
@@ -32,20 +37,27 @@ kubectl describe pod <pod>         # Pod events and status
 
 ## Repo Structure
 
-- `bootstrap/` — One-time manual installs (MetalLB, cert-manager, ArgoCD). Applied via `install.sh`.
-- `infrastructure/` — ArgoCD-managed infra (Longhorn, Traefik config, AdGuard, GPU Operator)
+- `bootstrap/` — One-time manual installs (MetalLB, cert-manager, Flux CD). Applied via `install.sh`.
+- `clusters/olympus/` — Flux CD entrypoint: GitRepository/HelmRepository sources and layer Kustomizations
+- `infrastructure/` — Flux-managed infra (Longhorn, Traefik config, GPU Operator, Reloader, Weave GitOps)
 - `databases/` — Shared database instances (PostgreSQL, MariaDB, Redis)
 - `apps/` — One directory per application, each with `values.yaml` + `ingress.yaml`
-- `olympus/` — AI/GPU workloads (Ollama, LiteLLM, OpenClaw, Open WebUI, n8n, Jellyfin)
+- `olympus/` — AI/GPU workloads (Ollama, LiteLLM, OpenClaw, Open WebUI, n8n)
 - `olympus/olympus-openclaw-config/` — OpenClaw agent configuration source (JSON5 configs + workspace files)
 - `olympus/openclaw/` — OpenClaw K8s manifests (deployment, configmap, secrets, ingress)
 - `monitoring/` — Prometheus stack, Loki, Promtail, Grafana
-- `argocd/` — ArgoCD Application manifests (root app-of-apps pattern)
 - `scripts/` — Utility scripts (SSH firewall, etc.)
 
 ## GitOps Workflow
 
-Edit YAML manifests → commit/push to Gitea (olympus repo) → ArgoCD auto-sync → cluster applies changes. No manual `kubectl apply` after bootstrap.
+Edit YAML manifests → commit/push to Gitea (olympus repo) → Flux CD auto-sync → cluster applies changes. No manual `kubectl apply` after bootstrap.
+
+Flux uses a layered Kustomization hierarchy with dependency ordering:
+```
+namespaces → infrastructure → databases → apps / olympus / monitoring
+```
+
+Helm-based apps use `HelmRelease` CRDs alongside existing `values.yaml` files. Plain YAML apps have `kustomization.yaml` files listing their resources. Stakater Reloader handles automatic pod restarts on ConfigMap/Secret changes.
 
 ## Conventions
 
@@ -76,7 +88,7 @@ Edit YAML manifests → commit/push to Gitea (olympus repo) → ArgoCD auto-sync
 - **Layer 3** (off-cluster): rclone CronJob syncs PVC to B2 — `databases/backups/rclone-sync-cronjob.yaml`
 - **Verify**: Weekly restore test — `databases/backups/restore-verify-cronjob.yaml`
 - **Alerts**: PrometheusRules in `databases/backups/alerts.yaml` — fires on job failures and staleness
-- **ArgoCD**: `db-backups` app syncs `databases/backups/`, `longhorn-extras` app syncs `infrastructure/longhorn-extras/`
+- **Flux**: `databases` Kustomization syncs `databases/backups/`, `infrastructure` Kustomization syncs `infrastructure/longhorn-extras/`
 
 ## OLYMPUS Multi-Agent Architecture
 
@@ -132,7 +144,7 @@ All model traffic through LiteLLM (unified proxy) → Ollama (local) or DashScop
 
 - **Comms**: Mattermost + Hermes bot
 - **Tasks**: Vikunja
-- **GitOps**: ArgoCD + Gitea
+- **GitOps**: Flux CD v2 + Gitea (dashboard at `https://flux.ramoneees.com`)
 - **Storage**: Longhorn
 - **Databases**: PostgreSQL (pgvector), MariaDB, Redis
 - **Finance**: Firefly III, Invoice Ninja

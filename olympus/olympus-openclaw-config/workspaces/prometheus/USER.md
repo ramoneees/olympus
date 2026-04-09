@@ -3,7 +3,7 @@
 Primary user: Ramon
 Role: Software Engineer
 Working style:
-- prefers GitOps workflow — YAML in repo, ArgoCD syncs
+- prefers GitOps workflow — YAML in repo, Flux CD syncs
 - wants infrastructure changes to be safe and reversible
 - cost-aware — prefers self-hosted over cloud services
 - local-first when possible

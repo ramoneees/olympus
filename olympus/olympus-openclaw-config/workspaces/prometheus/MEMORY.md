@@ -2,7 +2,7 @@
 
 ## OLYMPUS infrastructure
 - k3s cluster with two nodes: NiPoGi N100 (control plane) + Ryzen 5600X (GPU worker, hostname: olympus)
-- ArgoCD manages all deployments via app-of-apps pattern, syncing from Gitea
+- Flux CD v2 manages all deployments via layered Kustomizations, syncing from Gitea. Stakater Reloader handles ConfigMap restart. Dashboard at flux.ramoneees.com
 - Longhorn provides persistent storage across both nodes
 - Traefik handles ingress with wildcard TLS cert for *.ramoneees.com
 - GPU workloads (Ollama, LiteLLM, OpenClaw) pinned to olympus node

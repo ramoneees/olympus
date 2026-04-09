@@ -1,0 +1,34 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: weave-gitops
+  namespace: infrastructure
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: weave-gitops
+      sourceRef:
+        kind: HelmRepository
+        name: weave-gitops
+        namespace: flux-system
+      interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    adminUser:
+      create: true
+      username: admin
+      # bcrypt hash of "Olympus2026!" — generate with: htpasswd -nbBC 10 "" 'Olympus2026!' | cut -d: -f2
+      passwordHash: "$2y$10$co8r3ku84mYRp9R3nwFDSeJedLiQ0zh0XMpKj6HGsy9PQe/SBdAQu"
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi

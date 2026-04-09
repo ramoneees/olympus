@@ -60,8 +60,8 @@ Useful LogQL examples:
 # Error logs from a specific pod
 {namespace="olympus", pod=~"openclaw.*"} |= "error"
 
-# ArgoCD sync failures
-{namespace=~"argocd.*"} |= "sync" |= "fail"
+# Flux sync issues
+{namespace="flux-system"} |= "error"
 
 # k3s kubelet logs
 {job="systemd-journal", unit="k3s.service"} |= "error"
@@ -78,6 +78,6 @@ Useful LogQL examples:
 - Use `--dry-run=client -o yaml` to preview changes before applying.
 - Never run destructive commands (`delete`, `drain`, `cordon`) without confirming impact.
 - Use web tools only for official Kubernetes, Helm, or provider documentation.
-- Follow the GitOps pattern: generate manifests → commit to repo → let ArgoCD sync.
+- Follow the GitOps pattern: generate manifests → commit to repo → let Flux sync.
 - Use monitoring APIs to diagnose issues before making infrastructure changes.
 - Check Prometheus alerts and Loki logs as the first step when investigating problems.
