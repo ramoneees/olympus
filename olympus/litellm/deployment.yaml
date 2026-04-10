@@ -8,9 +8,12 @@ metadata:
   labels:
     app: litellm
 spec:
-  replicas: 1
+  replicas: 2
   strategy:
-    type: Recreate
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: litellm
@@ -68,11 +71,11 @@ spec:
               readOnly: true
           resources:
             requests:
-              cpu: 250m
-              memory: 512Mi
-            limits:
-              cpu: "2"
+              cpu: 1000m
               memory: 2Gi
+            limits:
+              cpu: "4"
+              memory: 4Gi
           livenessProbe:
             httpGet:
               path: /health/liveliness
@@ -217,10 +220,22 @@ data:
           model: openrouter/minimax/minimax-m2.7
           api_key: os.environ/OPENROUTER_API_KEY    
     router_settings:
-      routing_strategy: simple-shuffle
+      routing_strategy: latency-based-routing
+      redis_host: redis.olympus.svc.cluster.local
+      redis_port: 6379
+      model_group_alias:
+        - [glm-5, glm-5-turbo, glm-5.1, glm-5-code]
+        - [qwen3-coder-plus, qwen3-coder-next]
     litellm_settings:
       drop_params: true
       set_verbose: false
+      cache: true
+      cache_params:
+        type: redis
+        host: redis.olympus.svc.cluster.local
+        port: 6379
+      request_timeout: 60
+      timeout: 120
     general_settings:
       database_url: os.environ/DATABASE_URL
       master_key: os.environ/LITELLM_MASTER_KEY
@@ -232,11 +247,10 @@ metadata:
   name: litellm
   namespace: olympus
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: litellm
   ports:
     - name: http
       port: 4000
       targetPort: 4000
-      nodePort: 30400
