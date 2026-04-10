@@ -492,7 +492,7 @@ data:
       "hooks": {
         "enabled": true,
         "path": "/hooks",
-        "token": "${OPENCLAW_GATEWAY_TOKEN}",
+        "token": "${OPENCLAW_HOOKS_TOKEN}",
         "defaultSessionKey": "hook:ingress",
         "allowedAgentIds": ["apollo", "daedalus", "vulcan", "arachne", "cyclops", "argos", "metis"],
         "internal": {

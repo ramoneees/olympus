@@ -91,6 +91,12 @@ spec:
                 secretKeyRef:
                   name: openclaw-tekton-secret
                   key: gateway-token
+            # Hooks auth (must differ from gateway token)
+            - name: OPENCLAW_HOOKS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-tekton-secret
+                  key: hooks-token
             # Brave web search
             - name: BRAVE_API_KEY
               valueFrom:
