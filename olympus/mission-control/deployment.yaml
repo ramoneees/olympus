@@ -52,6 +52,14 @@ spec:
               cp -a /src/openclaw.json /src/workspaces /src/agents /src/config /src/CLAUDE.md /src/memory /dest/ 2>/dev/null || true
               mkdir -p /dest/workspace 2>/dev/null || true
               sed -i 's|/home/ramoneees/.openclaw|/openclaw|g' /dest/openclaw.json 2>/dev/null || true
+              # Replace all ${VAR} placeholders with safe dummy values so the
+              # openclaw CLI can parse the config inside the MC pod.  MC only
+              # needs the gateway connection — all other URLs/tokens are unused.
+              # URL fields → "http://localhost:0", other strings → "unset"
+              sed -i -E 's|\$\{[A-Z_]+\}|unset|g' /dest/openclaw.json 2>/dev/null || true
+              # Fix baseUrl / url fields that became "unset" — they must be valid URLs
+              sed -i -E 's|"baseUrl": "unset"|"baseUrl": "http://localhost:0"|g' /dest/openclaw.json 2>/dev/null || true
+              sed -i -E 's|"url": "unset"|"url": "http://localhost:0"|g' /dest/openclaw.json 2>/dev/null || true
               chown -R 1001:1001 /dest/
           volumeMounts:
             - name: openclaw-data-host
