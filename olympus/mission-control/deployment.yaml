@@ -62,6 +62,11 @@ spec:
               sed -i -E 's|"url": "unset"|"url": "http://localhost:0"|g' /dest/openclaw.json 2>/dev/null || true
               # Restore the gateway auth token — MC needs it for dispatch
               sed -i -E 's|"token": "unset"|"token": "'"$OPENCLAW_GATEWAY_TOKEN"'"|g' /dest/openclaw.json 2>/dev/null || true
+              # Copy device identity for gateway pairing (operator.write scope)
+              if [ -f /data/openclaw-identity/device.json ]; then
+                mkdir -p /dest/identity
+                cp /data/openclaw-identity/device.json /dest/identity/device.json
+              fi
               chown -R 1001:1001 /dest/
           volumeMounts:
             - name: openclaw-data-host
@@ -69,6 +74,8 @@ spec:
               readOnly: true
             - name: openclaw-config
               mountPath: /dest
+            - name: mc-data
+              mountPath: /data
       containers:
         - name: mission-control
           image: git.ramoneees.com/ramoneees/mission-control/mission-control:latest
@@ -78,7 +85,6 @@ spec:
           volumeMounts:
             - name: openclaw-config
               mountPath: /openclaw
-              readOnly: true
             - name: mc-data
               mountPath: /data
             - name: openclaw-cli
