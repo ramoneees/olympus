@@ -94,11 +94,11 @@ spec:
               value: "1"
             - name: OPENCLAW_GATEWAY_URL
               value: "ws://192.168.50.11:18789"
-            - name: OPENCLAW_GATEWAY_TOKEN
+            - name: OPENCLAW_GATEWAY_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mission-control-secret
-                  key: gateway-token
+                  key: gateway-password
             - name: PORT
               value: "3000"
             - name: HOSTNAME
