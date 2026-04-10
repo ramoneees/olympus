@@ -1,0 +1,590 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openclaw-tekton-config
+  namespace: olympus
+data:
+  openclaw.json: |
+    {
+      "meta": {
+        "lastTouchedVersion": "2026.4.10",
+        "lastTouchedAt": "2026-04-10T00:00:00.000Z"
+      },
+      "models": {
+        "mode": "merge",
+        "providers": {
+          "litellm": {
+            "baseUrl": "http://litellm.olympus.svc.cluster.local:4000",
+            "apiKey": "${LITELLM_API_KEY}",
+            "api": "openai-completions",
+            "models": [
+              {
+                "id": "qwen3-coder-plus",
+                "name": "Qwen 3 Coder Plus",
+                "reasoning": false,
+                "input": ["text"],
+                "contextWindow": 131072,
+                "maxTokens": 8192
+              },
+              {
+                "id": "qwen3-coder-next",
+                "name": "Qwen 3 Coder Next",
+                "reasoning": false,
+                "input": ["text"],
+                "contextWindow": 131072,
+                "maxTokens": 8192
+              },
+              {
+                "id": "qwen3.5-plus",
+                "name": "Qwen 3.5 Plus",
+                "reasoning": false,
+                "input": ["text"],
+                "contextWindow": 131072,
+                "maxTokens": 8192
+              },
+              {
+                "id": "MiniMax-M2.5",
+                "name": "MiniMax M2.5",
+                "reasoning": false,
+                "input": ["text"],
+                "contextWindow": 131072,
+                "maxTokens": 8192
+              },
+              {
+                "id": "kimi-k2.5",
+                "name": "Kimi K2.5",
+                "reasoning": true,
+                "input": ["text"],
+                "contextWindow": 131072,
+                "maxTokens": 8192
+              },
+              {
+                "id": "glm-5",
+                "name": "GLM-5",
+                "reasoning": false,
+                "input": ["text"],
+                "contextWindow": 128000,
+                "maxTokens": 8192
+              },
+              {
+                "id": "glm-5-turbo",
+                "name": "GLM-5 Turbo",
+                "reasoning": false,
+                "input": ["text"],
+                "contextWindow": 128000,
+                "maxTokens": 4096
+              },
+              {
+                "id": "nomic-embed-text-v2",
+                "name": "Nomic Embed Text v2",
+                "reasoning": false,
+                "input": ["text"],
+                "contextWindow": 8192,
+                "maxTokens": 1
+              },
+              {
+                "id": "openrouter/anthropic/claude-sonnet-4",
+                "name": "Claude Sonnet 4",
+                "reasoning": false,
+                "input": ["text"],
+                "contextWindow": 200000,
+                "maxTokens": 8192
+              },
+              {
+                "id": "openrouter/deepseek/deepseek-r1",
+                "name": "DeepSeek R1 Cloud",
+                "reasoning": true,
+                "input": ["text"],
+                "contextWindow": 163840,
+                "maxTokens": 8192
+              }
+            ]
+          }
+        }
+      },
+      "agents": {
+        "defaults": {
+          "model": {
+            "primary": "litellm/qwen3-coder-plus",
+            "fallbacks": [
+              "litellm/qwen3.5-plus",
+              "litellm/openrouter/deepseek/deepseek-r1",
+              "litellm/openrouter/anthropic/claude-sonnet-4"
+            ]
+          },
+          "models": {
+            "litellm/qwen3-coder-plus": {
+              "alias": "coder",
+              "params": { "temperature": 0.2 }
+            },
+            "litellm/qwen3-coder-next": {
+              "alias": "coder-next",
+              "params": { "temperature": 0.2 }
+            },
+            "litellm/qwen3.5-plus": {
+              "alias": "general",
+              "params": { "temperature": 0.1 }
+            },
+            "litellm/MiniMax-M2.5": {
+              "alias": "fast",
+              "params": { "temperature": 0.1 }
+            },
+            "litellm/kimi-k2.5": {
+              "alias": "reasoning",
+              "params": { "temperature": 0.1 }
+            },
+            "litellm/glm-5": {
+              "alias": "deep",
+              "params": { "temperature": 0.1 }
+            },
+            "litellm/glm-5-turbo": {
+              "alias": "turbo"
+            },
+            "litellm/openrouter/anthropic/claude-sonnet-4": {
+              "alias": "premium"
+            },
+            "litellm/openrouter/deepseek/deepseek-r1": {
+              "alias": "deepseek"
+            }
+          },
+          "skipBootstrap": false,
+          "bootstrapMaxChars": 20000,
+          "bootstrapTotalMaxChars": 150000,
+          "userTimezone": "Europe/Lisbon",
+          "timeFormat": "24",
+          "memorySearch": {
+            "enabled": true,
+            "sources": ["memory", "sessions"],
+            "experimental": { "sessionMemory": true },
+            "provider": "openai",
+            "remote": {
+              "baseUrl": "http://litellm.olympus.svc.cluster.local:4000/v1/",
+              "apiKey": "${LITELLM_API_KEY}"
+            },
+            "fallback": "none",
+            "model": "nomic-embed-text-v2",
+            "sync": {
+              "watch": true,
+              "sessions": {
+                "deltaBytes": 100000,
+                "deltaMessages": 50
+              }
+            },
+            "query": {
+              "hybrid": {
+                "enabled": true,
+                "vectorWeight": 0.7,
+                "textWeight": 0.3,
+                "candidateMultiplier": 4,
+                "mmr": { "enabled": true, "lambda": 0.7 },
+                "temporalDecay": { "enabled": true, "halfLifeDays": 30 }
+              }
+            },
+            "cache": { "enabled": true, "maxEntries": 50000 }
+          },
+          "compaction": {
+            "reserveTokensFloor": 20000,
+            "memoryFlush": {
+              "enabled": true,
+              "softThresholdTokens": 4000
+            }
+          },
+          "thinkingDefault": "low",
+          "verboseDefault": "off",
+          "elevatedDefault": "off",
+          "timeoutSeconds": 1200,
+          "imageMaxDimensionPx": 1200,
+          "maxConcurrent": 3,
+          "subagents": {
+            "maxConcurrent": 3,
+            "maxSpawnDepth": 2,
+            "maxChildrenPerAgent": 5,
+            "archiveAfterMinutes": 120,
+            "model": "litellm/MiniMax-M2.5",
+            "runTimeoutSeconds": 900
+          },
+          "sandbox": {
+            "mode": "off"
+          }
+        },
+        "list": [
+          {
+            "id": "apollo",
+            "default": true,
+            "workspace": "/home/node/.openclaw/workspaces/apollo",
+            "model": "litellm/qwen3.5-plus",
+            "subagents": {
+              "allowAgents": ["daedalus", "vulcan", "arachne", "cyclops", "argos", "metis"]
+            },
+            "sandbox": { "mode": "off" },
+            "tools": {
+              "profile": "full",
+              "allow": [
+                "group:fs",
+                "group:runtime",
+                "group:memory",
+                "web_search",
+                "web_fetch",
+                "sessions_spawn",
+                "sessions_send",
+                "sessions_list",
+                "session_status",
+                "mcp:sequential-thinking"
+              ],
+              "deny": [
+                "browser",
+                "canvas",
+                "image",
+                "cron"
+              ],
+              "loopDetection": { "enabled": true }
+            }
+          },
+          {
+            "id": "daedalus",
+            "workspace": "/home/node/.openclaw/workspaces/daedalus",
+            "model": "litellm/MiniMax-M2.5",
+            "sandbox": { "mode": "off" },
+            "tools": {
+              "profile": "full",
+              "allow": [
+                "group:fs",
+                "group:memory",
+                "web_search",
+                "web_fetch",
+                "session_status",
+                "sessions_spawn",
+                "mcp:sequential-thinking",
+                "mcp:web-search-prime",
+                "mcp:web-reader"
+              ],
+              "deny": [
+                "exec",
+                "process",
+                "browser",
+                "canvas",
+                "cron",
+                "gateway",
+                "image"
+              ],
+              "loopDetection": { "enabled": true }
+            }
+          },
+          {
+            "id": "vulcan",
+            "workspace": "/home/node/.openclaw/workspaces/vulcan",
+            "model": "litellm/qwen3-coder-plus",
+            "sandbox": { "mode": "off" },
+            "tools": {
+              "profile": "coding",
+              "allow": [
+                "group:fs",
+                "group:runtime",
+                "group:memory",
+                "web_search",
+                "web_fetch",
+                "session_status",
+                "mcp:web-reader",
+                "mcp:zreader"
+              ],
+              "deny": [
+                "sessions_list",
+                "sessions_history",
+                "sessions_send",
+                "sessions_spawn",
+                "browser",
+                "canvas",
+                "cron",
+                "gateway",
+                "message"
+              ],
+              "elevated": { "enabled": false },
+              "loopDetection": { "enabled": true }
+            }
+          },
+          {
+            "id": "arachne",
+            "workspace": "/home/node/.openclaw/workspaces/arachne",
+            "model": "litellm/qwen3-coder-next",
+            "sandbox": { "mode": "off" },
+            "tools": {
+              "profile": "coding",
+              "allow": [
+                "group:fs",
+                "group:runtime",
+                "group:memory",
+                "web_search",
+                "web_fetch",
+                "session_status",
+                "mcp:web-reader",
+                "mcp:zreader"
+              ],
+              "deny": [
+                "sessions_list",
+                "sessions_history",
+                "sessions_send",
+                "sessions_spawn",
+                "browser",
+                "canvas",
+                "cron",
+                "gateway",
+                "message"
+              ],
+              "elevated": { "enabled": false },
+              "loopDetection": { "enabled": true }
+            }
+          },
+          {
+            "id": "cyclops",
+            "workspace": "/home/node/.openclaw/workspaces/cyclops",
+            "model": "litellm/qwen3-coder-plus",
+            "sandbox": { "mode": "off" },
+            "tools": {
+              "profile": "coding",
+              "allow": [
+                "group:fs",
+                "group:runtime",
+                "group:memory",
+                "web_search",
+                "web_fetch",
+                "session_status",
+                "mcp:kubernetes",
+                "mcp:web-reader"
+              ],
+              "deny": [
+                "sessions_list",
+                "sessions_history",
+                "sessions_send",
+                "sessions_spawn",
+                "browser",
+                "canvas",
+                "cron",
+                "gateway",
+                "message"
+              ],
+              "elevated": { "enabled": false },
+              "loopDetection": { "enabled": true }
+            }
+          },
+          {
+            "id": "argos",
+            "workspace": "/home/node/.openclaw/workspaces/argos",
+            "model": "litellm/kimi-k2.5",
+            "sandbox": { "mode": "off" },
+            "tools": {
+              "profile": "coding",
+              "allow": [
+                "group:fs",
+                "group:runtime",
+                "group:memory",
+                "web_search",
+                "web_fetch",
+                "session_status",
+                "mcp:sequential-thinking"
+              ],
+              "deny": [
+                "sessions_list",
+                "sessions_history",
+                "sessions_send",
+                "sessions_spawn",
+                "browser",
+                "canvas",
+                "cron",
+                "gateway",
+                "message"
+              ],
+              "elevated": { "enabled": false },
+              "loopDetection": { "enabled": true }
+            }
+          },
+          {
+            "id": "metis",
+            "workspace": "/home/node/.openclaw/workspaces/metis",
+            "model": "litellm/glm-5",
+            "sandbox": { "mode": "off" },
+            "tools": {
+              "profile": "full",
+              "allow": [
+                "group:fs",
+                "group:memory",
+                "web_search",
+                "web_fetch",
+                "session_status",
+                "sessions_spawn",
+                "mcp:sequential-thinking",
+                "mcp:web-search-prime",
+                "mcp:web-reader",
+                "mcp:zreader"
+              ],
+              "deny": [
+                "exec",
+                "process",
+                "browser",
+                "canvas",
+                "cron",
+                "gateway",
+                "message",
+                "image"
+              ],
+              "loopDetection": { "enabled": true }
+            }
+          }
+        ]
+      },
+      "tools": {
+        "web": {
+          "search": {
+            "enabled": true,
+            "provider": "brave",
+            "maxResults": 5,
+            "timeoutSeconds": 30,
+            "cacheTtlMinutes": 15
+          },
+          "fetch": {
+            "enabled": true,
+            "maxChars": 50000,
+            "maxCharsCap": 50000,
+            "timeoutSeconds": 30,
+            "cacheTtlMinutes": 15
+          }
+        },
+        "sessions": {
+          "visibility": "tree"
+        },
+        "loopDetection": {
+          "enabled": true,
+          "historySize": 30,
+          "warningThreshold": 10,
+          "criticalThreshold": 20,
+          "globalCircuitBreakerThreshold": 30,
+          "detectors": {
+            "genericRepeat": true,
+            "knownPollNoProgress": true,
+            "pingPong": true
+          }
+        },
+        "agentToAgent": {
+          "enabled": true,
+          "allow": ["apollo", "daedalus", "vulcan", "arachne", "cyclops", "argos", "metis"]
+        },
+        "elevated": {
+          "enabled": false
+        }
+      },
+      "commands": {
+        "native": "auto",
+        "nativeSkills": "auto",
+        "restart": true,
+        "ownerDisplay": "raw"
+      },
+      "cron": {
+        "enabled": true,
+        "store": "~/.openclaw/cron/jobs.json",
+        "maxConcurrentRuns": 3,
+        "retry": {
+          "maxAttempts": 3,
+          "backoffMs": [60000, 120000, 300000],
+          "retryOn": ["rate_limit", "overloaded", "network", "server_error"]
+        },
+        "sessionRetention": "48h"
+      },
+      "hooks": {
+        "enabled": true,
+        "path": "/hooks",
+        "token": "${OPENCLAW_GATEWAY_TOKEN}",
+        "defaultSessionKey": "hook:ingress",
+        "allowedAgentIds": ["apollo", "daedalus", "vulcan", "arachne", "cyclops", "argos", "metis"],
+        "internal": {
+          "enabled": true,
+          "entries": {
+            "boot-md": { "enabled": true },
+            "command-logger": { "enabled": true },
+            "session-memory": { "enabled": true }
+          }
+        }
+      },
+      "web": {
+        "enabled": true
+      },
+      "gateway": {
+        "port": 18790,
+        "mode": "local",
+        "bind": "0.0.0.0",
+        "controlUi": {
+          "allowedOrigins": [
+            "https://tekton.ramoneees.com",
+            "https://paperclip.ramoneees.com"
+          ]
+        },
+        "auth": {
+          "mode": "token",
+          "token": "${OPENCLAW_GATEWAY_TOKEN}"
+        },
+        "trustedProxies": [
+          "10.42.0.0/16",
+          "10.43.0.0/16",
+          "192.168.50.0/24"
+        ]
+      },
+      "memory": {
+        "backend": "builtin"
+      },
+      "mcp": {
+        "servers": {
+          "sequential-thinking": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+          },
+          "kubernetes": {
+            "command": "npx",
+            "args": ["-y", "kubernetes-mcp-server@latest", "--disable-destructive"]
+          },
+          "web-search-prime": {
+            "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+            "transport": "streamable-http",
+            "headers": {
+              "Authorization": "Bearer ${Z_AI_API_KEY}"
+            }
+          },
+          "web-reader": {
+            "url": "https://api.z.ai/api/mcp/web_reader/mcp",
+            "transport": "streamable-http",
+            "headers": {
+              "Authorization": "Bearer ${Z_AI_API_KEY}"
+            }
+          },
+          "zreader": {
+            "url": "https://api.z.ai/api/mcp/zread/mcp",
+            "transport": "streamable-http",
+            "headers": {
+              "Authorization": "Bearer ${Z_AI_API_KEY}"
+            }
+          }
+        }
+      },
+      "plugins": {
+        "enabled": true,
+        "allow": ["memory-core", "browser"],
+        "load": {
+          "paths": ["~/.openclaw/data/extensions"]
+        },
+        "slots": {
+          "memory": "memory-core",
+          "contextEngine": "legacy"
+        },
+        "entries": {
+          "brave": {
+            "enabled": true,
+            "config": {
+              "webSearch": {
+                "apiKey": "${BRAVE_API_KEY}"
+              }
+            }
+          },
+          "browser": {
+            "enabled": true
+          }
+        }
+      }
+    }

@@ -1,0 +1,149 @@
+# OpenClaw Tekton — coding-focused agent team for Paperclip orchestration
+# Separate OpenClaw instance dedicated to the dev company
+# Secret is in secrets.yaml (applied manually, not tracked in git)
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: openclaw-tekton-data
+  namespace: olympus
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openclaw-tekton
+  namespace: olympus
+  labels:
+    app: openclaw-tekton
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: openclaw-tekton
+  template:
+    metadata:
+      labels:
+        app: openclaw-tekton
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ['sh', '-c', 'chown -R 1000:1000 /home/node/.openclaw']
+          volumeMounts:
+            - name: openclaw-data
+              mountPath: /home/node/.openclaw
+        - name: install-config
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              # Copy config from ConfigMap to data volume
+              mkdir -p /home/node/.openclaw/config
+              cp /config-src/openclaw.json /home/node/.openclaw/openclaw.json
+              # Create workspace directories for each agent
+              for agent in apollo daedalus vulcan arachne cyclops argos metis; do
+                mkdir -p /home/node/.openclaw/workspaces/$agent
+              done
+              # Create shared directories
+              mkdir -p /home/node/.openclaw/memory
+              mkdir -p /home/node/.openclaw/cron
+              mkdir -p /home/node/.openclaw/data/extensions
+              mkdir -p /home/node/.openclaw/npm-global
+              chown -R 1000:1000 /home/node/.openclaw
+          volumeMounts:
+            - name: openclaw-data
+              mountPath: /home/node/.openclaw
+            - name: tekton-config
+              mountPath: /config-src
+      containers:
+        - name: openclaw
+          image: ghcr.io/openclaw/openclaw:latest
+          ports:
+            - name: gateway
+              containerPort: 18790
+          volumeMounts:
+            - name: openclaw-data
+              mountPath: /home/node/.openclaw
+          env:
+            # LiteLLM (model routing)
+            - name: LITELLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-tekton-secret
+                  key: litellm-api-key
+            # Gateway auth
+            - name: OPENCLAW_GATEWAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-tekton-secret
+                  key: gateway-token
+            # Brave web search
+            - name: BRAVE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-tekton-secret
+                  key: brave-api-key
+            # Gitea access for agents
+            - name: GITEA_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-tekton-secret
+                  key: gitea-token
+            # ZAI MCP services
+            - name: Z_AI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-tekton-secret
+                  key: z-ai-api-key
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 4Gi
+          livenessProbe:
+            tcpSocket:
+              port: gateway
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          readinessProbe:
+            tcpSocket:
+              port: gateway
+            initialDelaySeconds: 15
+            periodSeconds: 15
+      volumes:
+        - name: openclaw-data
+          persistentVolumeClaim:
+            claimName: openclaw-tekton-data
+        - name: tekton-config
+          configMap:
+            name: openclaw-tekton-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openclaw-tekton
+  namespace: olympus
+spec:
+  type: ClusterIP
+  selector:
+    app: openclaw-tekton
+  ports:
+    - name: gateway
+      port: 18790
+      targetPort: 18790

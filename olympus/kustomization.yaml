@@ -6,5 +6,6 @@ resources:
   - n8n/
   - ollama/
   - openclaw/
+  # - openclaw-tekton/  # uncomment after applying secrets manually
   - paperclip/
   - openwebui/
