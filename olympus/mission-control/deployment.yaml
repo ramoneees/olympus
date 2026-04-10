@@ -60,6 +60,8 @@ spec:
               # Fix baseUrl / url fields that became "unset" — they must be valid URLs
               sed -i -E 's|"baseUrl": "unset"|"baseUrl": "http://localhost:0"|g' /dest/openclaw.json 2>/dev/null || true
               sed -i -E 's|"url": "unset"|"url": "http://localhost:0"|g' /dest/openclaw.json 2>/dev/null || true
+              # Restore the gateway auth token — MC needs it for dispatch
+              sed -i -E 's|"token": "unset"|"token": "'"$OPENCLAW_GATEWAY_TOKEN"'"|g' /dest/openclaw.json 2>/dev/null || true
               chown -R 1001:1001 /dest/
           volumeMounts:
             - name: openclaw-data-host
