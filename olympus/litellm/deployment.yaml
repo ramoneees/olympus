@@ -228,9 +228,6 @@ data:
       routing_strategy: latency-based-routing
       redis_host: redis.olympus.svc.cluster.local
       redis_port: 6379
-      model_group_alias:
-        - [glm-5, glm-5-turbo, glm-5.1, glm-5-code]
-        - [qwen3-coder-plus, qwen3-coder-next]
     litellm_settings:
       drop_params: true
       set_verbose: false
