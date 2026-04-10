@@ -152,31 +152,36 @@ data:
         litellm_params:
           model: ollama/qwen3.5:4b
           api_base: http://ollama.olympus.svc.cluster.local:11434
-      # Cloud — ZAI (ZhipuAI) direct API
+      # Cloud — ZAI (ZhipuAI) Coding Plan
       - model_name: glm-5
         litellm_params:
-          model: zai/glm-5
+          model: openai/glm-5
+          api_base: https://api.z.ai/api/coding/paas/v4
           api_key: os.environ/GLM_API_KEY
       - model_name: glm-5-turbo
         litellm_params:
           model: openai/glm-5-turbo
-          api_base: https://api.z.ai/api/paas/v4
+          api_base: https://api.z.ai/api/coding/paas/v4
           api_key: os.environ/GLM_API_KEY
       - model_name: glm-5-code
         litellm_params:
-          model: zai/glm-5-code
+          model: openai/glm-5-code
+          api_base: https://api.z.ai/api/coding/paas/v4
           api_key: os.environ/GLM_API_KEY
       - model_name: glm-5.1
         litellm_params:
-          model: zai/glm-5.1
+          model: openai/glm-5.1
+          api_base: https://api.z.ai/api/coding/paas/v4
           api_key: os.environ/GLM_API_KEY
       - model_name: glm-4.7
         litellm_params:
-          model: zai/glm-4.7
+          model: openai/glm-4.7
+          api_base: https://api.z.ai/api/coding/paas/v4
           api_key: os.environ/GLM_API_KEY
       - model_name: glm-4.6
         litellm_params:
-          model: zai/glm-4.6
+          model: openai/glm-4.6
+          api_base: https://api.z.ai/api/coding/paas/v4
           api_key: os.environ/GLM_API_KEY
       # Alibaba Cloud — DashScope Coding Plan (all models via coding endpoint)
       - model_name: qwen3.5-plus
