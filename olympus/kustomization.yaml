@@ -6,4 +6,5 @@ resources:
   - n8n/
   - ollama/
   - openclaw/
+  - paperclip/
   - openwebui/

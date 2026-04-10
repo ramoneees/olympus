@@ -1,0 +1,120 @@
+# Paperclip — paperclipai/paperclip
+# Open-source orchestration for AI agent teams
+# Secret is in secrets.yaml (applied manually, not tracked in git)
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: paperclip-data
+  namespace: olympus
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paperclip
+  namespace: olympus
+  labels:
+    app: paperclip
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: paperclip
+  template:
+    metadata:
+      labels:
+        app: paperclip
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ['sh', '-c', 'chown -R 1000:1000 /paperclip']
+          volumeMounts:
+            - name: paperclip-data
+              mountPath: /paperclip
+      containers:
+        - name: paperclip
+          image: ghcr.io/paperclipai/paperclip:latest
+          ports:
+            - name: http
+              containerPort: 3100
+          volumeMounts:
+            - name: paperclip-data
+              mountPath: /paperclip
+          env:
+            # Database
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: paperclip-secret
+                  key: database-url
+            # Server
+            - name: PORT
+              value: "3100"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: SERVE_UI
+              value: "true"
+            - name: PAPERCLIP_HOME
+              value: "/paperclip"
+            # Deployment mode
+            - name: PAPERCLIP_DEPLOYMENT_MODE
+              value: "authenticated"
+            - name: PAPERCLIP_DEPLOYMENT_EXPOSURE
+              value: "private"
+            - name: PAPERCLIP_PUBLIC_URL
+              value: "https://paperclip.ramoneees.com"
+            # Auth
+            - name: BETTER_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: paperclip-secret
+                  key: auth-secret
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 15
+      volumes:
+        - name: paperclip-data
+          persistentVolumeClaim:
+            claimName: paperclip-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: paperclip
+  namespace: olympus
+spec:
+  type: ClusterIP
+  selector:
+    app: paperclip
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3100
