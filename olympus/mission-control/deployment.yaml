@@ -56,7 +56,7 @@ spec:
               # openclaw CLI can parse the config inside the MC pod.  MC only
               # needs the gateway connection — all other URLs/tokens are unused.
               # URL fields → "http://localhost:0", other strings → "unset"
-              sed -i -E 's|\$\{[A-Z_]+\}|unset|g' /dest/openclaw.json 2>/dev/null || true
+              sed -i -E 's|\$\{[A-Za-z_]+\}|unset|g' /dest/openclaw.json 2>/dev/null || true
               # Fix baseUrl / url fields that became "unset" — they must be valid URLs
               sed -i -E 's|"baseUrl": "unset"|"baseUrl": "http://localhost:0"|g' /dest/openclaw.json 2>/dev/null || true
               sed -i -E 's|"url": "unset"|"url": "http://localhost:0"|g' /dest/openclaw.json 2>/dev/null || true
