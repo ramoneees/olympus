@@ -133,6 +133,9 @@ spec:
               value: "/openclaw/workspaces"
             - name: OPENCLAW_MEMORY_DIR
               value: "/openclaw/memory"
+            # Ollama (LLM inference)
+            - name: OLLAMA_HOST
+              value: "http://ollama.olympus.svc.cluster.local:11434"
             # Network access
             - name: MC_ALLOWED_HOSTS
               value: "mission-control.ramoneees.com,localhost,127.0.0.1"
