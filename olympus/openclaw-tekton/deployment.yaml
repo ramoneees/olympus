@@ -54,6 +54,11 @@ spec:
               # Copy config from ConfigMap to data volume
               mkdir -p /home/node/.openclaw/config
               cp /config-src/openclaw.json /home/node/.openclaw/openclaw.json
+              # Download gitea-mcp binary (official Gitea MCP server)
+              GITEA_MCP_VER="v0.2.0"
+              curl -fsSL "https://gitea.com/gitea/gitea-mcp/releases/download/${GITEA_MCP_VER}/gitea-mcp-linux-amd64" \
+                -o /home/node/.openclaw/gitea-mcp \
+                && chmod +x /home/node/.openclaw/gitea-mcp
               # Create workspace directories for each agent
               for agent in apollo daedalus vulcan arachne cyclops argos metis; do
                 mkdir -p /home/node/.openclaw/workspaces/$agent

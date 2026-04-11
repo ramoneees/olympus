@@ -635,60 +635,32 @@ data:
             }
           },
           "gitea-apollo": {
-            "command": "npx",
-            "args": ["-y", "@nicepkg/gitea-mcp"],
-            "env": {
-              "GITEA_API_URL": "https://git.ramoneees.com",
-              "GITEA_TOKEN": "${GITEA_TOKEN_APOLLO}"
-            }
+            "command": "/home/node/.openclaw/gitea-mcp",
+            "args": ["-t", "stdio", "--host", "https://git.ramoneees.com", "--token", "${GITEA_TOKEN_APOLLO}"]
           },
           "gitea-daedalus": {
-            "command": "npx",
-            "args": ["-y", "@nicepkg/gitea-mcp"],
-            "env": {
-              "GITEA_API_URL": "https://git.ramoneees.com",
-              "GITEA_TOKEN": "${GITEA_TOKEN_DAEDALUS}"
-            }
+            "command": "/home/node/.openclaw/gitea-mcp",
+            "args": ["-t", "stdio", "--host", "https://git.ramoneees.com", "--token", "${GITEA_TOKEN_DAEDALUS}"]
           },
           "gitea-vulcan": {
-            "command": "npx",
-            "args": ["-y", "@nicepkg/gitea-mcp"],
-            "env": {
-              "GITEA_API_URL": "https://git.ramoneees.com",
-              "GITEA_TOKEN": "${GITEA_TOKEN_VULCAN}"
-            }
+            "command": "/home/node/.openclaw/gitea-mcp",
+            "args": ["-t", "stdio", "--host", "https://git.ramoneees.com", "--token", "${GITEA_TOKEN_VULCAN}"]
           },
           "gitea-arachne": {
-            "command": "npx",
-            "args": ["-y", "@nicepkg/gitea-mcp"],
-            "env": {
-              "GITEA_API_URL": "https://git.ramoneees.com",
-              "GITEA_TOKEN": "${GITEA_TOKEN_ARACHNE}"
-            }
+            "command": "/home/node/.openclaw/gitea-mcp",
+            "args": ["-t", "stdio", "--host", "https://git.ramoneees.com", "--token", "${GITEA_TOKEN_ARACHNE}"]
           },
           "gitea-cyclops": {
-            "command": "npx",
-            "args": ["-y", "@nicepkg/gitea-mcp"],
-            "env": {
-              "GITEA_API_URL": "https://git.ramoneees.com",
-              "GITEA_TOKEN": "${GITEA_TOKEN_CYCLOPS}"
-            }
+            "command": "/home/node/.openclaw/gitea-mcp",
+            "args": ["-t", "stdio", "--host", "https://git.ramoneees.com", "--token", "${GITEA_TOKEN_CYCLOPS}"]
           },
           "gitea-argos": {
-            "command": "npx",
-            "args": ["-y", "@nicepkg/gitea-mcp"],
-            "env": {
-              "GITEA_API_URL": "https://git.ramoneees.com",
-              "GITEA_TOKEN": "${GITEA_TOKEN_ARGOS}"
-            }
+            "command": "/home/node/.openclaw/gitea-mcp",
+            "args": ["-t", "stdio", "--host", "https://git.ramoneees.com", "--token", "${GITEA_TOKEN_ARGOS}"]
           },
           "gitea-metis": {
-            "command": "npx",
-            "args": ["-y", "@nicepkg/gitea-mcp"],
-            "env": {
-              "GITEA_API_URL": "https://git.ramoneees.com",
-              "GITEA_TOKEN": "${GITEA_TOKEN_METIS}"
-            }
+            "command": "/home/node/.openclaw/gitea-mcp",
+            "args": ["-t", "stdio", "--host", "https://git.ramoneees.com", "--token", "${GITEA_TOKEN_METIS}"]
           }
         }
       },
