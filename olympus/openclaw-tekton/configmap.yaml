@@ -497,8 +497,6 @@ data:
                 "mcp:gitea-metis"
               ],
               "deny": [
-                "exec",
-                "process",
                 "browser",
                 "canvas",
                 "cron",
