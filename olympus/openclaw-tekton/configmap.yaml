@@ -518,8 +518,8 @@ data:
           ]
         },
         "auth": {
-          "mode": "password",
-          "password": "${OPENCLAW_GATEWAY_TOKEN}"
+          "mode": "token",
+          "token": "${OPENCLAW_GATEWAY_TOKEN}"
         },
         "trustedProxies": [
           "10.42.0.0/16",
