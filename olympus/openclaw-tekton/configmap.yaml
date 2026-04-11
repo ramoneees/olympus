@@ -289,6 +289,7 @@ data:
               "docker": {
                 "image": "git.ramoneees.com/tekton/vulcan:latest",
                 "network": "tekton-lan",
+                "dns": ["192.168.50.1", "1.1.1.1"],
                 "env": {
                   "GITEA_USERNAME": "vulcan",
                   "GITEA_TOKEN": "${GITEA_TOKEN_VULCAN}",
@@ -338,6 +339,7 @@ data:
               "docker": {
                 "image": "git.ramoneees.com/tekton/arachne:latest",
                 "network": "tekton-lan",
+                "dns": ["192.168.50.1", "1.1.1.1"],
                 "env": {
                   "GITEA_USERNAME": "arachne",
                   "GITEA_TOKEN": "${GITEA_TOKEN_ARACHNE}",
@@ -387,6 +389,7 @@ data:
               "docker": {
                 "image": "git.ramoneees.com/tekton/cyclops:latest",
                 "network": "tekton-lan",
+                "dns": ["192.168.50.1", "1.1.1.1"],
                 "env": {
                   "GITEA_USERNAME": "cyclops",
                   "GITEA_TOKEN": "${GITEA_TOKEN_CYCLOPS}",
@@ -436,6 +439,7 @@ data:
               "docker": {
                 "image": "git.ramoneees.com/tekton/argos:latest",
                 "network": "tekton-lan",
+                "dns": ["192.168.50.1", "1.1.1.1"],
                 "env": {
                   "GITEA_USERNAME": "argos",
                   "GITEA_TOKEN": "${GITEA_TOKEN_ARGOS}",
