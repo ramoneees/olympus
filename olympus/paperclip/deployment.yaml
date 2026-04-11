@@ -48,6 +48,15 @@ spec:
       containers:
         - name: paperclip
           image: ghcr.io/paperclipai/paperclip:latest
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - |
+                    # Patch: OpenClaw rejects the 'paperclip' property in agent params
+                    sed -i 's/agentParams\.paperclip = paperclipPayload;/\/\/ agentParams.paperclip = paperclipPayload; \/\/ PATCHED: OpenClaw compat/' /app/packages/adapters/openclaw-gateway/src/server/execute.ts 2>/dev/null || true
           ports:
             - name: http
               containerPort: 3100
