@@ -233,8 +233,6 @@ data:
                 "mcp:gitea-apollo"
               ],
               "deny": [
-                "exec",
-                "process",
                 "browser",
                 "canvas",
                 "image",
@@ -263,8 +261,6 @@ data:
                 "mcp:gitea-daedalus"
               ],
               "deny": [
-                "exec",
-                "process",
                 "browser",
                 "canvas",
                 "cron",
