@@ -109,6 +109,42 @@ spec:
                 secretKeyRef:
                   name: openclaw-tekton-secret
                   key: gitea-token
+            # Per-agent Gitea tokens
+            - name: GITEA_TOKEN_APOLLO
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-tekton-secret
+                  key: gitea-token-apollo
+            - name: GITEA_TOKEN_DAEDALUS
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-tekton-secret
+                  key: gitea-token-daedalus
+            - name: GITEA_TOKEN_VULCAN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-tekton-secret
+                  key: gitea-token-vulcan
+            - name: GITEA_TOKEN_ARACHNE
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-tekton-secret
+                  key: gitea-token-arachne
+            - name: GITEA_TOKEN_CYCLOPS
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-tekton-secret
+                  key: gitea-token-cyclops
+            - name: GITEA_TOKEN_ARGOS
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-tekton-secret
+                  key: gitea-token-argos
+            - name: GITEA_TOKEN_METIS
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-tekton-secret
+                  key: gitea-token-metis
             # ZAI MCP services
             - name: Z_AI_API_KEY
               valueFrom:
