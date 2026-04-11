@@ -55,10 +55,11 @@ spec:
               mkdir -p /home/node/.openclaw/config
               cp /config-src/openclaw.json /home/node/.openclaw/openclaw.json
               # Download gitea-mcp binary (official Gitea MCP server)
-              GITEA_MCP_VER="v0.2.0"
-              wget -q "https://gitea.com/gitea/gitea-mcp/releases/download/${GITEA_MCP_VER}/gitea-mcp-linux-amd64" \
-                -O /home/node/.openclaw/gitea-mcp \
-                && chmod +x /home/node/.openclaw/gitea-mcp
+              wget -q "https://gitea.com/gitea/gitea-mcp/releases/download/v1.1.0/gitea-mcp_Linux_x86_64.tar.gz" \
+                -O /tmp/gitea-mcp.tar.gz \
+                && tar xzf /tmp/gitea-mcp.tar.gz -C /home/node/.openclaw/ gitea-mcp \
+                && chmod +x /home/node/.openclaw/gitea-mcp \
+                && rm /tmp/gitea-mcp.tar.gz
               # Create workspace directories for each agent
               for agent in apollo daedalus vulcan arachne cyclops argos metis; do
                 mkdir -p /home/node/.openclaw/workspaces/$agent
