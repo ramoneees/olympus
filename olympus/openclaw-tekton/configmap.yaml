@@ -76,8 +76,8 @@ data:
                 "maxTokens": 4096
               },
               {
-                "id": "nomic-embed-text-v2",
-                "name": "Nomic Embed Text v2",
+                "id": "bge-m3",
+                "name": "BGE-M3",
                 "reasoning": false,
                 "input": ["text"],
                 "contextWindow": 8192,
@@ -163,7 +163,7 @@ data:
               "apiKey": "${LITELLM_API_KEY}"
             },
             "fallback": "none",
-            "model": "nomic-embed-text-v2",
+            "model": "bge-m3",
             "sync": {
               "watch": true,
               "sessions": {
