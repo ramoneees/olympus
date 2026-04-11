@@ -281,7 +281,23 @@ data:
             "subagents": {
               "allowAgents": ["arachne", "argos"]
             },
-            "sandbox": { "mode": "off" },
+            "sandbox": {
+              "mode": "all",
+              "scope": "agent",
+              "workspaceAccess": "rw",
+              "backend": "docker",
+              "docker": {
+                "image": "git.ramoneees.com/tekton/vulcan:latest",
+                "network": "tekton-lan",
+                "env": {
+                  "GITEA_USERNAME": "vulcan",
+                  "GITEA_TOKEN": "${GITEA_TOKEN_VULCAN}",
+                  "GITEA_URL": "https://git.ramoneees.com",
+                  "GIT_USER_NAME": "Vulcan",
+                  "GIT_USER_EMAIL": "vulcan@tekton.dev"
+                }
+              }
+            },
             "tools": {
               "profile": "coding",
               "allow": [
@@ -314,7 +330,23 @@ data:
             "id": "arachne",
             "workspace": "/home/node/.openclaw/workspaces/arachne",
             "model": "litellm/qwen3-coder-next",
-            "sandbox": { "mode": "off" },
+            "sandbox": {
+              "mode": "all",
+              "scope": "agent",
+              "workspaceAccess": "rw",
+              "backend": "docker",
+              "docker": {
+                "image": "git.ramoneees.com/tekton/arachne:latest",
+                "network": "tekton-lan",
+                "env": {
+                  "GITEA_USERNAME": "arachne",
+                  "GITEA_TOKEN": "${GITEA_TOKEN_ARACHNE}",
+                  "GITEA_URL": "https://git.ramoneees.com",
+                  "GIT_USER_NAME": "Arachne",
+                  "GIT_USER_EMAIL": "arachne@tekton.dev"
+                }
+              }
+            },
             "tools": {
               "profile": "coding",
               "allow": [
@@ -347,7 +379,23 @@ data:
             "id": "cyclops",
             "workspace": "/home/node/.openclaw/workspaces/cyclops",
             "model": "litellm/qwen3-coder-plus",
-            "sandbox": { "mode": "off" },
+            "sandbox": {
+              "mode": "all",
+              "scope": "agent",
+              "workspaceAccess": "rw",
+              "backend": "docker",
+              "docker": {
+                "image": "git.ramoneees.com/tekton/cyclops:latest",
+                "network": "tekton-lan",
+                "env": {
+                  "GITEA_USERNAME": "cyclops",
+                  "GITEA_TOKEN": "${GITEA_TOKEN_CYCLOPS}",
+                  "GITEA_URL": "https://git.ramoneees.com",
+                  "GIT_USER_NAME": "Cyclops",
+                  "GIT_USER_EMAIL": "cyclops@tekton.dev"
+                }
+              }
+            },
             "tools": {
               "profile": "coding",
               "allow": [
@@ -380,7 +428,23 @@ data:
             "id": "argos",
             "workspace": "/home/node/.openclaw/workspaces/argos",
             "model": "litellm/kimi-k2.5",
-            "sandbox": { "mode": "off" },
+            "sandbox": {
+              "mode": "all",
+              "scope": "agent",
+              "workspaceAccess": "rw",
+              "backend": "docker",
+              "docker": {
+                "image": "git.ramoneees.com/tekton/argos:latest",
+                "network": "tekton-lan",
+                "env": {
+                  "GITEA_USERNAME": "argos",
+                  "GITEA_TOKEN": "${GITEA_TOKEN_ARGOS}",
+                  "GITEA_URL": "https://git.ramoneees.com",
+                  "GIT_USER_NAME": "Argos",
+                  "GIT_USER_EMAIL": "argos@tekton.dev"
+                }
+              }
+            },
             "tools": {
               "profile": "coding",
               "allow": [

@@ -115,6 +115,8 @@ spec:
             - name: mcp-k8s-token
               mountPath: /var/run/secrets/mcp-kubernetes
               readOnly: true
+            - name: docker-sock
+              mountPath: /var/run/docker.sock
           env:
             # LiteLLM (model routing)
             - name: LITELLM_API_KEY
@@ -221,6 +223,10 @@ spec:
         - name: tekton-workspaces
           configMap:
             name: openclaw-tekton-workspaces
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
 ---
 apiVersion: v1
 kind: Service
