@@ -39,6 +39,8 @@ spec:
             - name: http
               containerPort: 4000
           env:
+            - name: SETUP_MODE
+              value: "True"
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
