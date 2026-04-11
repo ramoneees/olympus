@@ -85,6 +85,13 @@ spec:
                 user:
                   token: $KUBE_TOKEN
               EOFKUBE
+              # Copy workspace files (only if not exist to preserve runtime changes)
+              for agent in apollo daedalus vulcan arachne cyclops argos metis; do
+                for file in IDENTITY SOUL TOOLS AGENTS USER HEARTBEAT; do
+                  [ -f /home/node/.openclaw/workspaces/$agent/${file}.md ] || \
+                    cp /workspace-src/$agent-${file}.md /home/node/.openclaw/workspaces/$agent/${file}.md 2>/dev/null || true
+                done
+              done
               chown -R 1000:1000 /home/node/.openclaw
           volumeMounts:
             - name: openclaw-data
@@ -94,6 +101,8 @@ spec:
             - name: mcp-k8s-token
               mountPath: /var/run/secrets/mcp-kubernetes
               readOnly: true
+            - name: tekton-workspaces
+              mountPath: /workspace-src
       containers:
         - name: openclaw
           image: ghcr.io/openclaw/openclaw:latest
@@ -209,6 +218,9 @@ spec:
         - name: mcp-k8s-token
           secret:
             secretName: mcp-kubernetes-token
+        - name: tekton-workspaces
+          configMap:
+            name: openclaw-tekton-workspaces
 ---
 apiVersion: v1
 kind: Service

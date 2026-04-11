@@ -4,4 +4,5 @@ resources:
   - deployment.yaml
   - configmap.yaml
   - ingress.yaml
+  - workspaces-configmap.yaml
   # secrets.yaml excluded — applied manually (not tracked in git)

@@ -1,0 +1,107 @@
+TEKTON AGENT AVATAR PROMPTS
+============================
+Style: Full-color manga/anime illustration. Portrait bust shot (head + shoulders).
+Square crop, 512x512px. Cel-shaded coloring, expressive eyes, clean linework.
+Setting: A modern tech startup office. Warm lighting mixed with screen glow.
+No text, no logos, no watermarks, no real brands.
+
+---
+
+AGENT 1 — CTO / Team Lead
+"The confident tech visionary"
+
+A young man with sharp golden-amber eyes and swept-back dark hair with subtle warm highlights.
+He wears a sleek black turtleneck under a tailored charcoal blazer with rolled-up sleeves.
+A thin translucent heads-up display hovers near his right temple like futuristic smart glasses
+projecting faint data streams. He has a confident half-smile, one hand raised mid-gesture as if
+explaining a big idea. Behind him: a large whiteboard covered in connected diagrams and flowcharts,
+multiple glowing monitors showing analytics dashboards. A small golden sun-shaped enamel pin on his
+lapel. Manga style, detailed background, warm and cool lighting contrast.
+
+---
+
+AGENT 2 — Product Owner / Planner
+"The calm strategist with the master plan"
+
+A thoughtful man with warm brown eyes and medium-length wavy chestnut hair. He wears round
+wireframe glasses with a faint digital reflection on the lenses. Dressed in a comfortable dark
+henley shirt and a casual vest covered in small enamel pins — tiny rockets, checkmarks, and a
+maze pattern. He holds a stylus pen, tapping it against his chin while studying something
+off-screen with a thoughtful expression. Behind him: walls covered in colorful sticky notes,
+sprint boards with columns, and timeline charts. A coffee mug with a labyrinth pattern sits on
+his desk. A small brass mechanical wing ornament next to his monitor. Manga style, soft warm
+lighting, cozy productive office.
+
+---
+
+AGENT 3 — Lead Software Engineer
+"The focused builder who forges the code"
+
+A strong-built man with intense deep red-brown eyes and short-cropped black hair with a streak
+of burnt orange. He wears a fitted black tech hoodie with the sleeves pushed up, revealing
+forearms with subtle geometric line tattoos resembling circuit traces. Large noise-canceling
+headphones rest around his neck. His expression is pure focused concentration — deep in flow
+state. His fingers hover over a mechanical keyboard with custom orange keycaps. Behind him:
+a triple monitor setup showing terminal windows with green text on black, scrolling log output,
+and a running automated test suite. A small metal anvil-shaped desk ornament sits among
+scattered energy drink cans. Manga style, dramatic screen-glow lighting, intense atmosphere.
+
+---
+
+AGENT 4 — Frontend Engineer
+"The pixel-perfect interface artisan"
+
+A young woman with sharp violet eyes and long silver-white hair tied in a messy side braid with
+thin luminescent ribbons woven through it. She wears an oversized dark graphic tee featuring an
+abstract geometric web pattern, tucked into high-waisted black pants, with a cropped lavender
+jacket. Her delicate fingers are mid-gesture, interacting with a holographic UI mockup floating
+in front of her — dragging interface components and resizing layouts. She has a slight satisfied
+smirk. Behind her: a curved ultrawide monitor showing design tools and a beautiful web interface,
+color palette swatches pinned to the wall, a small potted succulent on her clean desk. Manga
+style, cool purple and cyan ambient lighting, elegant workspace.
+
+---
+
+AGENT 5 — DevOps / Infrastructure Engineer
+"The one-eyed infrastructure guardian"
+
+A large, imposing man with a shaved head and short well-trimmed beard. He wears a single
+high-tech visor/eyepiece over his left eye that glows soft emerald green — it looks like an
+augmented reality scanner. His other eye is a calm grey-green. He wears a dark utilitarian
+cargo jacket covered in embroidered patches showing abstract symbols — a ship's wheel, a whale
+silhouette, geometric hexagons. Arms crossed, leaning back in his chair with quiet confidence
+and a slight knowing grin. Behind him: a glass wall looking into a server room with rows of
+blinking LED racks, a terminal showing infrastructure status output, monitoring dashboards all
+showing green indicators. A yellow hard hat sits on a shelf as a joke. Manga style, green-tinted
+ambient lighting from the server room, cool industrial atmosphere.
+
+---
+
+AGENT 6 — QA Engineer / Code Reviewer
+"The sharp-eyed perfectionist who catches everything"
+
+A lean man with striking ice-blue eyes that seem to notice every detail — almost unsettlingly
+perceptive. He has neat short dark hair, is clean-shaven, and wears a crisp light blue
+button-down shirt with the top button undone and thin rectangular analytical glasses that show
+faint code reflections in the lenses. His expression: one eyebrow slightly raised, the look
+of someone who just spotted a mistake everyone else missed. He holds a red pen in one hand.
+Behind him: a monitor showing a code comparison view with red and green highlighted sections,
+a checklist with items being checked off, organized sticky notes in neat rows. Several small
+decorative camera figurines on his shelf. Manga style, clean precise lighting, meticulous
+organized workspace.
+
+---
+
+AGENT 7 — Software Architect
+"The quiet genius who designs the blueprint"
+
+A woman with calm, knowing silver-grey eyes and a short stylish pixie-cut with subtle dark
+blue highlights. She wears elegant minimalist clothing — a structured black blazer over a
+simple white top, with a single piece of geometric silver jewelry shaped like a small bird
+pendant. Her expression is serene, looking slightly upward as if visualizing complex systems
+in her mind. One hand rests on a large technical diagram spread across her desk showing
+connected boxes and data flow arrows. Behind her: floor-to-ceiling whiteboards filled with
+system architecture diagrams and decision trees drawn in multiple marker colors. A small
+decorative owl figurine perches on her monitor. Neatly stacked technical books on the side.
+Manga style, soft natural light from a window mixed with screen glow, intellectual calm
+atmosphere.
