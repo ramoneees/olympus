@@ -63,12 +63,37 @@ spec:
               mkdir -p /home/node/.openclaw/cron
               mkdir -p /home/node/.openclaw/data/extensions
               mkdir -p /home/node/.openclaw/npm-global
+              # Generate kubeconfig for Kubernetes MCP
+              KUBE_TOKEN=$(cat /var/run/secrets/mcp-kubernetes/token)
+              KUBE_CA=$(cat /var/run/secrets/mcp-kubernetes/ca.crt)
+              cat > /home/node/.openclaw/kubeconfig << EOFKUBE
+              apiVersion: v1
+              kind: Config
+              clusters:
+              - cluster:
+                  certificate-authority-data: $(echo $KUBE_CA | base64 -w0)
+                  server: https://kubernetes.default.svc
+                name: olympus
+              contexts:
+              - context:
+                  cluster: olympus
+                  user: mcp-kubernetes
+                name: default
+              current-context: default
+              users:
+              - name: mcp-kubernetes
+                user:
+                  token: $KUBE_TOKEN
+              EOFKUBE
               chown -R 1000:1000 /home/node/.openclaw
           volumeMounts:
             - name: openclaw-data
               mountPath: /home/node/.openclaw
             - name: tekton-config
               mountPath: /config-src
+            - name: mcp-k8s-token
+              mountPath: /var/run/secrets/mcp-kubernetes
+              readOnly: true
       containers:
         - name: openclaw
           image: ghcr.io/openclaw/openclaw:latest
@@ -78,6 +103,9 @@ spec:
           volumeMounts:
             - name: openclaw-data
               mountPath: /home/node/.openclaw
+            - name: mcp-k8s-token
+              mountPath: /var/run/secrets/mcp-kubernetes
+              readOnly: true
           env:
             # LiteLLM (model routing)
             - name: LITELLM_API_KEY
@@ -151,6 +179,9 @@ spec:
                 secretKeyRef:
                   name: openclaw-tekton-secret
                   key: z-ai-api-key
+            # Kubernetes MCP for Cyclops
+            - name: KUBECONFIG
+              value: /home/node/.openclaw/kubeconfig
           resources:
             requests:
               cpu: 200m
@@ -175,6 +206,9 @@ spec:
         - name: tekton-config
           configMap:
             name: openclaw-tekton-config
+        - name: mcp-k8s-token
+          secret:
+            secretName: mcp-kubernetes-token
 ---
 apiVersion: v1
 kind: Service
