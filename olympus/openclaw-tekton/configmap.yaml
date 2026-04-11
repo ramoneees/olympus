@@ -222,7 +222,6 @@ data:
               "profile": "full",
               "allow": [
                 "group:fs",
-                "group:runtime",
                 "group:memory",
                 "web_search",
                 "web_fetch",
@@ -234,6 +233,8 @@ data:
                 "mcp:gitea-apollo"
               ],
               "deny": [
+                "exec",
+                "process",
                 "browser",
                 "canvas",
                 "image",
