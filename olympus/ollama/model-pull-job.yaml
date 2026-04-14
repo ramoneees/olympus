@@ -32,18 +32,10 @@ spec:
               echo "Ollama is ready. Pulling models..."
 
               for MODEL in \
-                "qwen2.5-coder:7b" \
+                "bge-m3:latest" \
                 "gpt-oss:20b" \
                 "gemma4:e2b" \
-                "gemma4:e4b"  \
-                "qwen3.5:0.8b" \
-                "qwen3.5:2b" \
-                "qwen3.5:4b" \
-                "deepseek-r1:7b" \
-                "qwen3:8b" \
-                "qwen3.5:9b" \
-                "bge-m3" \
-                "qwen3-vl:8b"; do
+                "gemma4:e4b"; do
                 echo "Pulling $MODEL..."
                 curl -sf "$OLLAMA/api/pull" -d "{\"name\":\"$MODEL\"}" || echo "WARN: Failed to pull $MODEL"
                 echo ""
