@@ -1,0 +1,232 @@
+# OpenClaw — Single-agent personal assistant (Hermes)
+# Runs the OpenClaw runtime with gateway, cron, WhatsApp, and Mattermost
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: openclaw-data
+  namespace: olympus
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openclaw
+  namespace: olympus
+  labels:
+    app: openclaw
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: openclaw
+  template:
+    metadata:
+      labels:
+        app: openclaw
+      annotations:
+        reloader.stakater.com/auto: "true"
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
+      initContainers:
+        - name: sync-config
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              # Sync openclaw-config from host into the PVC
+              # Config repo lives at /src on the host (git-managed)
+              mkdir -p /data/workspaces /data/cron /data/credentials /data/scripts /data/memory
+              cp -a /src/openclaw.json /data/ 2>/dev/null || true
+              cp -a /src/workspaces/hermes /data/workspaces/ 2>/dev/null || true
+              cp -a /src/cron-definitions /data/ 2>/dev/null || true
+              # Write Google OAuth credentials from secret to filesystem
+              # (Google Calendar + Gmail MCPs expect files on disk)
+              mkdir -p /data/credentials/google-calendar
+              if [ -n "$GOOGLE_OAUTH_CREDENTIALS" ]; then
+                echo "$GOOGLE_OAUTH_CREDENTIALS" > /data/credentials/google-calendar/gcp-oauth.keys.json
+              fi
+              if [ -n "$GOOGLE_CALENDAR_TOKENS" ]; then
+                echo "$GOOGLE_CALENDAR_TOKENS" > /data/credentials/google-calendar/.tokens.json
+              fi
+              # TickTick OAuth tokens
+              mkdir -p /data/credentials/ticktick
+              if [ -n "$TICKTICK_OAUTH_TOKENS" ]; then
+                echo "$TICKTICK_OAUTH_TOKENS" > /data/credentials/ticktick/tokens.json
+              fi
+              # Preserve runtime data (don't overwrite)
+              chown -R 1000:1000 /data/
+          env:
+            - name: GOOGLE_OAUTH_CREDENTIALS
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: GOOGLE_OAUTH_CREDENTIALS
+            - name: GOOGLE_CALENDAR_TOKENS
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: GOOGLE_CALENDAR_TOKENS
+            - name: TICKTICK_OAUTH_TOKENS
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: TICKTICK_OAUTH_TOKENS
+          volumeMounts:
+            - name: openclaw-config-host
+              mountPath: /src
+              readOnly: true
+            - name: openclaw-data
+              mountPath: /data
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+      containers:
+        - name: openclaw
+          image: ghcr.io/openclaw/openclaw:latest
+          ports:
+            - name: gateway
+              containerPort: 18789
+          volumeMounts:
+            - name: openclaw-data
+              mountPath: /home/node/.openclaw
+          env:
+            # LiteLLM (in-cluster)
+            - name: LITELLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: LITELLM_API_KEY
+            # Gateway auth
+            - name: OPENCLAW_GATEWAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: OPENCLAW_GATEWAY_TOKEN
+            # Hooks auth
+            - name: OPENCLAW_HOOKS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: OPENCLAW_HOOKS_TOKEN
+            # Mattermost (hermes bot)
+            - name: MATTERMOST_HERMES_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: MATTERMOST_BOT_TOKEN
+            - name: MATTERMOST_URL
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: MATTERMOST_URL
+            # n8n
+            - name: N8N_MCP_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: N8N_MCP_TOKEN
+            # Z AI (web search + reader)
+            - name: Z_AI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: Z_AI_API_KEY
+            # ElevenLabs TTS (for sag voice synthesis in briefings)
+            - name: ELEVENLABS_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: ELEVENLABS_API_KEY
+            # Firefly III — add these keys to openclaw-secrets before deploying
+            - name: FIREFLY_ADMIN_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: FIREFLY_ADMIN_TOKEN
+                  optional: true
+            - name: FIREFLY_URL
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: FIREFLY_URL
+                  optional: true
+            # Invoice Ninja — add these keys to openclaw-secrets before deploying
+            - name: INVOICE_NINJA_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: INVOICE_NINJA_API_TOKEN
+                  optional: true
+            - name: INVOICE_NINJA_BASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: INVOICE_NINJA_BASE_URL
+                  optional: true
+            # Mission Control (in-cluster)
+            - name: MC_URL
+              value: "http://mission-control.olympus.svc.cluster.local"
+            - name: MC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: MC_API_KEY
+                  optional: true
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 4Gi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: gateway
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: gateway
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 5
+      volumes:
+        - name: openclaw-config-host
+          hostPath:
+            path: /home/ramoneees/.openclaw
+            type: Directory
+        - name: openclaw-data
+          persistentVolumeClaim:
+            claimName: openclaw-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openclaw
+  namespace: olympus
+spec:
+  type: ClusterIP
+  selector:
+    app: openclaw
+  ports:
+    - name: http
+      port: 18789
+      targetPort: 18789

@@ -99,7 +99,7 @@ spec:
             - name: OPENCLAW_ALLOW_INSECURE_PRIVATE_WS
               value: "1"
             - name: OPENCLAW_GATEWAY_URL
-              value: "ws://192.168.50.11:18789"
+              value: "ws://openclaw.olympus.svc.cluster.local:18789"
             - name: OPENCLAW_GATEWAY_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -130,7 +130,7 @@ spec:
                   key: api-key
             # OpenClaw gateway — server-side (MC backend → gateway)
             - name: OPENCLAW_GATEWAY_HOST
-              value: "192.168.50.11"
+              value: "openclaw.olympus.svc.cluster.local"
             - name: OPENCLAW_GATEWAY_PORT
               value: "18789"
             # OpenClaw gateway — browser-side (auto-detect from browser)

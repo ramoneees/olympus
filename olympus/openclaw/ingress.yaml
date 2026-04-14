@@ -14,5 +14,6 @@ spec:
       services:
         - name: openclaw
           port: 18789
+          scheme: http
   tls:
     secretName: wildcard-ramoneees-com-tls
