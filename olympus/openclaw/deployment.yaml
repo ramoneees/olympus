@@ -14,6 +14,19 @@ spec:
     requests:
       storage: 10Gi
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: openclaw-homebrew
+  namespace: olympus
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -38,6 +51,31 @@ spec:
       nodeSelector:
         kubernetes.io/hostname: olympus
       initContainers:
+        - name: seed-homebrew
+          image: ghcr.io/openclaw/openclaw:latest
+          command:
+            - sh
+            - -c
+            - |
+              # Seed Homebrew from image into PVC on first run only
+              if [ ! -f /brew-pvc/.seeded ]; then
+                echo "First run: copying Homebrew to PVC..."
+                cp -a /home/linuxbrew/.linuxbrew/. /brew-pvc/
+                touch /brew-pvc/.seeded
+                echo "Homebrew seeded."
+              else
+                echo "Homebrew PVC already seeded, skipping."
+              fi
+          volumeMounts:
+            - name: openclaw-homebrew
+              mountPath: /brew-pvc
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
         - name: sync-config
           image: busybox
           command:
@@ -104,6 +142,8 @@ spec:
           volumeMounts:
             - name: openclaw-data
               mountPath: /home/node/.openclaw
+            - name: openclaw-homebrew
+              mountPath: /home/linuxbrew/.linuxbrew
           env:
             # LiteLLM (in-cluster)
             - name: LITELLM_API_KEY
@@ -216,6 +256,9 @@ spec:
         - name: openclaw-data
           persistentVolumeClaim:
             claimName: openclaw-data
+        - name: openclaw-homebrew
+          persistentVolumeClaim:
+            claimName: openclaw-homebrew
 ---
 apiVersion: v1
 kind: Service
