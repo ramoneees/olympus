@@ -28,7 +28,7 @@ spec:
         kubernetes.io/hostname: olympus
       containers:
         - name: litellm
-          image: ghcr.io/berriai/litellm:main-stable
+          image: ghcr.io/berriai/litellm:v1.83.3-stable
           imagePullPolicy: Always
           args:
             - "--config"

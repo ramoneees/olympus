@@ -47,7 +47,7 @@ spec:
                   FAILED=0
                   for db in $DATABASES; do
                     echo "Backing up $db..."
-                    if mysqldump -h "$DBHOST" -u "$DBUSER" -p"${MARIADB_ROOT_PASSWORD}" --single-transaction "$db" 2>/dev/null | gzip > "$BACKUP_DIR/${db}-${TIMESTAMP}.sql.gz"; then
+                    if mysqldump -h "$DBHOST" -u "$DBUSER" -p"${MARIADB_ROOT_PASSWORD}" --single-transaction "$db" 2>&1 | gzip > "$BACKUP_DIR/${db}-${TIMESTAMP}.sql.gz"; then
                       SIZE=$(du -h "$BACKUP_DIR/${db}-${TIMESTAMP}.sql.gz" | cut -f1)
                       echo "OK: $db ($SIZE)"
                     else
