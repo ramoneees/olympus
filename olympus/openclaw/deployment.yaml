@@ -82,12 +82,30 @@ spec:
             - sh
             - -c
             - |
-              # Sync openclaw-config from host into the PVC
+              # Sync full openclaw-config from host into the PVC
               # Config repo lives at /src on the host (git-managed)
-              mkdir -p /data/workspaces /data/cron /data/credentials /data/scripts /data/memory
+              mkdir -p /data/workspaces /data/cron /data/credentials /data/scripts /data/memory /data/config
+
+              # Copy root config files
               cp -a /src/openclaw.json /data/ 2>/dev/null || true
-              cp -a /src/workspaces/hermes /data/workspaces/ 2>/dev/null || true
+              cp -a /src/openclaw.json5 /data/ 2>/dev/null || true
+              cp -a /src/mcporter.json /data/ 2>/dev/null || true
+
+              # Copy full config directory (agents, models, tools, plugins, bindings)
+              cp -a /src/config/. /data/config/ 2>/dev/null || true
+
+              # Copy all agent workspaces
+              for ws in /src/workspaces/*/; do
+                agent=$(basename "$ws")
+                mkdir -p "/data/workspaces/$agent"
+                cp -a "$ws". "/data/workspaces/$agent/" 2>/dev/null || true
+              done
+
+              # Copy plugins, shared-memory, docs
+              cp -a /src/plugins /data/ 2>/dev/null || true
+              cp -a /src/shared-memory /data/ 2>/dev/null || true
               cp -a /src/cron-definitions /data/ 2>/dev/null || true
+
               # Write Google OAuth credentials from secret to filesystem
               # (Google Calendar + Gmail MCPs expect files on disk)
               mkdir -p /data/credentials/google-calendar
@@ -164,7 +182,7 @@ spec:
                   name: openclaw-secrets
                   key: OPENCLAW_HOOKS_TOKEN
             # Mattermost (hermes bot)
-            - name: MATTERMOST_HERMES_BOT_TOKEN
+            - name: MATTERMOST_BOT_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: openclaw-secrets
@@ -217,6 +235,19 @@ spec:
                 secretKeyRef:
                   name: openclaw-secrets
                   key: INVOICE_NINJA_BASE_URL
+                  optional: true
+            # Vikunja (task management MCP)
+            - name: VIKUNJA_URL
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: VIKUNJA_URL
+                  optional: true
+            - name: VIKUNJA_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secrets
+                  key: VIKUNJA_TOKEN
                   optional: true
             # Mission Control (in-cluster)
             - name: MC_URL

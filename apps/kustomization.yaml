@@ -7,6 +7,7 @@ resources:
   - firefly-iii/
   - gitea/
   - gitea-runner/
+  - home-assistant/
   - homebox/
   - invoice-ninja/
   - mattermost/
