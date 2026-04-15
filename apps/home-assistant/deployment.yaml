@@ -31,6 +31,10 @@ spec:
       labels:
         app: home-assistant
     spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      nodeSelector:
+        kubernetes.io/hostname: olympus
       initContainers:
         - name: seed-config
           image: busybox
@@ -40,13 +44,13 @@ spec:
             - |
               if [ ! -f /config/configuration.yaml ]; then
                 cat > /config/configuration.yaml << 'YAML'
-              # Home Assistant initial configuration
               homeassistant:
                 name: Olympus Home
                 unit_system: metric
                 time_zone: Europe/Lisbon
 
               http:
+                server_port: 8123
                 use_x_forwarded_for: true
                 trusted_proxies:
                   - 10.42.0.0/16
@@ -54,11 +58,25 @@ spec:
                   - 192.168.50.0/24
                   - 127.0.0.1
 
+              homekit:
+                - name: "Olympus Bridge"
+                  port: 21063
+                  filter:
+                    include_domains:
+                      - light
+                      - switch
+                      - climate
+                      - cover
+                      - fan
+                      - media_player
+                      - sensor
+                      - binary_sensor
+                      - lock
+
               default_config:
               YAML
-                echo "Seeded configuration.yaml"
+                echo "Seeded configuration.yaml with HomeKit bridge"
               else
-                # Ensure trusted_proxies exist even if config already exists
                 if ! grep -q "trusted_proxies" /config/configuration.yaml; then
                   cat >> /config/configuration.yaml << 'YAML'
 
@@ -70,9 +88,29 @@ spec:
                   - 192.168.50.0/24
                   - 127.0.0.1
               YAML
-                  echo "Appended trusted_proxies to existing config"
+                  echo "Appended trusted_proxies"
+                fi
+                if ! grep -q "homekit:" /config/configuration.yaml; then
+                  cat >> /config/configuration.yaml << 'YAML'
+
+              homekit:
+                - name: "Olympus Bridge"
+                  port: 21063
+                  filter:
+                    include_domains:
+                      - light
+                      - switch
+                      - climate
+                      - cover
+                      - fan
+                      - media_player
+                      - sensor
+                      - binary_sensor
+                      - lock
+              YAML
+                  echo "Appended homekit config"
                 else
-                  echo "Config already has trusted_proxies, skipping"
+                  echo "Config already has homekit block, skipping"
                 fi
               fi
           volumeMounts:
@@ -91,6 +129,8 @@ spec:
           ports:
             - name: http
               containerPort: 8123
+            - name: homekit
+              containerPort: 21063
           env:
             - name: TZ
               value: "Europe/Lisbon"
@@ -108,14 +148,14 @@ spec:
             httpGet:
               path: /manifest.json
               port: http
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
             periodSeconds: 60
             timeoutSeconds: 10
           readinessProbe:
             httpGet:
               path: /manifest.json
               port: http
-            initialDelaySeconds: 15
+            initialDelaySeconds: 30
             periodSeconds: 15
             timeoutSeconds: 5
       volumes:
