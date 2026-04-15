@@ -72,6 +72,7 @@ spec:
                       - sensor
                       - binary_sensor
                       - lock
+                      - camera
 
               default_config:
               YAML
@@ -107,6 +108,7 @@ spec:
                       - sensor
                       - binary_sensor
                       - lock
+                      - camera
               YAML
                   echo "Appended homekit config"
                 else
