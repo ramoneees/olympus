@@ -1,0 +1,74 @@
+# CronJob: Obsidian vault → pgvector sync
+# Clones the vault from GitHub, runs embedding sync against mnemosyne DB
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: obsidian-pgvector-sync
+  namespace: apps
+spec:
+  schedule: "*/30 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 600
+      template:
+        spec:
+          restartPolicy: OnFailure
+          initContainers:
+            - name: git-clone
+              image: alpine/git:latest
+              command:
+                - sh
+                - -c
+                - |
+                  git clone --depth 1 \
+                    https://$(cat /etc/git-token/token)@github.com/ramoneees/obsidian-backups.git \
+                    /vault
+              volumeMounts:
+                - name: vault
+                  mountPath: /vault
+                - name: git-token
+                  mountPath: /etc/git-token
+                  readOnly: true
+          containers:
+            - name: sync
+              image: python:3.12-slim
+              command:
+                - sh
+                - -c
+                - |
+                  pip install --quiet psycopg2-binary requests && \
+                  python /scripts/obsidian-pgvector-sync.py /vault
+              envFrom:
+                - secretRef:
+                    name: obsidian-sync-env
+              volumeMounts:
+                - name: vault
+                  mountPath: /vault
+                  readOnly: true
+                - name: sync-script
+                  mountPath: /scripts
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+          volumes:
+            - name: vault
+              emptyDir: {}
+            - name: git-token
+              secret:
+                secretName: obsidian-sync-env
+                items:
+                  - key: github-token
+                    path: token
+            - name: sync-script
+              configMap:
+                name: obsidian-sync-script

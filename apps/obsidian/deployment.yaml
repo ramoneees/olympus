@@ -1,3 +1,5 @@
+# Obsidian Vault — git-sync + FileBrowser
+# Source: github.com/ramoneees/obsidian-backups
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -18,7 +20,48 @@ spec:
       labels:
         app: obsidian
     spec:
+      initContainers:
+        - name: git-init
+          image: alpine/git:latest
+          command:
+            - sh
+            - -c
+            - |
+              git clone --depth 1 \
+                https://$(cat /etc/git-token/token)@github.com/ramoneees/obsidian-backups.git \
+                /vault
+          volumeMounts:
+            - name: vault
+              mountPath: /vault
+            - name: git-token
+              mountPath: /etc/git-token
+              readOnly: true
       containers:
+        - name: git-sync
+          image: alpine/git:latest
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                cd /vault
+                git fetch --depth 1 origin main
+                git reset --hard origin/main
+                sleep 60
+              done
+          volumeMounts:
+            - name: vault
+              mountPath: /vault
+            - name: git-token
+              mountPath: /etc/git-token
+              readOnly: true
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 50m
+              memory: 64Mi
         - name: filebrowser
           image: filebrowser/filebrowser:latest
           args: ["--port", "8080"]
@@ -28,6 +71,7 @@ spec:
           volumeMounts:
             - name: vault
               mountPath: /srv
+              readOnly: true
           resources:
             requests:
               cpu: 50m
@@ -49,21 +93,13 @@ spec:
             periodSeconds: 10
       volumes:
         - name: vault
-          persistentVolumeClaim:
-            claimName: obsidian-vault
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: obsidian-vault
-  namespace: apps
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: longhorn
-  resources:
-    requests:
-      storage: 2Gi
+          emptyDir: {}
+        - name: git-token
+          secret:
+            secretName: obsidian-sync-env
+            items:
+              - key: github-token
+                path: token
 ---
 apiVersion: v1
 kind: Service
