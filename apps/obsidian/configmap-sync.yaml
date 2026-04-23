@@ -28,6 +28,7 @@ data:
             }
             self.embedding_url = os.getenv('EMBEDDING_URL', 'http://litellm.olympus.svc.cluster.local:4000')
             self.embedding_model = os.getenv('EMBEDDING_MODEL', 'bge-m3')
+            self.litellm_api_key = os.getenv('LITELLM_API_KEY', '')
             self.namespace = '/memory/obsidian'
             self.source_agent = 'obsidian-sync'
 
@@ -40,9 +41,12 @@ data:
 
         def get_embedding(self, text: str) -> Optional[List[float]]:
             try:
+                headers = {"Content-Type": "application/json"}
+                if self.litellm_api_key:
+                    headers["Authorization"] = f"Bearer {self.litellm_api_key}"
                 response = requests.post(
                     f"{self.embedding_url}/embeddings",
-                    headers={"Content-Type": "application/json"},
+                    headers=headers,
                     json={"model": self.embedding_model, "input": text[:8000]},
                     timeout=60
                 )
