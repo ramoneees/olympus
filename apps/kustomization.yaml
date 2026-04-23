@@ -10,9 +10,9 @@ resources:
   - home-assistant/
   - homebox/
   - invoice-ninja/
-  - mattermost/
+  # - mattermost/  # suspended 2026-04-23
   - obsidian/
   - uptime-kuma/
   - vaultwarden/
-  - vikunja/
+  # - vikunja/  # suspended 2026-04-23
   - zotero/
