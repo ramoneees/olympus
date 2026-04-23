@@ -3,6 +3,6 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - ingress.yaml
-  - secrets.yaml
+  # - secrets.yaml  # managed out-of-band — real values applied manually to cluster
   - configmap-sync.yaml
   - cronjob-sync.yaml
