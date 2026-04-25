@@ -239,13 +239,27 @@ data:
           max_input_tokens: 202752
           max_tokens: 131072
       # OpenRouter (access to many models)
-      - model_name: openrouter/minimax/minimax-m2.7
+      - model_name: openrouter/minimax-m2.7
         litellm_params:
           model: openrouter/minimax/minimax-m2.7
           api_key: os.environ/OPENROUTER_API_KEY
         model_info:
           max_input_tokens: 196608
           max_tokens: 16384    
+      - model_name: openrouter/deepseek-v4-flash
+        litellm_params:
+          model: openrouter/deepseek/deepseek-v4-flash
+          api_key: os.environ/OPENROUTER_API_KEY
+        model_info:
+          max_input_tokens: 1048576
+          max_tokens: 1048576        
+      - model_name: openrouter/deepseek-v4-pro
+        litellm_params:
+          model: openrouter/deepseek/deepseek-v4-pro
+          api_key: os.environ/OPENROUTER_API_KEY
+        model_info:
+          max_input_tokens: 1048576
+          max_tokens: 1048576            
     router_settings:
       routing_strategy: latency-based-routing
       redis_host: redis-master.databases.svc.cluster.local
