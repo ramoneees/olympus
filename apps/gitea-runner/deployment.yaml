@@ -22,6 +22,7 @@ data:
       timeout: 1h
       labels:
         - "ubuntu-latest:docker://node:22-bookworm"
+        - "docker-latest:docker://docker:27-cli"
         - "node-22:docker://node:22-bookworm"
         - "node-20:docker://node:20-bookworm"
     cache:

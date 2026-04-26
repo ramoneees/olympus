@@ -15,4 +15,6 @@ resources:
   - uptime-kuma/
   - vaultwarden/
   # - vikunja/  # suspended 2026-04-23
+  - weserve/
+  - weserve-tunnel/
   - zotero/

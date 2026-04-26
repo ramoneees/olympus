@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weserve-tunnel
+  namespace: apps
+  labels:
+    app: weserve-tunnel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weserve-tunnel
+  template:
+    metadata:
+      labels:
+        app: weserve-tunnel
+    spec:
+      containers:
+        - name: cloudflared
+          image: cloudflare/cloudflared:latest
+          args:
+            - tunnel
+            - --no-autoupdate
+            - run
+            - --token
+            - $(TUNNEL_TOKEN)
+          env:
+            - name: TUNNEL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: weserve-tunnel-secret
+                  key: tunnel-token
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
