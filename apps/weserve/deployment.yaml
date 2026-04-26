@@ -30,7 +30,7 @@ spec:
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:postgresql://postgresql.databases.svc.cluster.local:5432/team_organizer"
             - name: SPRING_DATASOURCE_USERNAME
-              value: "weserve"
+              value: "to_user"
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
