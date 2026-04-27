@@ -41,6 +41,11 @@ spec:
                 secretKeyRef:
                   name: weserve-secret
                   key: jwt-secret
+            - name: LLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: weserve-secret
+                  key: llm-api-key
           resources:
             requests:
               cpu: 100m

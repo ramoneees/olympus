@@ -236,6 +236,13 @@ data:
           max_input_tokens: 196608
           max_tokens: 16384
           supports_vision: true
+      # MiniMax — Image generation (native REST, not Anthropic-compat)
+      - model_name: minimax/image-01
+        litellm_params:
+          model: minimax/image-01
+          api_key: os.environ/MINIMAX_API_KEY
+        model_info:
+          mode: image_generation
       - model_name: kimi-k2.5
         litellm_params:
           model: openai/kimi-k2.5

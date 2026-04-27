@@ -1,0 +1,145 @@
+# Open WebUI — Chat + Image/Music/Video generation UI
+# Music and video generation handled via Open WebUI Functions (Admin > Functions)
+# that call MiniMax REST API directly (https://api.minimax.io/v1/music_generation, /v1/video_generation)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: open-webui
+  namespace: olympus
+  labels:
+    app: open-webui
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: open-webui
+  template:
+    metadata:
+      labels:
+        app: open-webui
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: open-webui
+          image: ghcr.io/open-webui/open-webui:main
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            # --- LiteLLM as the OpenAI-compatible backend ---
+            - name: OPENAI_API_BASE_URL
+              value: "http://litellm.olympus.svc.cluster.local:4000/v1"
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: master-key
+
+            # --- Disable direct Ollama (LiteLLM proxies it) ---
+            - name: ENABLE_OLLAMA_API
+              value: "false"
+            - name: OLLAMA_BASE_URL
+              value: ""
+
+            # --- Image generation via LiteLLM → MiniMax image-01 ---
+            - name: ENABLE_IMAGE_GENERATION
+              value: "true"
+            - name: IMAGE_GENERATION_ENGINE
+              value: "openai"
+            - name: IMAGES_OPENAI_API_BASE_URL
+              value: "http://litellm.olympus.svc.cluster.local:4000/v1"
+            - name: IMAGES_OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: master-key
+            - name: IMAGE_GENERATION_MODEL
+              value: "minimax/image-01"
+
+            # --- Auth: built-in accounts, no public signup ---
+            - name: WEBUI_AUTH
+              value: "true"
+            - name: ENABLE_SIGNUP
+              value: "false"
+            - name: DEFAULT_USER_ROLE
+              value: "user"
+
+            # --- App identity ---
+            - name: WEBUI_NAME
+              value: "OLYMPUS"
+            - name: WEBUI_URL
+              value: "https://chat.ramoneees.com"
+
+            # --- Session secret ---
+            - name: WEBUI_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: open-webui-secret
+                  key: webui-secret-key
+
+            # --- MiniMax API key for Functions (music/video generation) ---
+            - name: MINIMAX_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: open-webui-secret
+                  key: minimax-api-key
+
+            # --- Redis for session caching ---
+            - name: REDIS_URL
+              value: "redis://redis-master.databases.svc.cluster.local:6379"
+
+            # --- Disable telemetry ---
+            - name: SCARF_NO_ANALYTICS
+              value: "true"
+            - name: DO_NOT_TRACK
+              value: "true"
+
+          volumeMounts:
+            - name: data
+              mountPath: /app/backend/data
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: open-webui-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: open-webui
+  namespace: olympus
+spec:
+  type: ClusterIP
+  selector:
+    app: open-webui
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
