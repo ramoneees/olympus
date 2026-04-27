@@ -71,6 +71,10 @@ spec:
             - name: DEFAULT_USER_ROLE
               value: "user"
 
+            # --- Default model for all users ---
+            - name: DEFAULT_MODELS
+              value: "MiniMax-M2.5"
+
             # --- App identity ---
             - name: WEBUI_NAME
               value: "OLYMPUS"
