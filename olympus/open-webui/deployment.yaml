@@ -91,13 +91,11 @@ spec:
                   name: open-webui-secret
                   key: minimax-api-key
 
-            # --- Web search via SearXNG (internal, no API key) ---
+            # --- Web search via DuckDuckGo (built-in, no API key needed) ---
             - name: ENABLE_RAG_WEB_SEARCH
               value: "true"
             - name: RAG_WEB_SEARCH_ENGINE
-              value: "searxng"
-            - name: SEARXNG_QUERY_URL
-              value: "http://searxng.apps.svc.cluster.local:8080/search?q=<query>&format=json&categories=general"
+              value: "duckduckgo"
             - name: RAG_WEB_SEARCH_RESULT_COUNT
               value: "5"
             - name: RAG_WEB_SEARCH_CONCURRENT_REQUESTS

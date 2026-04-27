@@ -17,5 +17,4 @@ resources:
   # - vikunja/  # suspended 2026-04-23
   - weserve/
   - weserve-tunnel/
-  - searxng/
   - zotero/

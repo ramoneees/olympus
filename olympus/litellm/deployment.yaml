@@ -143,6 +143,22 @@ data:
           max_tokens: 8192
           supports_vision: true
       # Cloud — ZAI (ZhipuAI) Coding Plan
+      - model_name: glm-4.5
+        litellm_params:
+          model: openai/glm-4.5
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 128000
+          max_tokens: 16384
+      - model_name: glm-4.5-air
+        litellm_params:
+          model: openai/glm-4.5-air
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 128000
+          max_tokens: 16384
       - model_name: glm-5
         litellm_params:
           model: openai/glm-5
