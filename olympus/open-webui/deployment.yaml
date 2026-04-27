@@ -91,11 +91,16 @@ spec:
                   name: open-webui-secret
                   key: minimax-api-key
 
-            # --- Web search via DuckDuckGo (built-in, no API key needed) ---
+            # --- Web search via Brave Search API ---
             - name: ENABLE_RAG_WEB_SEARCH
               value: "true"
             - name: RAG_WEB_SEARCH_ENGINE
-              value: "duckduckgo"
+              value: "brave"
+            - name: BRAVE_SEARCH_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: open-webui-secret
+                  key: brave-search-api-key
             - name: RAG_WEB_SEARCH_RESULT_COUNT
               value: "5"
             - name: RAG_WEB_SEARCH_CONCURRENT_REQUESTS
