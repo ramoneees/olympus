@@ -236,6 +236,14 @@ data:
           max_input_tokens: 196608
           max_tokens: 16384
           supports_vision: true
+      # MiniMax — Text-to-Speech (OpenAI-compatible /v1/audio/speech)
+      - model_name: minimax-speech
+        litellm_params:
+          model: openai/speech-2.8-hd
+          api_base: https://api.minimax.io/v1
+          api_key: os.environ/MINIMAX_API_KEY
+        model_info:
+          mode: audio
       # MiniMax — Image generation (native REST, not Anthropic-compat)
       - model_name: minimax/image-01
         litellm_params:

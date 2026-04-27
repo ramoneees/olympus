@@ -91,6 +91,21 @@ spec:
                   name: open-webui-secret
                   key: minimax-api-key
 
+            # --- TTS (Text-to-Speech) via LiteLLM → MiniMax Speech 2.8 ---
+            - name: AUDIO_TTS_ENGINE
+              value: "openai"
+            - name: AUDIO_TTS_OPENAI_API_BASE_URL
+              value: "http://litellm.olympus.svc.cluster.local:4000/v1"
+            - name: AUDIO_TTS_OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: master-key
+            - name: AUDIO_TTS_MODEL
+              value: "minimax-speech"
+            - name: AUDIO_TTS_VOICE
+              value: "Wise_Woman"
+
             # --- Redis for session caching ---
             - name: REDIS_URL
               value: "redis://redis-master.databases.svc.cluster.local:6379"
