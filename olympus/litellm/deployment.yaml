@@ -200,6 +200,59 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
+      # ZAI — Free tier models
+      - model_name: glm-4.5-flash
+        litellm_params:
+          model: openai/glm-4.5-flash
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 131072
+          max_tokens: 16384
+      - model_name: glm-4.7-flash
+        litellm_params:
+          model: openai/glm-4.7-flash
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 200000
+          max_tokens: 16384
+      - model_name: glm-4.7-flashx
+        litellm_params:
+          model: openai/glm-4.7-flashx
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 200000
+          max_tokens: 16384
+      # ZAI — Vision models
+      - model_name: glm-4.5v
+        litellm_params:
+          model: openai/glm-4.5v
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 65536
+          max_tokens: 16384
+          supports_vision: true
+      - model_name: glm-4.6v
+        litellm_params:
+          model: openai/glm-4.6v
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 131072
+          max_tokens: 16384
+          supports_vision: true
+      - model_name: glm-5v-turbo
+        litellm_params:
+          model: openai/glm-5v-turbo
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 200000
+          max_tokens: 131072
+          supports_vision: true
       # Alibaba Cloud — DashScope Coding Plan (all models via coding endpoint)
       - model_name: qwen3.5-plus
         litellm_params:
