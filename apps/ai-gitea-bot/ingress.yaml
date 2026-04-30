@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ai-gitea-bot
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`aibot.ramoneees.com`)
+      services:
+        - name: ai-gitea-bot
+          port: 8080
+  tls:
+    secretName: wildcard-ramoneees-com-tls

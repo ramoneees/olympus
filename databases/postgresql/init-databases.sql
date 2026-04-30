@@ -48,3 +48,9 @@ GRANT ALL PRIVILEGES ON DATABASE mnemosyne TO mnemosyne;
 ALTER DATABASE mnemosyne OWNER TO mnemosyne;
 \c mnemosyne
 CREATE EXTENSION IF NOT EXISTS vector;
+
+-- AI Gitea Bot
+CREATE DATABASE aigiteabot;
+CREATE USER aigiteabot WITH PASSWORD 'cc8QKWq62g0NMtGd';
+GRANT ALL PRIVILEGES ON DATABASE aigiteabot TO aigiteabot;
+ALTER DATABASE aigiteabot OWNER TO aigiteabot;

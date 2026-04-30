@@ -1,0 +1,75 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-gitea-bot
+  namespace: apps
+  labels:
+    app: ai-gitea-bot
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: ai-gitea-bot
+  template:
+    metadata:
+      labels:
+        app: ai-gitea-bot
+    spec:
+      containers:
+        - name: ai-gitea-bot
+          image: tmseidel/ai-gitea-bot:latest
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            - name: APP_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ai-gitea-bot-secret
+                  key: app-encryption-key
+            - name: DATABASE_URL
+              value: "jdbc:postgresql://postgresql.databases.svc.cluster.local:5432/aigiteabot"
+            - name: DATABASE_USERNAME
+              value: "aigiteabot"
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ai-gitea-bot-secret
+                  key: db-password
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-gitea-bot
+  namespace: apps
+spec:
+  selector:
+    app: ai-gitea-bot
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
