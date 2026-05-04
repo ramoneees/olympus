@@ -20,7 +20,7 @@ spec:
         - name: me-portfolio
           # Build and push: docker build -t gitea.ramoneees.com/ramon/me-portfolio:latest .
           # then: docker push gitea.ramoneees.com/ramon/me-portfolio:latest
-          image: gitea.ramoneees.com/ramon/me-portfolio:latest
+          image: git.ramoneees.com/ramoneees/me-portfolio:latest
           imagePullPolicy: Always
           ports:
             - name: http
