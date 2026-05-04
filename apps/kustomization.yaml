@@ -12,6 +12,7 @@ resources:
   - homebox/
   - invoice-ninja/
   # - mattermost/  # suspended 2026-04-23
+  - me-portfolio/
   - obsidian/
   - uptime-kuma/
   - vaultwarden/
