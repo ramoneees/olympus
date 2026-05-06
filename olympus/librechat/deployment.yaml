@@ -105,6 +105,11 @@ spec:
                 secretKeyRef:
                   name: librechat-secret
                   key: jwt-secret
+            - name: JWT_REFRESH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: librechat-secret
+                  key: jwt-secret
           volumeMounts:
             - name: config
               mountPath: /app/librechat.yaml
