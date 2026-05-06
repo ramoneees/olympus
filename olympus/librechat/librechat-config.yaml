@@ -15,6 +15,8 @@ data:
           apiKey: "${LITELLM_MASTER_KEY}"
           baseURL: "http://litellm.olympus.svc.cluster.local:4000/v1"
           models:
+            default:
+              - "MiniMax-M2.5"
             fetch: true
           titleConvo: true
           titleModel: "MiniMax-M2.5"
