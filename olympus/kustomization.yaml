@@ -5,7 +5,7 @@ resources:
   # - mission-control/  # suspended 2026-04-23
   - n8n/
   - ollama/
-  - open-webui/
+  - librechat/
   # - openclaw/  # suspended 2026-04-23
   # - openclaw-tekton/  # suspended 2026-04-23
   # - paperclip/  # suspended 2026-04-23

@@ -22,7 +22,7 @@ olympus/                GPU-pinned workloads
   ├── ollama/                   Local LLM inference
   ├── litellm/                  Unified LLM proxy
   ├── n8n/                      Workflow automation
-  └── openwebui/                LLM chat UI
+  └── librechat/               LLM chat UI (image gen, TTS/STT)
 monitoring/             Prometheus, Grafana, Loki, Promtail
 argocd/                 App-of-apps Application manifests (see argocd/AGENTS.md)
 scripts/                Utility scripts
@@ -131,7 +131,7 @@ kubectl top pods -A
 | Mattermost | chat.ramoneees.com | Team chat |
 | Vikunja | tasks.ramoneees.com | Task management |
 | Firefly III | firefly.ramoneees.com | Finance tracking |
-| Open WebUI | ai.ramoneees.com | LLM chat interface |
+| LibreChat | ai.ramoneees.com | LLM chat (image gen, TTS/STT) |
 | OpenClaw | openclaw.ramoneees.com | Multi-agent AI orchestrator (baremetal) |
 | Grafana | grafana.ramoneees.com | Monitoring dashboards |
 
