@@ -21,3 +21,16 @@ data:
           titleConvo: true
           titleModel: "MiniMax-M2.5"
           modelDisplayLabel: "OLYMPUS"
+    mcpServers:
+      minimax:
+        type: stdio
+        command: npx
+        args:
+          - "-y"
+          - "minimax-mcp-js"
+        env:
+          MINIMAX_API_KEY: "${MINIMAX_API_KEY}"
+          MINIMAX_API_HOST: "https://api.minimaxi.chat"
+          MINIMAX_MCP_BASE_PATH: "/app/data"
+          MINIMAX_RESOURCE_MODE: "url"
+        trustTools: true

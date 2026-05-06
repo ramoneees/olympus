@@ -92,6 +92,13 @@ spec:
                   name: librechat-secret
                   key: litellm-master-key
 
+            # MiniMax MCP (direct API key for image gen, TTS, etc.)
+            - name: MINIMAX_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: minimax-api-key
+
             # JWT Secret
             - name: JWT_SECRET
               valueFrom:
