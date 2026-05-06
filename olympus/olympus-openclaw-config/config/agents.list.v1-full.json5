@@ -23,7 +23,7 @@
   {
     id: "hephaestus",
     workspace: "/home/node/.openclaw/workspaces/hephaestus",
-    model: "litellm/qwen3-coder-plus",
+    model: "litellm/glm-5-turbo",
     sandbox: {
       mode: "all",
       scope: "agent",
@@ -89,7 +89,7 @@
   {
     id: "prometheus",
     workspace: "/home/node/.openclaw/workspaces/prometheus",
-    model: "litellm/qwen3-coder-plus",
+    model: "litellm/glm-5-turbo",
     sandbox: { mode: "off" },
     tools: {
       profile: "coding",

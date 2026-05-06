@@ -20,41 +20,9 @@ data:
             "api": "openai-completions",
             "models": [
               {
-                "id": "qwen3-coder-plus",
-                "name": "Qwen 3 Coder Plus",
-                "reasoning": false,
-                "input": ["text"],
-                "contextWindow": 131072,
-                "maxTokens": 8192
-              },
-              {
-                "id": "qwen3-coder-next",
-                "name": "Qwen 3 Coder Next",
-                "reasoning": false,
-                "input": ["text"],
-                "contextWindow": 131072,
-                "maxTokens": 8192
-              },
-              {
-                "id": "qwen3.5-plus",
-                "name": "Qwen 3.5 Plus",
-                "reasoning": false,
-                "input": ["text"],
-                "contextWindow": 131072,
-                "maxTokens": 8192
-              },
-              {
                 "id": "MiniMax-M2.5",
                 "name": "MiniMax M2.5",
                 "reasoning": false,
-                "input": ["text"],
-                "contextWindow": 131072,
-                "maxTokens": 8192
-              },
-              {
-                "id": "kimi-k2.5",
-                "name": "Kimi K2.5",
-                "reasoning": true,
                 "input": ["text"],
                 "contextWindow": 131072,
                 "maxTokens": 8192
@@ -106,32 +74,15 @@ data:
       "agents": {
         "defaults": {
           "model": {
-            "primary": "litellm/qwen3-coder-plus",
+            "primary": "litellm/glm-5-turbo",
             "fallbacks": [
-              "litellm/qwen3.5-plus",
               "litellm/openrouter/deepseek/deepseek-r1",
               "litellm/openrouter/anthropic/claude-sonnet-4"
             ]
           },
           "models": {
-            "litellm/qwen3-coder-plus": {
-              "alias": "coder",
-              "params": { "temperature": 0.2 }
-            },
-            "litellm/qwen3-coder-next": {
-              "alias": "coder-next",
-              "params": { "temperature": 0.2 }
-            },
-            "litellm/qwen3.5-plus": {
-              "alias": "general",
-              "params": { "temperature": 0.1 }
-            },
             "litellm/MiniMax-M2.5": {
               "alias": "fast",
-              "params": { "temperature": 0.1 }
-            },
-            "litellm/kimi-k2.5": {
-              "alias": "reasoning",
               "params": { "temperature": 0.1 }
             },
             "litellm/glm-5": {
@@ -213,7 +164,7 @@ data:
             "id": "apollo",
             "default": true,
             "workspace": "/home/node/.openclaw/workspaces/apollo",
-            "model": "litellm/qwen3.5-plus",
+            "model": "litellm/glm-5-turbo",
             "subagents": {
               "allowAgents": ["daedalus", "vulcan", "arachne", "cyclops", "argos", "metis"]
             },
@@ -273,7 +224,7 @@ data:
           {
             "id": "vulcan",
             "workspace": "/home/node/.openclaw/workspaces/vulcan",
-            "model": "litellm/qwen3-coder-plus",
+            "model": "litellm/glm-5-turbo",
             "subagents": {
               "allowAgents": ["arachne", "argos"]
             },
@@ -326,7 +277,7 @@ data:
           {
             "id": "arachne",
             "workspace": "/home/node/.openclaw/workspaces/arachne",
-            "model": "litellm/qwen3-coder-next",
+            "model": "litellm/glm-5-turbo",
             "sandbox": {
               "mode": "all",
               "scope": "agent",
@@ -376,7 +327,7 @@ data:
           {
             "id": "cyclops",
             "workspace": "/home/node/.openclaw/workspaces/cyclops",
-            "model": "litellm/qwen3-coder-plus",
+            "model": "litellm/glm-5-turbo",
             "sandbox": {
               "mode": "all",
               "scope": "agent",
@@ -426,7 +377,7 @@ data:
           {
             "id": "argos",
             "workspace": "/home/node/.openclaw/workspaces/argos",
-            "model": "litellm/kimi-k2.5",
+            "model": "litellm/glm-5",
             "sandbox": {
               "mode": "all",
               "scope": "agent",

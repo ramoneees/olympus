@@ -56,11 +56,11 @@ spec:
                 secretKeyRef:
                   name: litellm-secret
                   key: glm-api-key
-            - name: DASHSCOPE_API_KEY
+            - name: ALIBABA_TOKEN_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: litellm-secret
-                  key: dashscope-api-key
+                  key: alibaba-token-api-key
             - name: OPENROUTER_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -253,32 +253,6 @@ data:
           max_input_tokens: 200000
           max_tokens: 131072
           supports_vision: true
-      # Alibaba Cloud — DashScope Coding Plan (all models via coding endpoint)
-      - model_name: qwen3.5-plus
-        litellm_params:
-          model: openai/qwen3.5-plus
-          api_base: https://coding-intl.dashscope.aliyuncs.com/v1
-          api_key: os.environ/DASHSCOPE_API_KEY
-        model_info:
-          max_input_tokens: 1000000
-          max_tokens: 65536
-          supports_vision: true
-      - model_name: qwen3-coder-plus
-        litellm_params:
-          model: openai/qwen3-coder-plus
-          api_base: https://coding-intl.dashscope.aliyuncs.com/v1
-          api_key: os.environ/DASHSCOPE_API_KEY
-        model_info:
-          max_input_tokens: 1000000
-          max_tokens: 65536
-      - model_name: qwen3-coder-next
-        litellm_params:
-          model: openai/qwen3-coder-next
-          api_base: https://coding-intl.dashscope.aliyuncs.com/v1
-          api_key: os.environ/DASHSCOPE_API_KEY
-        model_info:
-          max_input_tokens: 262144
-          max_tokens: 65536
       # MiniMax — direct Anthropic-compatible API
       - model_name: MiniMax-M2.5
         litellm_params:
@@ -320,31 +294,37 @@ data:
           api_key: os.environ/MINIMAX_API_KEY
         model_info:
           mode: image_generation
-      - model_name: kimi-k2.5
+      # Alibaba Cloud — Token Plan (ap-southeast-1 MaaS)
+      - model_name: qwen3.6-plus
         litellm_params:
-          model: openai/kimi-k2.5
-          api_base: https://coding-intl.dashscope.aliyuncs.com/v1
-          api_key: os.environ/DASHSCOPE_API_KEY
+          model: openai/qwen3.6-plus
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
         model_info:
-          max_input_tokens: 262144
-          max_tokens: 98304
-          supports_vision: true
-      - model_name: glm-5-dashscope
+          max_input_tokens: 1000000
+          max_tokens: 65536
+      - model_name: deepseek-v3.2
         litellm_params:
-          model: openai/glm-5
-          api_base: https://coding-intl.dashscope.aliyuncs.com/v1
-          api_key: os.environ/DASHSCOPE_API_KEY
+          model: openai/deepseek-v3.2
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
         model_info:
-          max_input_tokens: 202752
-          max_tokens: 131072
-      - model_name: glm-4.7-dashscope
+          max_input_tokens: 131072
+          max_tokens: 16384
+      - model_name: qwen-image-2.0
         litellm_params:
-          model: openai/glm-4.7
-          api_base: https://coding-intl.dashscope.aliyuncs.com/v1
-          api_key: os.environ/DASHSCOPE_API_KEY
+          model: openai/qwen-image-2.0
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
         model_info:
-          max_input_tokens: 202752
-          max_tokens: 131072
+          mode: image_generation
+      - model_name: qwen-image-2.0-pro
+        litellm_params:
+          model: openai/qwen-image-2.0-pro
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
+        model_info:
+          mode: image_generation
       # OpenRouter (access to many models)
       - model_name: openrouter/deepseek-v4-flash
         litellm_params:

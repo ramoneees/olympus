@@ -15,10 +15,6 @@
       alias: "fast-route",
       params: { temperature: 0.1 },
     },
-    "litellm/qwen3-coder-plus": {
-      alias: "smart-coder",
-      params: { temperature: 0.2 },
-    },
     "litellm/qwen3.5:9b": {
       alias: "fast-general",
       params: { temperature: 0.2 },
@@ -33,24 +29,7 @@
       alias: "vision",
     },
     "litellm/glm-5-turbo": {
-      alias: "smart-glm",
-    },
-    "litellm/qwen-plus": {
-      alias: "smart-qwen",
-    },
-    "litellm/qwen-max": {
-      alias: "smart-qwen-max",
-    },
-    "litellm/qwen3-coder-next": {
-      alias: "smart-coder-next",
-      params: { temperature: 0.2 },
-    },
-    "litellm/qwen3.5-plus": {
-      alias: "smart-qwen35",
-      params: { temperature: 0.1 },
-    },
-    "litellm/kimi-k2.5": {
-      alias: "smart-kimi",
+      alias: "smart-coder",
     },
     "litellm/glm-5": {
       alias: "smart-glm5",
@@ -69,7 +48,7 @@
   model: {
     primary: "litellm/MiniMax-M2.5",
     fallbacks: [
-      "litellm/qwen-plus",
+      "litellm/glm-5-turbo",
       "litellm/openrouter/deepseek/deepseek-r1",
       "litellm/openrouter/anthropic/claude-sonnet-4",
     ],

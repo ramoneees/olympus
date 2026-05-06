@@ -74,41 +74,9 @@
             "maxTokens": 8192
           },
           {
-            "id": "qwen3-coder-plus",
-            "name": "Qwen 3 Coder Plus",
-            "reasoning": false,
-            "input": ["text"],
-            "contextWindow": 131072,
-            "maxTokens": 8192
-          },
-          {
             "id": "MiniMax-M2.5",
             "name": "MiniMax M2.5",
             "reasoning": false,
-            "input": ["text"],
-            "contextWindow": 131072,
-            "maxTokens": 8192
-          },
-          {
-            "id": "qwen3-coder-next",
-            "name": "Qwen 3 Coder Next",
-            "reasoning": false,
-            "input": ["text"],
-            "contextWindow": 131072,
-            "maxTokens": 8192
-          },
-          {
-            "id": "qwen3.5-plus",
-            "name": "Qwen 3.5 Plus",
-            "reasoning": false,
-            "input": ["text"],
-            "contextWindow": 131072,
-            "maxTokens": 8192
-          },
-          {
-            "id": "kimi-k2.5",
-            "name": "Kimi K2.5",
-            "reasoning": true,
             "input": ["text"],
             "contextWindow": 131072,
             "maxTokens": 8192
@@ -119,30 +87,6 @@
             "reasoning": false,
             "input": ["text"],
             "contextWindow": 128000,
-            "maxTokens": 8192
-          },
-          {
-            "id": "qwen-plus",
-            "name": "Qwen Plus",
-            "reasoning": false,
-            "input": ["text"],
-            "contextWindow": 131072,
-            "maxTokens": 8192
-          },
-          {
-            "id": "qwen-turbo",
-            "name": "Qwen Turbo",
-            "reasoning": false,
-            "input": ["text"],
-            "contextWindow": 131072,
-            "maxTokens": 8192
-          },
-          {
-            "id": "qwen-max",
-            "name": "Qwen Max",
-            "reasoning": true,
-            "input": ["text"],
-            "contextWindow": 131072,
             "maxTokens": 8192
           },
           {
@@ -178,7 +122,6 @@
       "model": {
         "primary": "litellm/glm-5-turbo",
         "fallbacks": [
-          "litellm/qwen-plus",
           "litellm/openrouter/deepseek/deepseek-r1"
         ]
       },
@@ -187,10 +130,6 @@
           "alias": "fast-route",
           "params": { "temperature": 0.1 }
         },
-        "litellm/qwen3-coder-plus": {
-          "alias": "smart-coder",
-          "params": { "temperature": 0.2 }
-        },
         "litellm/qwen3.5:9b": {
           "alias": "fast-general",
           "params": { "temperature": 0.2 }
@@ -198,18 +137,7 @@
         "litellm/deepseek-r1:7b": { "alias": "local-reasoning" },
         "litellm/qwen3:8b": { "alias": "local-general" },
         "litellm/qwen3-vl:8b": { "alias": "vision" },
-        "litellm/glm-5-turbo": { "alias": "smart-glm" },
-        "litellm/qwen-plus": { "alias": "smart-qwen" },
-        "litellm/qwen-max": { "alias": "smart-qwen-max" },
-        "litellm/qwen3-coder-next": {
-          "alias": "smart-coder-next",
-          "params": { "temperature": 0.2 }
-        },
-        "litellm/qwen3.5-plus": {
-          "alias": "smart-qwen35",
-          "params": { "temperature": 0.1 }
-        },
-        "litellm/kimi-k2.5": { "alias": "smart-kimi" },
+        "litellm/glm-5-turbo": { "alias": "smart-coder" },
         "litellm/glm-5": { "alias": "smart-glm5" }
       },
       "skipBootstrap": false,

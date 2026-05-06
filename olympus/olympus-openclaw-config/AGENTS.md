@@ -48,10 +48,10 @@ olympus-openclaw-config/
 | Domain | Agent | Model |
 |--------|-------|-------|
 | Orchestration | Hermes | glm-5-turbo (cloud) |
-| Code/Dev | Hephaestus | qwen3-coder-plus (cloud) |
+| Code/Dev | Hephaestus | glm-5-turbo (cloud) |
 | Research | Athena | MiniMax-M2.5 (cloud) |
 | Finance (LOCAL) | Plutus | deepseek-r1:7b (local) |
-| K8s/Infra | Prometheus | qwen3-coder-plus (cloud) |
+| K8s/Infra | Prometheus | glm-5-turbo (cloud) |
 | Audit/Risk | Themis | MiniMax-M2.5 (cloud) |
 | Bias/Critique | Nemesis | MiniMax-M2.5 (cloud) |
 | Writing | Calliope | MiniMax-M2.5 (cloud) |

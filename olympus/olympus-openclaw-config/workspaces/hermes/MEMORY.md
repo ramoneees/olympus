@@ -17,5 +17,5 @@
 
 ## Model tiers
 - FAST -> local Ollama (qwen3.5, qwen2.5-coder, deepseek-r1)
-- SMART -> GLM, DashScope (qwen-plus), OpenRouter (deepseek-r1)
+- SMART -> GLM (glm-5-turbo, glm-5), MiniMax (M2.5, M2.7), OpenRouter (deepseek-r1)
 - PREMIUM -> OpenRouter (Claude Sonnet 4, Gemini 2.5 Flash)
