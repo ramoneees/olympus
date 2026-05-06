@@ -1,16 +1,18 @@
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: open-webui
+  name: librechat
   namespace: olympus
+  labels:
+    app: librechat
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`chat.ramoneees.com`)
+    - match: Host(`ai.ramoneees.com`)
       kind: Rule
       services:
-        - name: open-webui
-          port: 8080
+        - name: librechat
+          port: 3080
   tls:
     secretName: wildcard-ramoneees-com-tls
