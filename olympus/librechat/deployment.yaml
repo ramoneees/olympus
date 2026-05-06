@@ -99,6 +99,13 @@ spec:
                   name: litellm-secret
                   key: minimax-api-key
 
+            # Brave Search MCP
+            - name: BRAVE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: librechat-secret
+                  key: brave-api-key
+
             # JWT Secret
             - name: JWT_SECRET
               valueFrom:

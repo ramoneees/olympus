@@ -34,3 +34,19 @@ data:
           MINIMAX_MCP_BASE_PATH: "/app/data"
           MINIMAX_RESOURCE_MODE: "url"
         trustTools: true
+      web-reader:
+        type: stdio
+        command: npx
+        args:
+          - "-y"
+          - "@modelcontextprotocol/server-fetch"
+        trustTools: true
+      web-search:
+        type: stdio
+        command: npx
+        args:
+          - "-y"
+          - "@modelcontextprotocol/server-brave-search"
+        env:
+          BRAVE_API_KEY: "${BRAVE_API_KEY}"
+        trustTools: true
