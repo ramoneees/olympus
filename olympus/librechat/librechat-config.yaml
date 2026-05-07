@@ -17,7 +17,7 @@ data:
           models:
             default:
               - "MiniMax-M2.5"
-              - "minimax/image-01"
+              - "image-01"
             fetch: true
           titleConvo: true
           titleModel: "MiniMax-M2.5"
