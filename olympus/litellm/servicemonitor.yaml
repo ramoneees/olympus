@@ -1,0 +1,19 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: litellm
+  namespace: olympus
+  labels:
+    app: litellm
+spec:
+  selector:
+    matchLabels:
+      app: litellm
+  namespaceSelector:
+    matchNames:
+      - olympus
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s

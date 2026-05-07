@@ -23,6 +23,9 @@ spec:
         app: litellm
       annotations:
         reloader.stakater.com/auto: "true"
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "4000"
+        prometheus.io/path: "/metrics"
     spec:
       nodeSelector:
         kubernetes.io/hostname: olympus
@@ -35,6 +38,8 @@ spec:
             - "/app/config.yaml"
             - "--port"
             - "4000"
+            - "--num_workers"
+            - "4"
           ports:
             - name: http
               containerPort: 4000
@@ -340,25 +345,231 @@ data:
           api_key: os.environ/OPENROUTER_API_KEY
         model_info:
           max_input_tokens: 1048576
-          max_tokens: 1048576            
+          max_tokens: 1048576
+      - model_name: openrouter/deepseek/deepseek-r1
+        litellm_params:
+          model: openrouter/deepseek/deepseek-r1
+          api_key: os.environ/OPENROUTER_API_KEY
+        model_info:
+          max_input_tokens: 163840
+          max_tokens: 8192
+      - model_name: openrouter/google/gemini-2.5-flash
+        litellm_params:
+          model: openrouter/google/gemini-2.5-flash
+          api_key: os.environ/OPENROUTER_API_KEY
+        model_info:
+          max_input_tokens: 1048576
+          max_tokens: 8192
+      # Smart routing group — latency-based tiering across GLM, MiniMax, Alibaba
+      # Clients use model name "smart"; LiteLLM routes by TTFT + RPM/TPM limits
+      - model_name: smart
+        litellm_params:
+          model: openai/glm-5-turbo
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 202752
+          max_tokens: 131072
+        rpm_limit: 60
+        tpm_limit: 200000
+      - model_name: smart
+        litellm_params:
+          model: anthropic/MiniMax-M2.5
+          api_base: https://api.minimax.io/anthropic
+          api_key: os.environ/MINIMAX_API_KEY
+        model_info:
+          max_input_tokens: 196608
+          max_tokens: 16384
+        rpm_limit: 30
+        tpm_limit: 100000
+      - model_name: smart
+        litellm_params:
+          model: openai/qwen3.6-plus
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
+        model_info:
+          max_input_tokens: 1000000
+          max_tokens: 65536
+        rpm_limit: 15
+        tpm_limit: 500000
+      # Anthropic-compatible endpoint alias — route /anthropic/v1/messages with model "claude-compat"
+      # Usage: ANTHROPIC_BASE_URL=https://litellm.ramoneees.com ANTHROPIC_API_KEY=<master-key>
+      - model_name: claude-compat
+        litellm_params:
+          model: openai/glm-5-turbo
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 202752
+          max_tokens: 131072
+      - model_name: claude-compat
+        litellm_params:
+          model: anthropic/MiniMax-M2.5
+          api_base: https://api.minimax.io/anthropic
+          api_key: os.environ/MINIMAX_API_KEY
+        model_info:
+          max_input_tokens: 196608
+          max_tokens: 16384
+      # Agent routing — high-throughput, short-to-medium requests (Hermes, OpenClaw)
+      - model_name: agents
+        litellm_params:
+          model: openai/glm-4.7
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 202752
+          max_tokens: 16384
+        rpm_limit: 80
+        tpm_limit: 100000
+      - model_name: agents
+        litellm_params:
+          model: openai/glm-5-turbo
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 202752
+          max_tokens: 131072
+        rpm_limit: 60
+        tpm_limit: 200000
+      - model_name: agents
+        litellm_params:
+          model: anthropic/MiniMax-M2.5
+          api_base: https://api.minimax.io/anthropic
+          api_key: os.environ/MINIMAX_API_KEY
+        model_info:
+          max_input_tokens: 196608
+          max_tokens: 16384
+        rpm_limit: 30
+        tpm_limit: 100000
+      - model_name: agents
+        litellm_params:
+          model: openai/glm-5.1
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 202752
+          max_tokens: 131072
+        rpm_limit: 20
+        tpm_limit: 150000
+      # Coding routing — code generation, debugging, refactoring
+      - model_name: coding
+        litellm_params:
+          model: openai/glm-5-turbo
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 202752
+          max_tokens: 131072
+        rpm_limit: 60
+        tpm_limit: 200000
+      - model_name: coding
+        litellm_params:
+          model: openai/deepseek-v3.2
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
+        model_info:
+          max_input_tokens: 131072
+          max_tokens: 16384
+        rpm_limit: 30
+        tpm_limit: 150000
+      - model_name: coding
+        litellm_params:
+          model: openrouter/deepseek/deepseek-v4-flash
+          api_key: os.environ/OPENROUTER_API_KEY
+        model_info:
+          max_input_tokens: 1048576
+          max_tokens: 1048576
+        rpm_limit: 20
+        tpm_limit: 500000
+      - model_name: coding
+        litellm_params:
+          model: openai/glm-5.1
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 202752
+          max_tokens: 131072
+        rpm_limit: 15
+        tpm_limit: 150000
+      # Personal routing — quality + large context (Claude Code, manual use)
+      - model_name: personal
+        litellm_params:
+          model: openai/glm-5.1
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 202752
+          max_tokens: 131072
+        rpm_limit: 30
+        tpm_limit: 200000
+      - model_name: personal
+        litellm_params:
+          model: anthropic/MiniMax-M2.7
+          api_base: https://api.minimax.io/anthropic
+          api_key: os.environ/MINIMAX_API_KEY
+        model_info:
+          max_input_tokens: 196608
+          max_tokens: 16384
+        rpm_limit: 20
+        tpm_limit: 100000
+      - model_name: personal
+        litellm_params:
+          model: openai/qwen3.6-plus
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
+        model_info:
+          max_input_tokens: 1000000
+          max_tokens: 65536
+        rpm_limit: 15
+        tpm_limit: 800000
+      - model_name: personal
+        litellm_params:
+          model: openrouter/deepseek/deepseek-v4-pro
+          api_key: os.environ/OPENROUTER_API_KEY
+        model_info:
+          max_input_tokens: 1048576
+          max_tokens: 1048576
+        rpm_limit: 10
+        tpm_limit: 500000
     router_settings:
       routing_strategy: latency-based-routing
       redis_host: redis-master.databases.svc.cluster.local
       redis_port: 6379
+      allowed_fails: 2
+      cooldown_time: 30
+      num_retries: 2
+      context_window_fallbacks:
+        - agents:
+            - qwen3.6-plus
+        - personal:
+            - qwen3.6-plus
+        - coding:
+            - qwen3.6-plus
+        - smart:
+            - qwen3.6-plus
+        - claude-compat:
+            - qwen3.6-plus
     litellm_settings:
       drop_params: true
       set_verbose: false
+      json_logs: true
+      success_callback: ["prometheus"]
+      failure_callback: ["prometheus"]
       cache: true
       cache_params:
         type: redis
         host: redis-master.databases.svc.cluster.local
         port: 6379
+        ttl: 600
       request_timeout: 60
       timeout: 120
     general_settings:
       database_url: os.environ/DATABASE_URL
       master_key: os.environ/LITELLM_MASTER_KEY
       store_model_in_db: false
+      database_connection_pool_limit: 10
+      proxy_batch_write_at: 10
+      allow_requests_on_db_unavailable: true
 ---
 apiVersion: v1
 kind: Service
