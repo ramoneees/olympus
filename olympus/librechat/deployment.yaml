@@ -52,17 +52,6 @@ spec:
                   name: librechat-secret
                   key: litellm-master-key
 
-            # Image Generation (direct MiniMax API — bypasses LiteLLM routing bug)
-            - name: IMAGE_GEN_OAI_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: litellm-secret
-                  key: minimax-api-key
-            - name: IMAGE_GEN_OAI_BASEURL
-              value: "https://api.minimax.io/v1"
-            - name: IMAGE_GEN_OAI_MODEL
-              value: "image-01"
-
             # TTS/STT (OpenAI-compatible → LiteLLM)
             - name: TTS_API_KEY
               valueFrom:

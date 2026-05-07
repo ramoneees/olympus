@@ -21,6 +21,7 @@ data:
           titleConvo: true
           titleModel: "MiniMax-M2.5"
           modelDisplayLabel: "OLYMPUS"
+          disableStatusCheck: false
     mcpServers:
       minimax:
         type: stdio
