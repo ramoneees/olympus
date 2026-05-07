@@ -290,8 +290,8 @@ data:
       # MiniMax — Image generation (native REST, not Anthropic-compat)
       - model_name: image-01
         litellm_params:
-          model: openai/image-01
-          api_base: https://api.minimaxi.chat/v1
+          model: minimax/image-01
+          api_base: https://api.minimaxi.chat
           api_key: os.environ/MINIMAX_API_KEY
         model_info:
           mode: image_generation
