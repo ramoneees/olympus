@@ -306,14 +306,6 @@ data:
           api_key: os.environ/MINIMAX_API_KEY
         model_info:
           mode: audio
-      # MiniMax — Image generation (native REST, not Anthropic-compat)
-      - model_name: image-01
-        litellm_params:
-          model: openai/image-01
-          api_base: https://api.minimax.io/v1
-          api_key: os.environ/MINIMAX_API_KEY
-        model_info:
-          mode: image_generation
       # Alibaba Cloud — Token Plan (ap-southeast-1 MaaS)
       - model_name: qwen3.6-plus
         litellm_params:
@@ -331,20 +323,6 @@ data:
         model_info:
           max_input_tokens: 131072
           max_tokens: 16384
-      - model_name: qwen-image-2.0
-        litellm_params:
-          model: openai/qwen-image-2.0
-          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
-          api_key: os.environ/ALIBABA_TOKEN_API_KEY
-        model_info:
-          mode: image_generation
-      - model_name: qwen-image-2.0-pro
-        litellm_params:
-          model: openai/qwen-image-2.0-pro
-          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
-          api_key: os.environ/ALIBABA_TOKEN_API_KEY
-        model_info:
-          mode: image_generation
       # OpenRouter (access to many models)
       - model_name: openrouter/deepseek-v4-flash
         litellm_params:
