@@ -20,6 +20,7 @@ spec:
       labels:
         app: ollama
     spec:
+      runtimeClassName: nvidia
       nodeSelector:
         kubernetes.io/hostname: olympus
       containers:
