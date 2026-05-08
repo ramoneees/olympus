@@ -124,7 +124,6 @@ data:
           max_input_tokens: 8192
           max_tokens: 1
           mode: embedding
-          tier: custom
       - model_name: gpt-oss:20b
         litellm_params:
           model: ollama/gpt-oss:20b
@@ -132,7 +131,6 @@ data:
         model_info:
           max_input_tokens: 128000
           max_tokens: 32768
-          tier: custom
       - model_name: gemma4:e2b
         litellm_params:
           model: ollama/gemma4:e2b
@@ -141,7 +139,6 @@ data:
           max_input_tokens: 128000
           max_tokens: 8192
           supports_vision: true
-          tier: haiku
       - model_name: gemma4:e4b
         litellm_params:
           model: ollama/gemma4:e4b
@@ -150,7 +147,6 @@ data:
           max_input_tokens: 128000
           max_tokens: 8192
           supports_vision: true
-          tier: sonnet
       - model_name: qwen2.5-coder:7b
         litellm_params:
           model: ollama/qwen2.5-coder:7b
@@ -158,7 +154,6 @@ data:
         model_info:
           max_input_tokens: 131072
           max_tokens: 8192
-          tier: sonnet
       - model_name: qwen3.5:9b
         litellm_params:
           model: ollama/qwen3.5:9b
@@ -166,7 +161,6 @@ data:
         model_info:
           max_input_tokens: 262144
           max_tokens: 8192
-          tier: opus
       # Cloud — ZAI (ZhipuAI) Coding Plan
       - model_name: glm-4.5
         litellm_params:
@@ -176,7 +170,6 @@ data:
         model_info:
           max_input_tokens: 128000
           max_tokens: 16384
-          tier: sonnet
       - model_name: glm-4.5-air
         litellm_params:
           model: openai/glm-4.5-air
@@ -185,7 +178,6 @@ data:
         model_info:
           max_input_tokens: 128000
           max_tokens: 16384
-          tier: sonnet
       - model_name: glm-5
         litellm_params:
           model: openai/glm-5
@@ -194,7 +186,6 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
-          tier: opus
       - model_name: glm-5-turbo
         litellm_params:
           model: openai/glm-5-turbo
@@ -203,7 +194,6 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
-          tier: sonnet
       # glm-5-code removed — does not exist as a separate model; glm-5-turbo is the code-optimized variant
       - model_name: glm-5.1
         litellm_params:
@@ -213,7 +203,6 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
-          tier: opus
       - model_name: glm-4.7
         litellm_params:
           model: openai/glm-4.7
@@ -222,7 +211,6 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
-          tier: sonnet
       - model_name: glm-4.6
         litellm_params:
           model: openai/glm-4.6
@@ -231,7 +219,6 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
-          tier: sonnet
       # ZAI — Free tier models
       - model_name: glm-4.5-flash
         litellm_params:
@@ -241,7 +228,6 @@ data:
         model_info:
           max_input_tokens: 131072
           max_tokens: 16384
-          tier: haiku
       - model_name: glm-4.7-flash
         litellm_params:
           model: openai/glm-4.7-flash
@@ -250,7 +236,6 @@ data:
         model_info:
           max_input_tokens: 200000
           max_tokens: 16384
-          tier: haiku
       - model_name: glm-4.7-flashx
         litellm_params:
           model: openai/glm-4.7-flashx
@@ -259,7 +244,6 @@ data:
         model_info:
           max_input_tokens: 200000
           max_tokens: 16384
-          tier: haiku
       # ZAI — Vision models
       - model_name: glm-4.5v
         litellm_params:
@@ -270,7 +254,6 @@ data:
           max_input_tokens: 65536
           max_tokens: 16384
           supports_vision: true
-          tier: sonnet
       - model_name: glm-4.6v
         litellm_params:
           model: openai/glm-4.6v
@@ -280,7 +263,6 @@ data:
           max_input_tokens: 131072
           max_tokens: 16384
           supports_vision: true
-          tier: sonnet
       - model_name: glm-5v-turbo
         litellm_params:
           model: openai/glm-5v-turbo
@@ -290,7 +272,6 @@ data:
           max_input_tokens: 200000
           max_tokens: 131072
           supports_vision: true
-          tier: opus
       # MiniMax — direct Anthropic-compatible API
       - model_name: MiniMax-M2.5
         litellm_params:
@@ -300,7 +281,6 @@ data:
         model_info:
           max_input_tokens: 196608
           max_tokens: 16384
-          tier: sonnet
       - model_name: MiniMax-M2.7
         litellm_params:
           model: anthropic/MiniMax-M2.7
@@ -309,7 +289,6 @@ data:
         model_info:
           max_input_tokens: 196608
           max_tokens: 16384
-          tier: opus
       - model_name: MiniMax-VL-01
         litellm_params:
           model: anthropic/MiniMax-VL-01
@@ -319,7 +298,6 @@ data:
           max_input_tokens: 196608
           max_tokens: 16384
           supports_vision: true
-          tier: opus
       # MiniMax — Text-to-Speech (OpenAI-compatible /v1/audio/speech)
       - model_name: minimax-speech
         litellm_params:
@@ -328,7 +306,6 @@ data:
           api_key: os.environ/MINIMAX_API_KEY
         model_info:
           mode: audio
-          tier: custom
       # MiniMax — Image generation (native REST, not Anthropic-compat)
       - model_name: image-01
         litellm_params:
@@ -337,7 +314,6 @@ data:
           api_key: os.environ/MINIMAX_API_KEY
         model_info:
           mode: image_generation
-          tier: custom
       # Alibaba Cloud — Token Plan (ap-southeast-1 MaaS)
       - model_name: qwen3.6-plus
         litellm_params:
@@ -347,7 +323,6 @@ data:
         model_info:
           max_input_tokens: 1000000
           max_tokens: 65536
-          tier: opus
       - model_name: deepseek-v3.2
         litellm_params:
           model: openai/deepseek-v3.2
@@ -356,7 +331,6 @@ data:
         model_info:
           max_input_tokens: 131072
           max_tokens: 16384
-          tier: sonnet
       - model_name: qwen-image-2.0
         litellm_params:
           model: openai/qwen-image-2.0
@@ -364,7 +338,6 @@ data:
           api_key: os.environ/ALIBABA_TOKEN_API_KEY
         model_info:
           mode: image_generation
-          tier: custom
       - model_name: qwen-image-2.0-pro
         litellm_params:
           model: openai/qwen-image-2.0-pro
@@ -372,7 +345,6 @@ data:
           api_key: os.environ/ALIBABA_TOKEN_API_KEY
         model_info:
           mode: image_generation
-          tier: custom
       # OpenRouter (access to many models)
       - model_name: openrouter/deepseek-v4-flash
         litellm_params:
@@ -381,7 +353,6 @@ data:
         model_info:
           max_input_tokens: 1048576
           max_tokens: 1048576
-          tier: sonnet
       - model_name: openrouter/deepseek-v4-pro
         litellm_params:
           model: openrouter/deepseek/deepseek-v4-pro
@@ -389,7 +360,6 @@ data:
         model_info:
           max_input_tokens: 1048576
           max_tokens: 1048576
-          tier: opus
       - model_name: openrouter/deepseek/deepseek-r1
         litellm_params:
           model: openrouter/deepseek/deepseek-r1
@@ -397,7 +367,6 @@ data:
         model_info:
           max_input_tokens: 163840
           max_tokens: 8192
-          tier: sonnet
       - model_name: openrouter/google/gemini-2.5-flash
         litellm_params:
           model: openrouter/google/gemini-2.5-flash
@@ -405,7 +374,6 @@ data:
         model_info:
           max_input_tokens: 1048576
           max_tokens: 8192
-          tier: haiku
       # Smart routing group — latency-based tiering across GLM, MiniMax, Alibaba
       # Clients use model name "smart"; LiteLLM routes by TTFT + RPM/TPM limits
       - model_name: smart
@@ -416,7 +384,6 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
-          tier: sonnet
         rpm_limit: 60
         tpm_limit: 200000
       - model_name: smart
@@ -427,7 +394,6 @@ data:
         model_info:
           max_input_tokens: 196608
           max_tokens: 16384
-          tier: sonnet
         rpm_limit: 30
         tpm_limit: 100000
       - model_name: smart
@@ -438,7 +404,6 @@ data:
         model_info:
           max_input_tokens: 1000000
           max_tokens: 65536
-          tier: opus
         rpm_limit: 15
         tpm_limit: 500000
       # Anthropic-compatible endpoint alias — route /anthropic/v1/messages with model "claude-compat"
@@ -451,7 +416,6 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
-          tier: sonnet
       - model_name: claude-compat
         litellm_params:
           model: anthropic/MiniMax-M2.5
@@ -460,7 +424,6 @@ data:
         model_info:
           max_input_tokens: 196608
           max_tokens: 16384
-          tier: sonnet
       # Agent routing — high-throughput, short-to-medium requests (Hermes, OpenClaw)
       - model_name: agents
         litellm_params:
@@ -470,7 +433,6 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 16384
-          tier: sonnet
         rpm_limit: 80
         tpm_limit: 100000
       - model_name: agents
@@ -481,7 +443,6 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
-          tier: sonnet
         rpm_limit: 60
         tpm_limit: 200000
       - model_name: agents
@@ -492,7 +453,6 @@ data:
         model_info:
           max_input_tokens: 196608
           max_tokens: 16384
-          tier: sonnet
         rpm_limit: 30
         tpm_limit: 100000
       - model_name: agents
@@ -503,7 +463,6 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
-          tier: opus
         rpm_limit: 20
         tpm_limit: 150000
       - model_name: agents
@@ -514,7 +473,6 @@ data:
           max_input_tokens: 128000
           max_tokens: 8192
           supports_vision: true
-          tier: sonnet
         rpm_limit: 80
         tpm_limit: 80000
       - model_name: agents
@@ -525,7 +483,6 @@ data:
           max_input_tokens: 128000
           max_tokens: 8192
           supports_vision: true
-          tier: haiku
         rpm_limit: 100
         tpm_limit: 60000
       # Coding routing — code generation, debugging, refactoring
@@ -538,7 +495,6 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
-          tier: opus
         rpm_limit: 15
         tpm_limit: 150000
       - model_name: coding
@@ -549,7 +505,6 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
-          tier: sonnet
         rpm_limit: 60
         tpm_limit: 200000
       - model_name: coding
@@ -560,7 +515,6 @@ data:
         model_info:
           max_input_tokens: 131072
           max_tokens: 16384
-          tier: sonnet
         rpm_limit: 30
         tpm_limit: 150000
       - model_name: coding
@@ -570,7 +524,6 @@ data:
         model_info:
           max_input_tokens: 1048576
           max_tokens: 1048576
-          tier: sonnet
         rpm_limit: 20
         tpm_limit: 500000
       - model_name: coding
@@ -580,7 +533,6 @@ data:
         model_info:
           max_input_tokens: 131072
           max_tokens: 8192
-          tier: sonnet
         rpm_limit: 80
         tpm_limit: 60000
       # Personal routing — quality + large context (Claude Code, manual use)
@@ -593,7 +545,6 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
-          tier: opus
         rpm_limit: 30
         tpm_limit: 200000
       - model_name: personal
@@ -604,7 +555,6 @@ data:
         model_info:
           max_input_tokens: 196608
           max_tokens: 16384
-          tier: opus
         rpm_limit: 20
         tpm_limit: 100000
       - model_name: personal
@@ -614,7 +564,6 @@ data:
         model_info:
           max_input_tokens: 262144
           max_tokens: 8192
-          tier: opus
         rpm_limit: 60
         tpm_limit: 80000
       - model_name: personal
@@ -625,7 +574,6 @@ data:
         model_info:
           max_input_tokens: 1000000
           max_tokens: 65536
-          tier: opus
         rpm_limit: 15
         tpm_limit: 800000
       - model_name: personal
@@ -635,7 +583,6 @@ data:
         model_info:
           max_input_tokens: 1048576
           max_tokens: 1048576
-          tier: opus
         rpm_limit: 10
         tpm_limit: 500000
       # Opusish — top-tier reasoning, architecture, complex tasks
@@ -647,7 +594,6 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
-          tier: opus
         rpm_limit: 30
         tpm_limit: 200000
       - model_name: opusish
@@ -658,7 +604,6 @@ data:
         model_info:
           max_input_tokens: 196608
           max_tokens: 16384
-          tier: opus
         rpm_limit: 20
         tpm_limit: 100000
       - model_name: opusish
@@ -669,7 +614,6 @@ data:
         model_info:
           max_input_tokens: 1000000
           max_tokens: 65536
-          tier: opus
         rpm_limit: 15
         tpm_limit: 800000
       - model_name: opusish
@@ -679,7 +623,6 @@ data:
         model_info:
           max_input_tokens: 1048576
           max_tokens: 1048576
-          tier: opus
         rpm_limit: 10
         tpm_limit: 500000
       - model_name: opusish
@@ -689,7 +632,6 @@ data:
         model_info:
           max_input_tokens: 262144
           max_tokens: 8192
-          tier: opus
         rpm_limit: 60
         tpm_limit: 80000
       # Sonnetish — balanced speed/quality for standard tasks
@@ -701,7 +643,6 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
-          tier: sonnet
         rpm_limit: 60
         tpm_limit: 200000
       - model_name: sonnetish
@@ -712,7 +653,6 @@ data:
         model_info:
           max_input_tokens: 196608
           max_tokens: 16384
-          tier: sonnet
         rpm_limit: 30
         tpm_limit: 100000
       - model_name: sonnetish
@@ -723,7 +663,6 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
-          tier: sonnet
         rpm_limit: 80
         tpm_limit: 100000
       - model_name: sonnetish
@@ -733,7 +672,6 @@ data:
         model_info:
           max_input_tokens: 131072
           max_tokens: 8192
-          tier: sonnet
         rpm_limit: 80
         tpm_limit: 60000
       - model_name: sonnetish
@@ -744,7 +682,6 @@ data:
           max_input_tokens: 128000
           max_tokens: 8192
           supports_vision: true
-          tier: sonnet
         rpm_limit: 80
         tpm_limit: 80000
       # Haikuish — fast/cheap for simple, high-volume tasks
@@ -756,7 +693,6 @@ data:
         model_info:
           max_input_tokens: 200000
           max_tokens: 16384
-          tier: haiku
         rpm_limit: 120
         tpm_limit: 300000
       - model_name: haikuish
@@ -767,7 +703,6 @@ data:
         model_info:
           max_input_tokens: 131072
           max_tokens: 16384
-          tier: haiku
         rpm_limit: 120
         tpm_limit: 300000
       - model_name: haikuish
@@ -778,7 +713,6 @@ data:
           max_input_tokens: 128000
           max_tokens: 8192
           supports_vision: true
-          tier: haiku
         rpm_limit: 100
         tpm_limit: 60000
       - model_name: haikuish
@@ -788,7 +722,6 @@ data:
         model_info:
           max_input_tokens: 1048576
           max_tokens: 8192
-          tier: haiku
         rpm_limit: 120
         tpm_limit: 500000
     router_settings:
