@@ -22,6 +22,7 @@ data:
           titleModel: "MiniMax-M2.5"
           modelDisplayLabel: "OLYMPUS"
           disableStatusCheck: false
+          systemPrompt: "When a tool returns an image URL, always embed it inline using markdown image syntax: ![description](url). When a tool returns an audio or video URL, render it as a markdown link with a descriptive label."
     mcpServers:
       minimax:
         type: stdio
