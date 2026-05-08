@@ -494,14 +494,14 @@ data:
         tpm_limit: 150000
       - model_name: agents
         litellm_params:
-          model: ollama/gemma4:e2b
-          api_base: http://ollama.olympus.svc.cluster.local:11434
+          model: anthropic/claude-haiku-4-5-20251001
         model_info:
-          max_input_tokens: 128000
+          max_input_tokens: 200000
           max_tokens: 8192
           supports_vision: true
-        rpm_limit: 80
-        tpm_limit: 80000
+          supports_function_calling: true
+        rpm_limit: 60
+        tpm_limit: 300000
       - model_name: agents
         litellm_params:
           model: ollama/gemma4:e2b
@@ -514,6 +514,16 @@ data:
         tpm_limit: 60000
       # Coding routing — code generation, debugging, refactoring
       # Order matters: first deployment = primary pick when latency ties. glm-5.1 first for quality.
+      - model_name: coding
+        litellm_params:
+          model: anthropic/claude-sonnet-4-6
+        model_info:
+          max_input_tokens: 200000
+          max_tokens: 64000
+          supports_vision: true
+          supports_function_calling: true
+        rpm_limit: 20
+        tpm_limit: 200000
       - model_name: coding
         litellm_params:
           model: openai/glm-5.1
@@ -566,6 +576,16 @@ data:
       # Order matters: first deployment = primary pick when latency ties. Best quality first.
       - model_name: personal
         litellm_params:
+          model: anthropic/claude-opus-4-7
+        model_info:
+          max_input_tokens: 200000
+          max_tokens: 32000
+          supports_vision: true
+          supports_function_calling: true
+        rpm_limit: 10
+        tpm_limit: 200000
+      - model_name: personal
+        litellm_params:
           model: openai/glm-5.1
           api_base: https://api.z.ai/api/coding/paas/v4
           api_key: os.environ/GLM_API_KEY
@@ -613,6 +633,16 @@ data:
         rpm_limit: 10
         tpm_limit: 500000
       # Opusish — top-tier reasoning, architecture, complex tasks
+      - model_name: opusish
+        litellm_params:
+          model: anthropic/claude-opus-4-7
+        model_info:
+          max_input_tokens: 200000
+          max_tokens: 32000
+          supports_vision: true
+          supports_function_calling: true
+        rpm_limit: 10
+        tpm_limit: 200000
       - model_name: opusish
         litellm_params:
           model: openai/glm-5.1
@@ -664,6 +694,16 @@ data:
       # Sonnetish — balanced speed/quality for standard tasks
       - model_name: sonnetish
         litellm_params:
+          model: anthropic/claude-sonnet-4-6
+        model_info:
+          max_input_tokens: 200000
+          max_tokens: 64000
+          supports_vision: true
+          supports_function_calling: true
+        rpm_limit: 30
+        tpm_limit: 200000
+      - model_name: sonnetish
+        litellm_params:
           model: openai/glm-5-turbo
           api_base: https://api.z.ai/api/coding/paas/v4
           api_key: os.environ/GLM_API_KEY
@@ -712,6 +752,16 @@ data:
         rpm_limit: 80
         tpm_limit: 80000
       # Haikuish — fast/cheap for simple, high-volume tasks
+      - model_name: haikuish
+        litellm_params:
+          model: anthropic/claude-haiku-4-5-20251001
+        model_info:
+          max_input_tokens: 200000
+          max_tokens: 8192
+          supports_vision: true
+          supports_function_calling: true
+        rpm_limit: 60
+        tpm_limit: 300000
       - model_name: haikuish
         litellm_params:
           model: openai/glm-4.7-flash
