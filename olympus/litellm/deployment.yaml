@@ -365,6 +365,7 @@ data:
           supports_function_calling: true
         rpm_limit: 10
         tpm_limit: 200000
+        order: 1
       - model_name: claude-opus-4-7
         litellm_params:
           model: openai/glm-5.1
@@ -375,6 +376,7 @@ data:
           max_tokens: 131072
         rpm_limit: 30
         tpm_limit: 200000
+        order: 2
       - model_name: claude-opus-4-7
         litellm_params:
           model: anthropic/MiniMax-M2.7
@@ -385,6 +387,7 @@ data:
           max_tokens: 16384
         rpm_limit: 20
         tpm_limit: 100000
+        order: 2
       - model_name: claude-opus-4-7
         litellm_params:
           model: openai/qwen3.6-plus
@@ -395,6 +398,7 @@ data:
           max_tokens: 65536
         rpm_limit: 15
         tpm_limit: 800000
+        order: 2
       - model_name: claude-opus-4-7
         litellm_params:
           model: openrouter/deepseek/deepseek-v4-pro
@@ -404,6 +408,7 @@ data:
           max_tokens: 1048576
         rpm_limit: 10
         tpm_limit: 500000
+        order: 2
       - model_name: claude-opus-4-7
         litellm_params:
           model: ollama/qwen3.5:9b
@@ -413,6 +418,7 @@ data:
           max_tokens: 8192
         rpm_limit: 60
         tpm_limit: 80000
+        order: 3
       - model_name: claude-sonnet-4-6
         litellm_params:
           model: anthropic/claude-sonnet-4-6
@@ -423,6 +429,7 @@ data:
           supports_function_calling: true
         rpm_limit: 30
         tpm_limit: 200000
+        order: 1
       - model_name: claude-sonnet-4-6
         litellm_params:
           model: openai/glm-5-turbo
@@ -433,6 +440,7 @@ data:
           max_tokens: 131072
         rpm_limit: 60
         tpm_limit: 200000
+        order: 2
       - model_name: claude-sonnet-4-6
         litellm_params:
           model: anthropic/MiniMax-M2.5
@@ -443,6 +451,7 @@ data:
           max_tokens: 16384
         rpm_limit: 30
         tpm_limit: 100000
+        order: 2
       - model_name: claude-sonnet-4-6
         litellm_params:
           model: openai/glm-4.7
@@ -453,6 +462,7 @@ data:
           max_tokens: 131072
         rpm_limit: 80
         tpm_limit: 100000
+        order: 2
       - model_name: claude-sonnet-4-6
         litellm_params:
           model: ollama/qwen2.5-coder:7b
@@ -462,6 +472,7 @@ data:
           max_tokens: 8192
         rpm_limit: 80
         tpm_limit: 60000
+        order: 3
       - model_name: claude-sonnet-4-6
         litellm_params:
           model: ollama/gemma4:e2b
@@ -472,6 +483,7 @@ data:
           supports_vision: true
         rpm_limit: 80
         tpm_limit: 80000
+        order: 3
       - model_name: claude-haiku-4-5-20251001
         litellm_params:
           model: anthropic/claude-haiku-4-5-20251001
@@ -482,6 +494,7 @@ data:
           supports_function_calling: true
         rpm_limit: 60
         tpm_limit: 300000
+        order: 1
       - model_name: claude-haiku-4-5-20251001
         litellm_params:
           model: openai/glm-4.7-flash
@@ -492,6 +505,7 @@ data:
           max_tokens: 16384
         rpm_limit: 120
         tpm_limit: 300000
+        order: 2
       - model_name: claude-haiku-4-5-20251001
         litellm_params:
           model: openai/glm-4.5-flash
@@ -502,6 +516,7 @@ data:
           max_tokens: 16384
         rpm_limit: 120
         tpm_limit: 300000
+        order: 2
       - model_name: claude-haiku-4-5-20251001
         litellm_params:
           model: ollama/gemma4:e2b
@@ -512,6 +527,7 @@ data:
           supports_vision: true
         rpm_limit: 100
         tpm_limit: 60000
+        order: 3
       - model_name: claude-haiku-4-5-20251001
         litellm_params:
           model: openrouter/google/gemini-2.5-flash
@@ -521,6 +537,7 @@ data:
           max_tokens: 8192
         rpm_limit: 120
         tpm_limit: 500000
+        order: 2
       # Smart routing group — latency-based tiering across GLM, MiniMax, Alibaba
       # Clients use model name "smart"; LiteLLM routes by TTFT + RPM/TPM limits
       - model_name: smart
@@ -533,6 +550,7 @@ data:
           max_tokens: 131072
         rpm_limit: 60
         tpm_limit: 200000
+        order: 1
       - model_name: smart
         litellm_params:
           model: anthropic/MiniMax-M2.5
@@ -543,6 +561,7 @@ data:
           max_tokens: 16384
         rpm_limit: 30
         tpm_limit: 100000
+        order: 2
       - model_name: smart
         litellm_params:
           model: openai/qwen3.6-plus
@@ -553,6 +572,7 @@ data:
           max_tokens: 65536
         rpm_limit: 15
         tpm_limit: 500000
+        order: 2
       # Anthropic-compatible endpoint alias — route /anthropic/v1/messages with model "claude-compat"
       # Usage: ANTHROPIC_BASE_URL=https://litellm.ramoneees.com ANTHROPIC_API_KEY=<master-key>
       - model_name: claude-compat
@@ -563,6 +583,7 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
+        order: 1
       - model_name: claude-compat
         litellm_params:
           model: anthropic/MiniMax-M2.5
@@ -571,6 +592,7 @@ data:
         model_info:
           max_input_tokens: 196608
           max_tokens: 16384
+        order: 2
       # Agent routing — high-throughput, short-to-medium requests (Hermes, OpenClaw)
       - model_name: agents
         litellm_params:
@@ -582,6 +604,7 @@ data:
           max_tokens: 16384
         rpm_limit: 80
         tpm_limit: 100000
+        order: 1
       - model_name: agents
         litellm_params:
           model: openai/glm-5-turbo
@@ -592,6 +615,7 @@ data:
           max_tokens: 131072
         rpm_limit: 60
         tpm_limit: 200000
+        order: 2
       - model_name: agents
         litellm_params:
           model: anthropic/MiniMax-M2.5
@@ -602,6 +626,7 @@ data:
           max_tokens: 16384
         rpm_limit: 30
         tpm_limit: 100000
+        order: 2
       - model_name: agents
         litellm_params:
           model: openai/glm-5.1
@@ -612,6 +637,7 @@ data:
           max_tokens: 131072
         rpm_limit: 20
         tpm_limit: 150000
+        order: 2
       - model_name: agents
         litellm_params:
           model: ollama/gemma4:e2b
@@ -622,6 +648,7 @@ data:
           supports_vision: true
         rpm_limit: 100
         tpm_limit: 60000
+        order: 3
       # Coding routing — code generation, debugging, refactoring
       # Order matters: first deployment = primary pick when latency ties. glm-5.1 first for quality.
       - model_name: coding
@@ -634,6 +661,7 @@ data:
           supports_function_calling: true
         rpm_limit: 20
         tpm_limit: 200000
+        order: 1
       - model_name: coding
         litellm_params:
           model: openai/glm-5.1
@@ -644,6 +672,7 @@ data:
           max_tokens: 131072
         rpm_limit: 15
         tpm_limit: 150000
+        order: 2
       - model_name: coding
         litellm_params:
           model: openai/glm-5-turbo
@@ -654,6 +683,7 @@ data:
           max_tokens: 131072
         rpm_limit: 60
         tpm_limit: 200000
+        order: 2
       - model_name: coding
         litellm_params:
           model: openai/deepseek-v3.2
@@ -664,6 +694,7 @@ data:
           max_tokens: 16384
         rpm_limit: 30
         tpm_limit: 150000
+        order: 2
       - model_name: coding
         litellm_params:
           model: openrouter/deepseek/deepseek-v4-flash
@@ -673,6 +704,7 @@ data:
           max_tokens: 1048576
         rpm_limit: 20
         tpm_limit: 500000
+        order: 2
       - model_name: coding
         litellm_params:
           model: ollama/qwen2.5-coder:7b
@@ -682,6 +714,7 @@ data:
           max_tokens: 8192
         rpm_limit: 80
         tpm_limit: 60000
+        order: 3
       # Personal routing — quality + large context (Claude Code, manual use)
       # Order matters: first deployment = primary pick when latency ties. Best quality first.
       - model_name: personal
@@ -694,6 +727,7 @@ data:
           supports_function_calling: true
         rpm_limit: 10
         tpm_limit: 200000
+        order: 1
       - model_name: personal
         litellm_params:
           model: openai/glm-5.1
@@ -704,6 +738,7 @@ data:
           max_tokens: 131072
         rpm_limit: 30
         tpm_limit: 200000
+        order: 2
       - model_name: personal
         litellm_params:
           model: anthropic/MiniMax-M2.7
@@ -714,6 +749,7 @@ data:
           max_tokens: 16384
         rpm_limit: 20
         tpm_limit: 100000
+        order: 2
       - model_name: personal
         litellm_params:
           model: ollama/qwen3.5:9b
@@ -723,6 +759,7 @@ data:
           max_tokens: 8192
         rpm_limit: 60
         tpm_limit: 80000
+        order: 3
       - model_name: personal
         litellm_params:
           model: openai/qwen3.6-plus
@@ -733,6 +770,7 @@ data:
           max_tokens: 65536
         rpm_limit: 15
         tpm_limit: 800000
+        order: 2
       - model_name: personal
         litellm_params:
           model: openrouter/deepseek/deepseek-v4-pro
@@ -742,6 +780,7 @@ data:
           max_tokens: 1048576
         rpm_limit: 10
         tpm_limit: 500000
+        order: 2
       # Opusish — top-tier reasoning, architecture, complex tasks
       - model_name: opusish
         litellm_params:
@@ -753,6 +792,7 @@ data:
           supports_function_calling: true
         rpm_limit: 10
         tpm_limit: 200000
+        order: 1
       - model_name: opusish
         litellm_params:
           model: openai/glm-5.1
@@ -763,6 +803,7 @@ data:
           max_tokens: 131072
         rpm_limit: 30
         tpm_limit: 200000
+        order: 2
       - model_name: opusish
         litellm_params:
           model: anthropic/MiniMax-M2.7
@@ -773,6 +814,7 @@ data:
           max_tokens: 16384
         rpm_limit: 20
         tpm_limit: 100000
+        order: 2
       - model_name: opusish
         litellm_params:
           model: openai/qwen3.6-plus
@@ -783,6 +825,7 @@ data:
           max_tokens: 65536
         rpm_limit: 15
         tpm_limit: 800000
+        order: 2
       - model_name: opusish
         litellm_params:
           model: openrouter/deepseek/deepseek-v4-pro
@@ -792,6 +835,7 @@ data:
           max_tokens: 1048576
         rpm_limit: 10
         tpm_limit: 500000
+        order: 2
       - model_name: opusish
         litellm_params:
           model: ollama/qwen3.5:9b
@@ -801,6 +845,7 @@ data:
           max_tokens: 8192
         rpm_limit: 60
         tpm_limit: 80000
+        order: 3
       # Sonnetish — balanced speed/quality for standard tasks
       - model_name: sonnetish
         litellm_params:
@@ -812,6 +857,7 @@ data:
           supports_function_calling: true
         rpm_limit: 30
         tpm_limit: 200000
+        order: 1
       - model_name: sonnetish
         litellm_params:
           model: openai/glm-5-turbo
@@ -822,6 +868,7 @@ data:
           max_tokens: 131072
         rpm_limit: 60
         tpm_limit: 200000
+        order: 2
       - model_name: sonnetish
         litellm_params:
           model: anthropic/MiniMax-M2.5
@@ -832,6 +879,7 @@ data:
           max_tokens: 16384
         rpm_limit: 30
         tpm_limit: 100000
+        order: 2
       - model_name: sonnetish
         litellm_params:
           model: openai/glm-4.7
@@ -842,6 +890,7 @@ data:
           max_tokens: 131072
         rpm_limit: 80
         tpm_limit: 100000
+        order: 2
       - model_name: sonnetish
         litellm_params:
           model: ollama/qwen2.5-coder:7b
@@ -851,6 +900,7 @@ data:
           max_tokens: 8192
         rpm_limit: 80
         tpm_limit: 60000
+        order: 3
       - model_name: sonnetish
         litellm_params:
           model: ollama/gemma4:e2b
@@ -861,6 +911,7 @@ data:
           supports_vision: true
         rpm_limit: 80
         tpm_limit: 80000
+        order: 3
       # Haikuish — fast/cheap for simple, high-volume tasks
       - model_name: haikuish
         litellm_params:
@@ -872,6 +923,7 @@ data:
           supports_function_calling: true
         rpm_limit: 60
         tpm_limit: 300000
+        order: 1
       - model_name: haikuish
         litellm_params:
           model: openai/glm-4.7-flash
@@ -882,6 +934,7 @@ data:
           max_tokens: 16384
         rpm_limit: 120
         tpm_limit: 300000
+        order: 2
       - model_name: haikuish
         litellm_params:
           model: openai/glm-4.5-flash
@@ -892,6 +945,7 @@ data:
           max_tokens: 16384
         rpm_limit: 120
         tpm_limit: 300000
+        order: 2
       - model_name: haikuish
         litellm_params:
           model: ollama/gemma4:e2b
@@ -902,6 +956,7 @@ data:
           supports_vision: true
         rpm_limit: 100
         tpm_limit: 60000
+        order: 3
       - model_name: haikuish
         litellm_params:
           model: openrouter/google/gemini-2.5-flash
@@ -911,6 +966,7 @@ data:
           max_tokens: 8192
         rpm_limit: 120
         tpm_limit: 500000
+        order: 2
     router_settings:
       routing_strategy: latency-based-routing
       routing_strategy_args:
@@ -921,26 +977,24 @@ data:
           percentiles: [50, 95]
       redis_host: redis-master.databases.svc.cluster.local
       redis_port: 6379
-      allowed_fails: 2
-      cooldown_time: 30
-      num_retries: 2
+      allowed_fails: 1
+      cooldown_time: 20
+      num_retries: 1
+      fallbacks:
+        - claude-opus-4-7: [claude-sonnet-4-6]
+        - opusish: [sonnetish]
+        - personal: [sonnetish]
+        - coding: [sonnetish]
+        - agents: [sonnetish]
       context_window_fallbacks:
-        - agents:
-            - qwen3.6-plus
-        - personal:
-            - qwen3.6-plus
-        - coding:
-            - qwen3.6-plus
-        - smart:
-            - qwen3.6-plus
-        - claude-compat:
-            - qwen3.6-plus
-        - opusish:
-            - qwen3.6-plus
-        - sonnetish:
-            - qwen3.6-plus
-        - haikuish:
-            - glm-4.7-flash
+        - agents: [qwen3.6-plus]
+        - personal: [qwen3.6-plus]
+        - coding: [qwen3.6-plus]
+        - smart: [qwen3.6-plus]
+        - claude-compat: [qwen3.6-plus]
+        - opusish: [qwen3.6-plus]
+        - sonnetish: [qwen3.6-plus]
+        - haikuish: [glm-4.7-flash]
     litellm_settings:
       drop_params: true
       set_verbose: false
