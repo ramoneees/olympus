@@ -422,7 +422,6 @@ data:
       - model_name: claude-sonnet-4-6
         litellm_params:
           model: anthropic/claude-sonnet-4-6
-          api_key: "sk-ant-fake" # Use a fake key to prevent accidental usage of the primary model; real key required for actual routing
         model_info:
           max_input_tokens: 200000
           max_tokens: 64000
