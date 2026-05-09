@@ -368,8 +368,8 @@ data:
         order: 1
       - model_name: claude-opus-4-7
         litellm_params:
-          model: openai/glm-5.1
-          api_base: https://api.z.ai/api/coding/paas/v4
+          model: glm-5.1
+          api_base: https://api.z.ai/api/anthropic
           api_key: os.environ/GLM_API_KEY
         model_info:
           max_input_tokens: 202752
@@ -379,7 +379,7 @@ data:
         order: 2
       - model_name: claude-opus-4-7
         litellm_params:
-          model: anthropic/MiniMax-M2.7
+          model: MiniMax-M2.7
           api_base: https://api.minimax.io/anthropic
           api_key: os.environ/MINIMAX_API_KEY
         model_info:
@@ -390,8 +390,8 @@ data:
         order: 2
       - model_name: claude-opus-4-7
         litellm_params:
-          model: openai/qwen3.6-plus
-          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          model: qwen3.6-plus
+          api_base: https://coding-intl.dashscope.aliyuncs.com/apps/anthropic
           api_key: os.environ/ALIBABA_TOKEN_API_KEY
         model_info:
           max_input_tokens: 1000000
@@ -432,8 +432,8 @@ data:
         order: 1
       - model_name: claude-sonnet-4-6
         litellm_params:
-          model: openai/glm-5-turbo
-          api_base: https://api.z.ai/api/coding/paas/v4
+          model: glm-5-turbo
+          api_base: https://api.z.ai/api/anthropic
           api_key: os.environ/GLM_API_KEY
         model_info:
           max_input_tokens: 202752
@@ -443,7 +443,7 @@ data:
         order: 2
       - model_name: claude-sonnet-4-6
         litellm_params:
-          model: anthropic/MiniMax-M2.5
+          model: MiniMax-M2.5
           api_base: https://api.minimax.io/anthropic
           api_key: os.environ/MINIMAX_API_KEY
         model_info:
@@ -454,8 +454,8 @@ data:
         order: 2
       - model_name: claude-sonnet-4-6
         litellm_params:
-          model: openai/glm-4.7
-          api_base: https://api.z.ai/api/coding/paas/v4
+          model: glm-4.7
+          api_base: https://api.z.ai/api/anthropic
           api_key: os.environ/GLM_API_KEY
         model_info:
           max_input_tokens: 202752
@@ -497,8 +497,8 @@ data:
         order: 1
       - model_name: claude-haiku-4-5-20251001
         litellm_params:
-          model: openai/glm-4.7-flash
-          api_base: https://api.z.ai/api/coding/paas/v4
+          model: glm-4.7-flash
+          api_base: https://api.z.ai/api/anthropic
           api_key: os.environ/GLM_API_KEY
         model_info:
           max_input_tokens: 200000
@@ -508,8 +508,8 @@ data:
         order: 2
       - model_name: claude-haiku-4-5-20251001
         litellm_params:
-          model: openai/glm-4.5-flash
-          api_base: https://api.z.ai/api/coding/paas/v4
+          model: glm-4.5-flash
+          api_base: https://api.z.ai/api/anthropic
           api_key: os.environ/GLM_API_KEY
         model_info:
           max_input_tokens: 131072
