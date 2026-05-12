@@ -376,7 +376,7 @@ data:
           max_tokens: 131072
         rpm_limit: 30
         tpm_limit: 200000
-        order: 2
+        order: 1
       - model_name: claude-opus-4-7
         litellm_params:
           model: anthropic/MiniMax-M2.7
@@ -387,7 +387,7 @@ data:
           max_tokens: 16384
         rpm_limit: 20
         tpm_limit: 100000
-        order: 2
+        order: 1
       - model_name: claude-opus-4-7
         litellm_params:
           model: anthropic/qwen3.6-plus
@@ -398,7 +398,7 @@ data:
           max_tokens: 65536
         rpm_limit: 15
         tpm_limit: 800000
-        order: 2
+        order: 1
       - model_name: claude-opus-4-7
         litellm_params:
           model: ollama/qwen3.5:9b
@@ -434,7 +434,7 @@ data:
           max_tokens: 131072
         rpm_limit: 60
         tpm_limit: 200000
-        order: 2
+        order: 1
       - model_name: claude-sonnet-4-6
         litellm_params:
           model: anthropic/MiniMax-M2.5
@@ -445,7 +445,7 @@ data:
           max_tokens: 16384
         rpm_limit: 30
         tpm_limit: 100000
-        order: 2
+        order: 1
       - model_name: claude-sonnet-4-6
         litellm_params:
           model: anthropic/glm-4.7
@@ -456,7 +456,7 @@ data:
           max_tokens: 131072
         rpm_limit: 80
         tpm_limit: 100000
-        order: 2
+        order: 1
       - model_name: claude-sonnet-4-6
         litellm_params:
           model: ollama/qwen2.5-coder:7b
@@ -503,7 +503,7 @@ data:
           max_tokens: 16384
         rpm_limit: 120
         tpm_limit: 300000
-        order: 2
+        order: 1
       - model_name: claude-haiku-4-5-20251001
         litellm_params:
           model: anthropic/glm-4.5-flash
@@ -514,7 +514,7 @@ data:
           max_tokens: 16384
         rpm_limit: 120
         tpm_limit: 300000
-        order: 2
+        order: 1
       - model_name: claude-haiku-4-5-20251001
         litellm_params:
           model: ollama/gemma4:e2b
@@ -535,7 +535,7 @@ data:
           max_tokens: 8192
         rpm_limit: 120
         tpm_limit: 500000
-        order: 2
+        order: 1
       # Smart routing group — latency-based tiering across GLM, MiniMax, Alibaba
       # Clients use model name "smart"; LiteLLM routes by TTFT + RPM/TPM limits
       - model_name: smart
@@ -670,7 +670,7 @@ data:
           max_tokens: 131072
         rpm_limit: 15
         tpm_limit: 150000
-        order: 2
+        order: 1
       - model_name: coding
         litellm_params:
           model: openai/glm-5-turbo
@@ -681,7 +681,7 @@ data:
           max_tokens: 131072
         rpm_limit: 60
         tpm_limit: 200000
-        order: 2
+        order: 1
       - model_name: coding
         litellm_params:
           model: openai/deepseek-v3.2
@@ -692,7 +692,7 @@ data:
           max_tokens: 16384
         rpm_limit: 30
         tpm_limit: 150000
-        order: 2
+        order: 1
       - model_name: coding
         litellm_params:
           model: openrouter/deepseek/deepseek-v4-flash
@@ -702,7 +702,7 @@ data:
           max_tokens: 1048576
         rpm_limit: 20
         tpm_limit: 500000
-        order: 2
+        order: 1
       - model_name: coding
         litellm_params:
           model: ollama/qwen2.5-coder:7b
@@ -736,7 +736,7 @@ data:
           max_tokens: 131072
         rpm_limit: 30
         tpm_limit: 200000
-        order: 2
+        order: 1
       - model_name: personal
         litellm_params:
           model: anthropic/MiniMax-M2.7
@@ -747,7 +747,7 @@ data:
           max_tokens: 16384
         rpm_limit: 20
         tpm_limit: 100000
-        order: 2
+        order: 1
       - model_name: personal
         litellm_params:
           model: ollama/qwen3.5:9b
@@ -768,7 +768,7 @@ data:
           max_tokens: 65536
         rpm_limit: 15
         tpm_limit: 800000
-        order: 2
+        order: 1
       - model_name: personal
         litellm_params:
           model: openrouter/deepseek/deepseek-v4-pro
@@ -778,27 +778,59 @@ data:
           max_tokens: 1048576
         rpm_limit: 10
         tpm_limit: 500000
-        order: 2
+        order: 1
     router_settings:
-      routing_strategy: latency-based-routing
-      routing_strategy_args:
-        p95_latency_metrics:
-          enabled: true
-          percentiles: [50, 95]
+      # simple-shuffle distributes across all same-order models proportionally to rpm_limit
+      routing_strategy: simple-shuffle
+
+      # Per-group strategies for fine-grained control
+      routing_groups:
+        - group_name: opus-tier
+          models: [claude-opus-4-7]
+          routing_strategy: simple-shuffle
+        - group_name: sonnet-tier
+          models: [claude-sonnet-4-6]
+          routing_strategy: simple-shuffle
+        - group_name: haiku-tier
+          models: [claude-haiku-4-5-20251001]
+          routing_strategy: simple-shuffle
+        - group_name: personal-tier
+          models: [personal]
+          routing_strategy: simple-shuffle
+        - group_name: coding-tier
+          models: [coding]
+          routing_strategy: simple-shuffle
+        - group_name: agents-tier
+          models: [agents]
+          routing_strategy: simple-shuffle
+        - group_name: smart-tier
+          models: [smart]
+          routing_strategy: simple-shuffle
+
+      # Alias Claude Code's expected model names to our routing group names
+      model_group_alias:
+        claude-opus-4-6: claude-opus-4-7
+        claude-haiku-4-6: claude-haiku-4-5-20251001
+
       redis_host: redis-master.databases.svc.cluster.local
       redis_port: 6379
-      allowed_fails: 2
-      cooldown_time: 30
-      num_retries: 1
+      allowed_fails: 3
+      cooldown_time: 60
+      num_retries: 3
+      retry_policy:
+        RateLimitErrorRetries: 3
+        TimeoutErrorRetries: 2
+        InternalServerErrorRetries: 2
+      # Fixed format: dict (not list-of-lists)
       context_window_fallbacks:
-        - agents: [qwen3.6-plus]
-        - personal: [qwen3.6-plus]
-        - coding: [qwen3.6-plus]
-        - smart: [qwen3.6-plus]
-        - claude-compat: [qwen3.6-plus]
-        - claude-opus-4-7: [qwen3.6-plus]
-        - claude-sonnet-4-6: [qwen3.6-plus]
-        - claude-haiku-4-5-20251001: [glm-4.7-flash]
+        agents: [qwen3.6-plus]
+        personal: [qwen3.6-plus]
+        coding: [qwen3.6-plus]
+        smart: [qwen3.6-plus]
+        claude-compat: [qwen3.6-plus]
+        claude-opus-4-7: [qwen3.6-plus]
+        claude-sonnet-4-6: [qwen3.6-plus]
+        claude-haiku-4-5-20251001: [glm-4.7-flash]
     litellm_settings:
       drop_params: true
       set_verbose: false
