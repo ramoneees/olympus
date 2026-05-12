@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: obsidian-couchdb
+  namespace: apps
+  labels:
+    app: obsidian-couchdb
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: obsidian-couchdb
+  template:
+    metadata:
+      labels:
+        app: obsidian-couchdb
+    spec:
+      containers:
+        - name: couchdb
+          image: couchdb:3.3.3
+          ports:
+            - name: http
+              containerPort: 5984
+          env:
+            - name: COUCHDB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: obsidian-sync-env
+                  key: COUCHDB_USER
+            - name: COUCHDB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: obsidian-sync-env
+                  key: COUCHDB_PASSWORD
+          volumeMounts:
+            - name: couchdb-data
+              mountPath: /opt/couchdb/data
+            - name: couchdb-config
+              mountPath: /opt/couchdb/etc/local.d/10-livesync.ini
+              subPath: 10-livesync.ini
+          resources:
+            requests:
+              cpu: 50m
+              memory: 256Mi
+            limits:
+              cpu: 200m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /_up
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /_up
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: couchdb-data
+          persistentVolumeClaim:
+            claimName: obsidian-couchdb-data
+        - name: couchdb-config
+          configMap:
+            name: obsidian-couchdb-config
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: obsidian-couchdb-data
+  namespace: apps
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: obsidian-couchdb
+  namespace: apps
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 5984
+      targetPort: 5984
+  selector:
+    app: obsidian-couchdb

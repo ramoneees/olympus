@@ -15,3 +15,50 @@ spec:
           port: 8080
   tls:
     secretName: wildcard-ramoneees-com-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: obsidian-cors
+  namespace: apps
+spec:
+  headers:
+    accessControlAllowMethods:
+      - GET
+      - PUT
+      - POST
+      - HEAD
+      - DELETE
+    accessControlAllowHeaders:
+      - accept
+      - authorization
+      - content-type
+      - origin
+      - referer
+    accessControlAllowOriginList:
+      - app://obsidian.md
+      - capacitor://localhost
+      - http://localhost
+    accessControlMaxAge: 3600
+    accessControlAllowCredentials: true
+    addVaryHeader: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: obsidian-couchdb
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`obsidian.ramoneees.com`)
+      kind: Rule
+      middlewares:
+        - name: obsidian-cors
+          namespace: apps
+      services:
+        - name: obsidian-couchdb
+          port: 5984
+  tls:
+    secretName: wildcard-ramoneees-com-tls

@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
   - adguard/
   - ai-gitea-bot/
-  - authentik/
   - cloudbeaver/
   - firefly-iii/
   - gitea/
@@ -11,13 +10,9 @@ resources:
   - home-assistant/
   - homebox/
   - invoice-ninja/
-  # - mattermost/  # suspended 2026-04-23
   - me-portfolio/
   - obsidian/
   - toolbox/
-  - uptime-kuma/
-  - vaultwarden/
-  # - vikunja/  # suspended 2026-04-23
   - weserve/
   - weserve-tunnel/
   - zotero/

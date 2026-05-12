@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-OLYMPUS is a personal homelab Kubernetes infrastructure project with an integrated multi-agent AI orchestration system. It is Infrastructure-as-Code (IaC) — primarily YAML manifests for a self-hosted k3s cluster running on two physical servers.
+OLYMPUS is a personal homelab Kubernetes infrastructure project. It is Infrastructure-as-Code (IaC) — primarily YAML manifests for a self-hosted k3s cluster running on two physical servers.
 
 ## Infrastructure
 
@@ -42,9 +42,7 @@ kubectl describe pod <pod>         # Pod events and status
 - `infrastructure/` — Flux-managed infra (Longhorn, Traefik config, GPU Operator, Reloader, Weave GitOps)
 - `databases/` — Shared database instances (PostgreSQL, MariaDB, Redis)
 - `apps/` — One directory per application, each with `values.yaml` + `ingress.yaml`
-- `olympus/` — AI/GPU workloads (Ollama, LiteLLM, OpenClaw, Open WebUI, n8n)
-- `olympus/olympus-openclaw-config/` — OpenClaw agent configuration source (JSON5 configs + workspace files)
-- `olympus/openclaw/` — OpenClaw K8s manifests (deployment, configmap, secrets, ingress)
+- `olympus/` — AI/GPU workloads (Ollama, LiteLLM, LibreChat, n8n)
 - `monitoring/` — Prometheus stack, Loki, Promtail, Grafana
 - `scripts/` — Utility scripts (SSH firewall, etc.)
 
@@ -90,68 +88,15 @@ Helm-based apps use `HelmRelease` CRDs alongside existing `values.yaml` files. P
 - **Alerts**: PrometheusRules in `databases/backups/alerts.yaml` — fires on job failures and staleness
 - **Flux**: `databases` Kustomization syncs `databases/backups/`, `infrastructure` Kustomization syncs `infrastructure/longhorn-extras/`
 
-## OLYMPUS Multi-Agent Architecture
-
-An AI orchestration layer using OpenClaw, with 13 specialized agents:
-
-| Agent | Role | Model | Tool Profile |
-|-------|------|-------|-------------|
-| **Hermes** (orchestrator) | Routes tasks, coordinates agents | glm-5-turbo (cloud) | full (deny exec/write) + sessions |
-| **Hephaestus** | Developer/Code | qwen3-coder-plus (cloud) | coding (sandboxed) |
-| **Prometheus** | Infrastructure/IaC | qwen3-coder-plus (cloud) | coding |
-| **Athena** | Research/Docs | MiniMax-M2.5 (cloud) | minimal + web + MCP web readers |
-| **Plutus** | Finance | MiniMax-M2.7 (cloud, hardened) | minimal + read/write + MCP firefly-iii |
-| **Themis** | Strategy & Audit | MiniMax-M2.5 (cloud) | minimal + read + web |
-| **Mnemosyne** | Memory Curator | qwen3:8b (local Ollama) | minimal + memory |
-| **Nemesis** | Critique & Bias Detection | MiniMax-M2.5 (cloud) | minimal + memory + sessions_spawn |
-| **Iris** | Communication & Messaging | MiniMax-M2.5 (cloud) | minimal + read + memory + message |
-| **Calliope** | Writing & Content | MiniMax-M2.5 (cloud) | minimal + read + memory + sessions_spawn |
-| **Asclepius** | Health & Wellness | MiniMax-M2.5 (cloud) | minimal + memory + message |
-| **Argus** | Monitoring & Alerts | MiniMax-M2.5 (cloud) | minimal + memory + MCP kubernetes |
-| **Persephone** | Planning & GTD | MiniMax-M2.5 (cloud) | minimal + memory + sessions_spawn |
-
-### LLM Routing
-
-All model traffic through LiteLLM (unified proxy) → Ollama (local) or DashScope/OpenRouter (cloud). Models are referenced with `litellm/` prefix in agent configs. LiteLLM runs in `olympus` namespace at `http://litellm.olympus.svc.cluster.local:4000`.
-
-### Memory Architecture
-
-- **Backend**: Built-in (SQLite + sqlite-vec vector index)
-- **File storage**: Markdown files in agent workspaces (`/home/node/.openclaw/workspaces/<agent>/`)
-- **Embeddings**: `nomic-embed-text-v2` via LiteLLM → Ollama (local, never leaves cluster)
-- **Search**: Hybrid (BM25 text 0.3 + vector 0.7), MMR diversity, 30-day temporal decay
-- **Memory flush**: Enabled — agents persist durable memories before context compaction (threshold: 4000 tokens)
-- **Session memory**: Experimental cross-session recall enabled, indexed via `memory_search`
-- **Embedding cache**: 50,000 entries
-- **Sync thresholds**: 100KB or 50 messages triggers re-indexing
-
-### Communication Channels
-
-- **Mattermost**: Hermes bot integration with DM pairing, callback via `https://openclaw.ramoneees.com`
-- **WhatsApp**: Self-chat mode with allowlist
-- **Gateway**: Port 18789, token auth, accessible at `https://openclaw.ramoneees.com`
-- **Hooks**: Enabled (boot-md, command-logger, session-memory)
-
-### Container Runtime
-
-- Image: `ghcr.io/openclaw/openclaw:latest`
-- Homebrew (Linuxbrew) at `/home/linuxbrew/.linuxbrew` for skill dependencies
-- npm global installs at `/home/node/.openclaw/npm-global`
-- PVC-backed data at `/home/node/.openclaw` (10Gi Longhorn)
-- Sandbox mode: off (tool allow/deny lists provide per-agent isolation)
-
 ## Key Services Stack
 
-- **Comms**: Mattermost + Hermes bot
-- **Tasks**: Vikunja
 - **GitOps**: Flux CD v2 + Gitea (dashboard at `https://flux.ramoneees.com`)
 - **Storage**: Longhorn
 - **Databases**: PostgreSQL (pgvector), MariaDB, Redis
 - **Finance**: Firefly III, Invoice Ninja
 - **Automation**: n8n (Execute Command node enabled)
-- **Auth**: Authentik (SSO), Vaultwarden
 - **GPU**: NVIDIA GPU Operator (Helm)
-- **AI**: Ollama (local inference), LiteLLM (proxy), OpenClaw (orchestration), Open WebUI (chat UI at ai.ramoneees.com)
+- **AI**: Ollama (local inference), LiteLLM (proxy), LibreChat (chat UI at ai.ramoneees.com)
 
 ## Monitoring Stack
 
@@ -161,10 +106,6 @@ All model traffic through LiteLLM (unified proxy) → Ollama (local) or DashScop
 - **Loki**: Log aggregation (SingleBinary mode), 7-day retention, 10Gi storage
 - **Promtail**: DaemonSet log collector shipping to Loki
 - k3s-incompatible components disabled: kubeEtcd, kubeControllerManager, kubeScheduler, kubeProxy
-
-## Privacy Constraint
-
-Plutus (finance agent) uses a cloud model (MiniMax-M2.7 via OpenRouter) for budget reasons. To mitigate data exposure: `web_fetch` is denied (no outbound HTTP to arbitrary URLs), filesystem access is limited to `read`+`write` (no `edit`/`apply_patch`), and financial queries go through the `firefly-iii` MCP (structured API, not raw data). Memory embeddings use local Ollama (nomic-embed-text-v2 via LiteLLM), so Plutus memory search remains local-safe.
 
 ## Architecture Documentation
 
