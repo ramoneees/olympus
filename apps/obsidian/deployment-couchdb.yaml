@@ -34,6 +34,9 @@ spec:
       containers:
         - name: couchdb
           image: couchdb:3.3.3
+          securityContext:
+            runAsUser: 5984
+            runAsGroup: 5984
           ports:
             - name: http
               containerPort: 5984
