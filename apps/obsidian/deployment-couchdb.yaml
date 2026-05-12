@@ -65,15 +65,19 @@ spec:
               cpu: 200m
               memory: 512Mi
           livenessProbe:
-            httpGet:
-              path: /_up
-              port: http
+            exec:
+              command:
+                - sh
+                - -c
+                - "curl -sf -u $COUCHDB_USER:$COUCHDB_PASSWORD http://localhost:5984/_up"
             initialDelaySeconds: 30
             periodSeconds: 30
           readinessProbe:
-            httpGet:
-              path: /_up
-              port: http
+            exec:
+              command:
+                - sh
+                - -c
+                - "curl -sf -u $COUCHDB_USER:$COUCHDB_PASSWORD http://localhost:5984/_up"
             initialDelaySeconds: 10
             periodSeconds: 10
       volumes:
