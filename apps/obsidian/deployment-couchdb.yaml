@@ -17,6 +17,20 @@ spec:
       labels:
         app: obsidian-couchdb
     spec:
+      initContainers:
+        - name: chown-data
+          image: busybox:1.36
+          command: ["chown", "-R", "5984:5984", "/opt/couchdb/data"]
+          volumeMounts:
+            - name: couchdb-data
+              mountPath: /opt/couchdb/data
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
       containers:
         - name: couchdb
           image: couchdb:3.3.3
