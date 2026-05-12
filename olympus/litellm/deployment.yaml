@@ -76,11 +76,6 @@ spec:
                 secretKeyRef:
                   name: litellm-secret
                   key: minimax-api-key
-            - name: ANTHROPIC_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: litellm-secret
-                  key: anthropic-api-key
           volumeMounts:
             - name: config
               mountPath: /app/config.yaml
@@ -556,15 +551,15 @@ data:
         order: 1
       - model_name: smart
         litellm_params:
-          model: openai/MiniMax-M2.5
-          api_base: https://api.minimax.io/v1
+          model: anthropic/MiniMax-M2.5
+          api_base: https://api.minimax.io/anthropic
           api_key: os.environ/MINIMAX_API_KEY
         model_info:
           max_input_tokens: 196608
           max_tokens: 16384
         rpm_limit: 30
         tpm_limit: 100000
-        order: 1
+        order: 2
       - model_name: smart
         litellm_params:
           model: openai/qwen3.6-plus
@@ -589,15 +584,13 @@ data:
         order: 1
       - model_name: claude-compat
         litellm_params:
-          model: openai/MiniMax-M2.5
-          api_base: https://api.minimax.io/v1
+          model: anthropic/MiniMax-M2.5
+          api_base: https://api.minimax.io/anthropic
           api_key: os.environ/MINIMAX_API_KEY
         model_info:
           max_input_tokens: 196608
           max_tokens: 16384
-        rpm_limit: 30
-        tpm_limit: 100000
-        order: 1
+        order: 2
       # Agent routing — high-throughput, short-to-medium requests (Hermes, OpenClaw)
       - model_name: agents
         litellm_params:
@@ -623,7 +616,7 @@ data:
         order: 2
       - model_name: agents
         litellm_params:
-          model: openai/MiniMax-M2.5
+          model: anthropic/MiniMax-M2.5
           api_base: https://api.minimax.io/v1
           api_key: os.environ/MINIMAX_API_KEY
         model_info:
@@ -631,7 +624,7 @@ data:
           max_tokens: 16384
         rpm_limit: 30
         tpm_limit: 100000
-        order: 1
+        order: 2
       - model_name: agents
         litellm_params:
           model: openai/glm-5.1
@@ -658,8 +651,7 @@ data:
       # Order matters: first deployment = primary pick when latency ties. glm-5.1 first for quality.
       - model_name: coding
         litellm_params:
-          model: openai/claude-sonnet-4-6
-          api_key: os.environ/ANTHROPIC_API_KEY
+          model: anthropic/claude-sonnet-4-6
         model_info:
           max_input_tokens: 200000
           max_tokens: 64000
@@ -725,8 +717,7 @@ data:
       # Order matters: first deployment = primary pick when latency ties. Best quality first.
       - model_name: personal
         litellm_params:
-          model: openai/claude-opus-4-7
-          api_key: os.environ/ANTHROPIC_API_KEY
+          model: anthropic/claude-opus-4-7
         model_info:
           max_input_tokens: 200000
           max_tokens: 32000
@@ -748,8 +739,8 @@ data:
         order: 1
       - model_name: personal
         litellm_params:
-          model: openai/MiniMax-M2.7
-          api_base: https://api.minimax.io/v1
+          model: anthropic/MiniMax-M2.7
+          api_base: https://api.minimax.io/anthropic
           api_key: os.environ/MINIMAX_API_KEY
         model_info:
           max_input_tokens: 196608
