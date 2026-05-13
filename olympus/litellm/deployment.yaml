@@ -357,17 +357,6 @@ data:
       # so requests to claude-opus-4-7 etc. get the same smart routing + fallbacks.
       - model_name: claude-opus-4-7
         litellm_params:
-          model: anthropic/claude-opus-4-7
-        model_info:
-          max_input_tokens: 200000
-          max_tokens: 32000
-          supports_vision: true
-          supports_function_calling: true
-        rpm_limit: 10
-        tpm_limit: 200000
-        order: 1
-      - model_name: claude-opus-4-7
-        litellm_params:
           model: anthropic/glm-5.1
           api_base: https://api.z.ai/api/anthropic
           api_key: os.environ/GLM_API_KEY
@@ -410,20 +399,8 @@ data:
         tpm_limit: 80000
         order: 3
       # ─────────────────────────────────────────────────────────────────────────
-      # CLAUDE-SONNET-4-6 — Primary: real Anthropic Sonnet under Max subscription
-      #                    Fallbacks: GLM-5-Turbo → MiniMax-M2.5 → GLM-4.7 → Ollama
+      # CLAUDE-SONNET-4-6 — Fallbacks: GLM-5-Turbo → MiniMax-M2.5 → GLM-4.7 → Ollama
       # ─────────────────────────────────────────────────────────────────────────
-      - model_name: claude-sonnet-4-6
-        litellm_params:
-          model: anthropic/claude-sonnet-4-6
-        model_info:
-          max_input_tokens: 200000
-          max_tokens: 64000
-          supports_vision: true
-          supports_function_calling: true
-        rpm_limit: 30
-        tpm_limit: 200000
-        order: 1
       - model_name: claude-sonnet-4-6
         litellm_params:
           model: anthropic/glm-5-turbo
@@ -479,20 +456,8 @@ data:
         tpm_limit: 80000
         order: 3
       # ─────────────────────────────────────────────────────────────────────────
-      # CLAUDE-HAIKU-4-5-20251001 — Primary: real Anthropic Haiku under Max
-      #                            Fallbacks: GLM-4.7-Flash → GLM-4.5-Flash → Ollama
+      # CLAUDE-HAIKU-4-5-20251001 —  GLM-4.7-Flash → GLM-4.5-Flash → Ollama
       # ─────────────────────────────────────────────────────────────────────────
-      - model_name: claude-haiku-4-5-20251001
-        litellm_params:
-          model: anthropic/claude-haiku-4-5-20251001
-        model_info:
-          max_input_tokens: 200000
-          max_tokens: 8192
-          supports_vision: true
-          supports_function_calling: true
-        rpm_limit: 60
-        tpm_limit: 300000
-        order: 1
       - model_name: claude-haiku-4-5-20251001
         litellm_params:
           model: anthropic/glm-4.7-flash
@@ -551,8 +516,8 @@ data:
         order: 1
       - model_name: smart
         litellm_params:
-          model: anthropic/MiniMax-M2.5
-          api_base: https://api.minimax.io/anthropic
+          model: MiniMax-M2.5
+          api_base: https://api.minimax.io/v1
           api_key: os.environ/MINIMAX_API_KEY
         model_info:
           max_input_tokens: 196608
@@ -651,17 +616,6 @@ data:
       # Order matters: first deployment = primary pick when latency ties. glm-5.1 first for quality.
       - model_name: coding
         litellm_params:
-          model: anthropic/claude-sonnet-4-6
-        model_info:
-          max_input_tokens: 200000
-          max_tokens: 64000
-          supports_vision: true
-          supports_function_calling: true
-        rpm_limit: 20
-        tpm_limit: 200000
-        order: 1
-      - model_name: coding
-        litellm_params:
           model: openai/glm-5.1
           api_base: https://api.z.ai/api/coding/paas/v4
           api_key: os.environ/GLM_API_KEY
@@ -715,17 +669,6 @@ data:
         order: 3
       # Personal routing — quality + large context (Claude Code, manual use)
       # Order matters: first deployment = primary pick when latency ties. Best quality first.
-      - model_name: personal
-        litellm_params:
-          model: anthropic/claude-opus-4-7
-        model_info:
-          max_input_tokens: 200000
-          max_tokens: 32000
-          supports_vision: true
-          supports_function_calling: true
-        rpm_limit: 10
-        tpm_limit: 200000
-        order: 1
       - model_name: personal
         litellm_params:
           model: openai/glm-5.1
