@@ -22,13 +22,22 @@ spec:
             description: "A database backup CronJob in the databases namespace has failed. Check logs with: kubectl logs -n databases job/{{ $labels.job_name }}"
         - alert: DatabaseBackupMissing
           expr: |
-            time() - kube_cronjob_status_last_successful_time{namespace="databases", cronjob=~"pg-backup|mariadb-backup"} > 129600
+            time() - kube_cronjob_status_last_successful_time{namespace="databases", cronjob=~"pg-backup|mariadb-backup"} > 86400
           for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Database backup CronJob {{ $labels.cronjob }} has not succeeded in 24 hours"
+            description: "Run: kubectl get cronjob {{ $labels.cronjob }} -n databases"
+        - alert: BackupJobStuck
+          expr: |
+            kube_job_status_active{namespace="databases", job_name=~"pg-backup.*|mariadb-backup.*|rclone-b2-sync.*"} > 0
+          for: 60m
           labels:
             severity: warning
           annotations:
-            summary: "No successful {{ $labels.cronjob }} backup in 36 hours"
-            description: "The {{ $labels.cronjob }} CronJob has not completed successfully in over 36 hours. Investigate immediately."
+            summary: "Backup job {{ $labels.job_name }} has been active for more than 60 minutes"
+            description: "Job may be stuck. Run: kubectl get jobs -n databases -l job_name=~'pg-backup.*|mariadb-backup.*|rclone-b2-sync.*'"
         - alert: RcloneSyncFailed
           expr: |
             kube_job_status_failed{namespace="databases", job_name=~"rclone-b2-sync.*"} > 0

@@ -78,3 +78,23 @@ spec:
             severity: critical
           annotations:
             summary: "Database pod {{ $labels.namespace }}/{{ $labels.pod }} is {{ $labels.phase }}"
+
+        - alert: BackupJobStuck
+          expr: |
+            kube_job_status_active{namespace="databases", job_name=~"pg-backup.*|mariadb-backup.*|rclone-b2-sync.*"} > 0
+          for: 60m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Backup job {{ $labels.job_name }} has been active for more than 60 minutes"
+            description: "Job may be stuck. Run: kubectl get jobs -n databases -l job_name=~'pg-backup.*|mariadb-backup.*|rclone-b2-sync.*'"
+
+        - alert: DatabaseBackupMissing
+          expr: |
+            time() - kube_cronjob_status_last_successful_time{namespace="databases", cronjob=~"pg-backup|mariadb-backup"} > 86400
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Database backup CronJob {{ $labels.cronjob }} has not succeeded in 24 hours"
+            description: "Run: kubectl get cronjob {{ $labels.cronjob }} -n databases"
