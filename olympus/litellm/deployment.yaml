@@ -352,155 +352,6 @@ data:
         model_info:
           max_input_tokens: 1048576
           max_tokens: 8192
-      # Anthropic model names — routing groups for Claude Code compatibility
-      # Claude Code only knows standard Anthropic model names; these mirror the *ish groups
-      # so requests to claude-opus-4-7 etc. get the same smart routing + fallbacks.
-      - model_name: claude-opus-4-7
-        litellm_params:
-          model: anthropic/glm-5.1
-          api_base: https://api.z.ai/api/anthropic
-          api_key: os.environ/GLM_API_KEY
-        model_info:
-          max_input_tokens: 202752
-          max_tokens: 131072
-        rpm_limit: 30
-        tpm_limit: 200000
-        order: 1
-      - model_name: claude-opus-4-7
-        litellm_params:
-          model: anthropic/MiniMax-M2.7
-          api_base: https://api.minimax.io/anthropic
-          api_key: os.environ/MINIMAX_API_KEY
-        model_info:
-          max_input_tokens: 196608
-          max_tokens: 16384
-        rpm_limit: 20
-        tpm_limit: 100000
-        order: 1
-      - model_name: claude-opus-4-7
-        litellm_params:
-          model: anthropic/qwen3.6-plus
-          api_base: https://coding-intl.dashscope.aliyuncs.com/apps/anthropic
-          api_key: os.environ/ALIBABA_TOKEN_API_KEY
-        model_info:
-          max_input_tokens: 1000000
-          max_tokens: 65536
-        rpm_limit: 15
-        tpm_limit: 800000
-        order: 1
-      - model_name: claude-opus-4-7
-        litellm_params:
-          model: ollama/qwen3.5:9b
-          api_base: http://ollama.olympus.svc.cluster.local:11434
-        model_info:
-          max_input_tokens: 262144
-          max_tokens: 8192
-        rpm_limit: 60
-        tpm_limit: 80000
-        order: 3
-      # ─────────────────────────────────────────────────────────────────────────
-      # CLAUDE-SONNET-4-6 — Fallbacks: GLM-5-Turbo → MiniMax-M2.5 → GLM-4.7 → Ollama
-      # ─────────────────────────────────────────────────────────────────────────
-      - model_name: claude-sonnet-4-6
-        litellm_params:
-          model: anthropic/glm-5-turbo
-          api_base: https://api.z.ai/api/anthropic
-          api_key: os.environ/GLM_API_KEY
-        model_info:
-          max_input_tokens: 202752
-          max_tokens: 131072
-        rpm_limit: 60
-        tpm_limit: 200000
-        order: 1
-      - model_name: claude-sonnet-4-6
-        litellm_params:
-          model: anthropic/MiniMax-M2.5
-          api_base: https://api.minimax.io/anthropic
-          api_key: os.environ/MINIMAX_API_KEY
-        model_info:
-          max_input_tokens: 196608
-          max_tokens: 16384
-        rpm_limit: 30
-        tpm_limit: 100000
-        order: 1
-      - model_name: claude-sonnet-4-6
-        litellm_params:
-          model: anthropic/glm-4.7
-          api_base: https://api.z.ai/api/anthropic
-          api_key: os.environ/GLM_API_KEY
-        model_info:
-          max_input_tokens: 202752
-          max_tokens: 131072
-        rpm_limit: 80
-        tpm_limit: 100000
-        order: 1
-      - model_name: claude-sonnet-4-6
-        litellm_params:
-          model: ollama/qwen2.5-coder:7b
-          api_base: http://ollama.olympus.svc.cluster.local:11434
-        model_info:
-          max_input_tokens: 131072
-          max_tokens: 8192
-        rpm_limit: 80
-        tpm_limit: 60000
-        order: 3
-      - model_name: claude-sonnet-4-6
-        litellm_params:
-          model: ollama/gemma4:e2b
-          api_base: http://ollama.olympus.svc.cluster.local:11434
-        model_info:
-          max_input_tokens: 128000
-          max_tokens: 8192
-          supports_vision: true
-        rpm_limit: 80
-        tpm_limit: 80000
-        order: 3
-      # ─────────────────────────────────────────────────────────────────────────
-      # CLAUDE-HAIKU-4-5-20251001 —  GLM-4.7-Flash → GLM-4.5-Flash → Ollama
-      # ─────────────────────────────────────────────────────────────────────────
-      - model_name: claude-haiku-4-5-20251001
-        litellm_params:
-          model: anthropic/glm-4.7-flash
-          api_base: https://api.z.ai/api/anthropic
-          api_key: os.environ/GLM_API_KEY
-        model_info:
-          max_input_tokens: 200000
-          max_tokens: 16384
-        rpm_limit: 120
-        tpm_limit: 300000
-        order: 1
-      - model_name: claude-haiku-4-5-20251001
-        litellm_params:
-          model: anthropic/glm-4.5-flash
-          api_base: https://api.z.ai/api/anthropic
-          api_key: os.environ/GLM_API_KEY
-        model_info:
-          max_input_tokens: 131072
-          max_tokens: 16384
-        rpm_limit: 120
-        tpm_limit: 300000
-        order: 1
-      - model_name: claude-haiku-4-5-20251001
-        litellm_params:
-          model: ollama/gemma4:e2b
-          api_base: http://ollama.olympus.svc.cluster.local:11434
-        model_info:
-          max_input_tokens: 128000
-          max_tokens: 8192
-          supports_vision: true
-        rpm_limit: 100
-        tpm_limit: 60000
-        order: 3
-      - model_name: claude-haiku-4-5-20251001
-        litellm_params:
-          model: openrouter/google/gemini-2.5-flash
-          api_key: os.environ/OPENROUTER_API_KEY
-        model_info:
-          max_input_tokens: 1048576
-          max_tokens: 8192
-        rpm_limit: 120
-        tpm_limit: 500000
-        order: 1
       # Smart routing group — latency-based tiering across GLM, MiniMax, Alibaba
       # Clients use model name "smart"; LiteLLM routes by TTFT + RPM/TPM limits
       - model_name: smart
@@ -535,26 +386,6 @@ data:
           max_tokens: 65536
         rpm_limit: 15
         tpm_limit: 500000
-        order: 2
-      # Anthropic-compatible endpoint alias — route /anthropic/v1/messages with model "claude-compat"
-      # Usage: ANTHROPIC_BASE_URL=https://litellm.ramoneees.com ANTHROPIC_API_KEY=<master-key>
-      - model_name: claude-compat
-        litellm_params:
-          model: openai/glm-5-turbo
-          api_base: https://api.z.ai/api/coding/paas/v4
-          api_key: os.environ/GLM_API_KEY
-        model_info:
-          max_input_tokens: 202752
-          max_tokens: 131072
-        order: 1
-      - model_name: claude-compat
-        litellm_params:
-          model: anthropic/MiniMax-M2.5
-          api_base: https://api.minimax.io/anthropic
-          api_key: os.environ/MINIMAX_API_KEY
-        model_info:
-          max_input_tokens: 196608
-          max_tokens: 16384
         order: 2
       # Agent routing — high-throughput, short-to-medium requests (Hermes, OpenClaw)
       - model_name: agents
@@ -728,15 +559,6 @@ data:
 
       # Per-group strategies for fine-grained control
       routing_groups:
-        - group_name: opus-tier
-          models: [claude-opus-4-7]
-          routing_strategy: simple-shuffle
-        - group_name: sonnet-tier
-          models: [claude-sonnet-4-6]
-          routing_strategy: simple-shuffle
-        - group_name: haiku-tier
-          models: [claude-haiku-4-5-20251001]
-          routing_strategy: simple-shuffle
         - group_name: personal-tier
           models: [personal]
           routing_strategy: simple-shuffle
@@ -749,11 +571,6 @@ data:
         - group_name: smart-tier
           models: [smart]
           routing_strategy: simple-shuffle
-
-      # Alias Claude Code's expected model names to our routing group names
-      model_group_alias:
-        claude-opus-4-6: claude-opus-4-7
-        claude-haiku-4-6: claude-haiku-4-5-20251001
 
       redis_host: redis-master.databases.svc.cluster.local
       redis_port: 6379
@@ -770,10 +587,6 @@ data:
         personal: [qwen3.6-plus]
         coding: [qwen3.6-plus]
         smart: [qwen3.6-plus]
-        claude-compat: [qwen3.6-plus]
-        claude-opus-4-7: [qwen3.6-plus]
-        claude-sonnet-4-6: [qwen3.6-plus]
-        claude-haiku-4-5-20251001: [glm-4.7-flash]
     litellm_settings:
       drop_params: true
       set_verbose: false
