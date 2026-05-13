@@ -1,1 +1,17 @@
-YXBpVmVyc2lvbjoga3VzdG9taXplLmNvbmZpZy5rOHMuaW8vdjFiZXRhMQpraW5kOiBLdXN0b21pemF0aW9uCnJlc291cmNlczoKICAtIGFkZ3VhcmQvCiAgLSBhaS1naXRlYS1ib3QvCiAgLSBjbG91ZGJlYXZlci8KICAtIGZpcmZseS1pYWkvCiAgLSBnaXRlYS8KICAtIGdpdGVhLXJ1bm5lci8KICAtIGhvbWUtYXNzaXN0YW50LwogIC0gaG9tZWJveC8KICAtIGludm9pY2UtbmlqYSwvCiAgLSBvYnNpZGlhbi8KICAtIHRvb2xib3gvCiAgLSB3ZXNlcnZlLwogIC0gd2VzZXJ2ZS10dW5uZWwvCiAgLSB6b3R1cm8vCg==
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - adguard/
+  - ai-gitea-bot/
+  - cloudbeaver/
+  - firefly-iii/
+  - gitea/
+  - gitea-runner/
+  - home-assistant/
+  - homebox/
+  - invoice-ninja/
+  - obsidian/
+  - toolbox/
+  - weserve/
+  - weserve-tunnel/
+  - zotero/
