@@ -1,0 +1,80 @@
+# PrometheusRules for olympus workloads — uses only kube_* metrics
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: olympus-workload-alerts
+  namespace: olympus
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: olympus.workloads
+      rules:
+        - alert: OlympusDeploymentUnavailable
+          expr: |
+            kube_deployment_status_replicas_available{
+              namespace="olympus",
+              deployment=~"n8n|litellm|ollama|librechat"
+            } == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Olympus deployment {{ $labels.deployment }} has 0 available replicas"
+            description: "Run: kubectl get pods -n olympus -l app={{ $labels.deployment }}"
+
+        - alert: OlympusPodNotRunning
+          expr: |
+            kube_pod_status_phase{namespace="olympus", phase!="Running"} > 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Pod {{ $labels.namespace }}/{{ $labels.pod }} is {{ $labels.phase }}"
+
+        - alert: OlympusPodRestartingTooMuch
+          expr: |
+            increase(kube_pod_container_status_restarts_total{namespace="olympus"}[15m]) > 5
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod {{ $labels.namespace }}/{{ $labels.pod }} restarting excessively"
+
+        - alert: OlympusPodOOMKilled
+          expr: |
+            kube_pod_container_status_last_terminated_reason{namespace="olympus", reason="OOMKilled"} > 0
+          for: 0m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Pod {{ $labels.namespace }}/{{ $labels.pod }} was OOMKilled"
+
+        - alert: LitellmDown
+          expr: |
+            up{job="olympus/litellm"} == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "litellm metrics endpoint is down"
+
+        - alert: OllamaModelPullFailed
+          expr: |
+            kube_job_status_failed{namespace="olympus", job_name=~"ollama-model-pull.*"} > 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "ollama-model-pull job failed — models may not be loaded"
+            description: "Run: kubectl get jobs -n olympus -l app=ollama-model-pull"
+
+        - alert: DatabasePodNotRunning
+          expr: |
+            kube_pod_status_phase{namespace="databases", phase!="Running"} > 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Database pod {{ $labels.namespace }}/{{ $labels.pod }} is {{ $labels.phase }}"

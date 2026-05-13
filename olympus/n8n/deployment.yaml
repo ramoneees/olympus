@@ -242,6 +242,11 @@ spec:
                   key: encryption-key
             - name: N8N_MCP_SERVER_ENABLED
               value: "true"
+            - name: N8N_WEBHOOK_AUTH_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-secret
+                  key: n8n-webhook-auth-key
             - name: NODES_EXCLUDE
               value: "[]"
           volumeMounts:

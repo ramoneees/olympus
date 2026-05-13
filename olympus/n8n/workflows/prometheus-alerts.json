@@ -1,0 +1,48 @@
+{
+  "id": "hbzLLN8dGtZV3aoo",
+  "name": "Prometheus Alert Handler",
+  "nodes": [
+    {
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "parameters": {
+        "path": "prometheus-alerts",
+        "authentication": "none"
+      },
+      "position": [250, 300]
+    },
+    {
+      "name": "Build Alert Message",
+      "type": "n8n-nodes-base.set",
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [{
+            "name": "message",
+            "type": "string",
+            "value": "={{ JSON.stringify({ severity: $json.body.alerts[0].labels.severity, alert: $json.body.alerts[0].labels.alertname, summary: $json.body.alerts[0].annotations.summary, description: $json.body.alerts[0].annotations.description, status: $json.body.status }) }}"
+          }]
+        }
+      },
+      "position": [500, 300]
+    },
+    {
+      "name": "Notify Hermes",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "parameters": {
+        "source": "database",
+        "workflowId": "D1X5OyGlkuo7UwdR",
+        "workflowInputs": "={{ JSON.stringify({ message: $json.message }) }}",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "position": [750, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Build Alert Message" }]] },
+    "Build Alert Message": { "main": [[{ "node": "Notify Hermes" }]] }
+  }
+}
