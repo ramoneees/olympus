@@ -23,7 +23,7 @@ spec:
               image: bitnami/postgresql:latest
               env:
                 - name: PGPASSWORD
-                  value: SecurePgr2024!
+                  value: SecurePg2024!
               command:
                 - /bin/bash
                 - -c
