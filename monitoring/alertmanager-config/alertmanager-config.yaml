@@ -35,18 +35,21 @@ spec:
     receiver: default
     routes:
       # Critical severity → Hermes auto-remediation path
-      - match:
-          severity: critical
+      - matchers:
+          - name: severity
+            value: critical
         receiver: critical
         continue: false
       # Warning severity → n8n (no auto-remediation, just logging/escalation)
-      - match:
-          severity: warning
+      - matchers:
+          - name: severity
+            value: warning
         receiver: warning
         continue: false
       # K8s pod crashes → immediate notification
-      - match:
-          namespace: apps
+      - matchers:
+          - name: namespace
+            value: apps
         receiver: warning
         continue: false
         # Don't group K8s pod alerts — get them immediately
