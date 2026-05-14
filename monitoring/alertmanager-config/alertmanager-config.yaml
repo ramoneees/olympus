@@ -1,1 +1,53 @@
-IyBBbGVydG1hbmFnZXJDb25maWcg4oCUIHJvdXRlIGFsZXJ0cyB0byBkaWZmZXJlbnQgcmVjZWl2ZXJzIGJhc2VkIG9uIHNldmVyaXR5L2xhYmVscwojIENyaXRpY2FsIOKGkiBUZWxlZ3JhbSArIG44biAoYXV0by1yZW1lZGlhdGlvbikKIyBXYXJuaW5nL0luZm8g4oaSIG44biBvbmx5IChsb2cgb25seSwgbm8gYXV0by1yZW1lZGlhdGlvbikKLS0tCmFwaVZlcnNpb246IG1vbml0b3JpbmcuY29yZW9zLmNvbS92MWFscGhhMQpraW5kOiBBbGVydG1hbmFnZXJDb25maWcKbWV0YWRhdGE6CiAgbmFtZTogaW5jaWRlbnQtcm91dGluZwogIG5hbWVzcGFjZTogbW9uaXRvcmluZwogIGxhYmVsczoKICAgIGFsZXJ0bWFuYWdlckNvbmZpZzogaW5jaWRlbnQtcm91dGluZwpzcGVjOgogIHJlY2VpdmVyczoKICAgIC0gbmFtZTogY3JpdGljYWwKICAgICAgd2ViaG9va0NvbmZpZ3M6CiAgICAgICAgLSB1cmw6IGh0dHBzOi8vbjhuLnJhbW9uZWVlcy5jb20vd2ViaG9vay9wcm9tZXRoZXVzLWFsZXJ0cwogICAgICAgICAgc2VuZFJlc29sdmVkOiB0cnVlCiAgICAtIG5hbWU6IHdhcm5pbmcKICAgICAgd2ViaG9va0NvbmZpZ3M6CiAgICAgICAgLSB1cmw6IGh0dHBzOi8vbjhuLnJhbW9uZWVlcy5jb20vd2ViaG9vay9wcm9tZXRoZXVzLWFsZXJ0cwogICAgICAgICAgc2VuZFJlc29sdmVkOiB0cnVlCiAgICAtIG5hbWU6IG51bGwKICAgIC0gbmFtZTogZGVmYXVsdAogICAgICB3ZWJob29rQ29uZmlnczoKICAgICAgICAtIHVybDogaHR0cHM6Ly9uOG4ucmFtb25lZWVzLmNvbS93ZWJob29rL3Byb21ldGhldXMtYWxlcnRzCiAgICAgICAgICBzZW5kUmVzb2x2ZWQ6IHRydWUKCiAgcm91dGU6CiAgICBncm91cEJ5OgogICAgICAtIGFsZXJ0bmFtZQogICAgICAtIG5hbWVzcGFjZQogICAgZ3JvdXBXYWl0OiAxMHMKICAgIGdyb3VwSW50ZXJ2YWw6IDEwcwogICAgcmVwZWF0SW50ZXJ2YWw6IDRoCiAgICByZWNlaXZlcjogZGVmYXVsdAogICAgcm91dGVzOgogICAgICAjIENyaXRpY2FsIHNldmVyaXR5IOKGkiBIZXJtZXMgYXV0by1yZW1lZGlhdGlvbiBwYXRoCiAgICAgIC0gbWF0Y2g6CiAgICAgICAgICBzZXZlcml0eTogY3JpdGljYWwKICAgICAgICByZWNlaXZlcjogY3JpdGljYWwKICAgICAgICBjb250aW51ZTogZmFsc2UKICAgICAgIyBXYXJuaW5nIHNldmVyaXR5IOKGkiBuOG4gKG5vIGF1dG8tcmVtZWRpYXRpb24sIGp1c3QgbG9nZ2luZy9lc2NhbGF0aW9uKQogICAgICAtIG1hdGNoOgogICAgICAgICAgc2V2ZXJpdHk6IHdhcm5pbmcKICAgICAgICByZWNlaXZlcjogd2FybmluZwogICAgICAgIGNvbnRpbnVlOiBmYWxzZQogICAgICAjIEs4cyBwb2QgY3Jhc2hlcyDihpIgaW1tZWRpYXRlIG5vdGlmaWNhdGlvbgogICAgICAtIG1hdGNoOgogICAgICAgICAgbmFtZXNwYWNlOiBhcHBzCiAgICAgICAgcmVjZWl2ZXI6IHdhcm5pbmcKICAgICAgICBjb250aW51ZTogZmFsc2UKICAgICAgICAjIERvbid0IGdyb3VwIEs4cyBwb2QgYWxlcnRzIOKAlCBnZXQgdGhlbSBpbW1lZGlhdGVseQogICAgICAgIGdyb3VwSW50ZXJ2YWw6IDBz
+# AlertmanagerConfig — route alerts to different receivers based on severity/labels
+# Critical → Telegram + n8n (auto-remediation)
+# Warning/Info → n8n only (log only, no auto-remediation)
+---
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: incident-routing
+  namespace: monitoring
+  labels:
+    alertmanagerConfig: incident-routing
+spec:
+  receivers:
+    - name: critical
+      webhookConfigs:
+        - url: https://n8n.ramoneees.com/webhook/prometheus-alerts
+          sendResolved: true
+    - name: warning
+      webhookConfigs:
+        - url: https://n8n.ramoneees.com/webhook/prometheus-alerts
+          sendResolved: true
+    - name: null
+    - name: default
+      webhookConfigs:
+        - url: https://n8n.ramoneees.com/webhook/prometheus-alerts
+          sendResolved: true
+
+  route:
+    groupBy:
+      - alertname
+      - namespace
+    groupWait: 10s
+    groupInterval: 10s
+    repeatInterval: 4h
+    receiver: default
+    routes:
+      # Critical severity → Hermes auto-remediation path
+      - match:
+          severity: critical
+        receiver: critical
+        continue: false
+      # Warning severity → n8n (no auto-remediation, just logging/escalation)
+      - match:
+          severity: warning
+        receiver: warning
+        continue: false
+      # K8s pod crashes → immediate notification
+      - match:
+          namespace: apps
+        receiver: warning
+        continue: false
+        # Don't group K8s pod alerts — get them immediately
+        groupInterval: 0s
