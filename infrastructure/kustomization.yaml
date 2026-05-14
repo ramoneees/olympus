@@ -1,1 +1,10 @@
-YXBpVmVyc2lvbjoga3VzdG9taXplLmNvbmZpZy5rOHMuaW8vdjFiZXRhMQpraW5kOiBLdXN0b21pemF0aW9uCnJlc291cmNlczoKICAtIGNvcmVkbnMvCiAgLSBsb25naG9ybi8KICAtIGxvbmdob3JuLWV4dHJhcy8KICAtIGdwdS1vcGVyYXRvci8KICAtIHJlbG9hZGVyLwogIC0gdHJhZWZpay8KICAtIHdlYXZlLWdpdG9wcy8K
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - coredns/
+  - longhorn/
+  - longhorn-extras/
+  - gpu-operator/
+  - reloader/
+  - traefik/
+  - weave-gitops/
