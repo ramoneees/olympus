@@ -25,7 +25,7 @@ spec:
                 - name: PGPASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: postgresql-secret
+                      name: db-backup-credentials
                       key: postgres-password
               command:
                 - /bin/bash
