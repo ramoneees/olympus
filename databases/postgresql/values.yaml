@@ -26,6 +26,9 @@ primary:
     scripts:
       init-extensions.sql: |
         CREATE EXTENSION IF NOT EXISTS vector;
+  # TEMP: pinned to olympus — homeserver has multipath conflict on /dev/sdc blocking volume mount
+  nodeSelector:
+    kubernetes.io/hostname: olympus
   persistence:
     enabled: true
     storageClass: longhorn
