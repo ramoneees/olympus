@@ -19,7 +19,7 @@ spec:
       webhookConfigs:
         - url: https://n8n.ramoneees.com/webhook/prometheus-alerts
           sendResolved: true
-    - name: null
+    - name: "null"
     - name: default
       webhookConfigs:
         - url: https://n8n.ramoneees.com/webhook/prometheus-alerts
