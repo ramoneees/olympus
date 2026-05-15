@@ -5,8 +5,7 @@ namespace: apps
 
 resources:
   - configmap.yaml
-  - rbac-ci.yaml
-  - statefulset-postgres.yaml
+  - rbac-ci.yaml  - statefulset-postgres.yaml
   - deployment-minio.yaml
   - create-buckets-job.yaml
   - deployment-portal.yaml
