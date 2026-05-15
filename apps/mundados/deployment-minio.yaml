@@ -29,6 +29,8 @@ spec:
       labels:
         app: mundados-minio
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: homeserver
       containers:
         - name: minio
           image: minio/minio:latest
