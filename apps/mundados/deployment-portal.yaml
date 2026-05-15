@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: portal
-          image: registry.ramoneees.com/mundados-portal:latest
+          image: git.ramoneees.com/ramoneees/mundados-portal:latest
           ports:
             - containerPort: 3000
           env:

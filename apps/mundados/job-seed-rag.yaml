@@ -16,7 +16,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: seed-rag
-          image: registry.ramoneees.com/mundados-recolha:latest
+          image: git.ramoneees.com/ramoneees/mundados-recolha:latest
           imagePullPolicy: Always
           command: ["python", "/app/src/recolha/scripts/seed_rag.py"]
           env:

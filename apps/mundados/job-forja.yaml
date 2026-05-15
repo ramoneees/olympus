@@ -16,7 +16,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: forja
-          image: registry.ramoneees.com/mundados-forja:latest
+          image: git.ramoneees.com/ramoneees/mundados-forja:latest
           imagePullPolicy: Always
           command: ["clj", "-M:run"]
           env:

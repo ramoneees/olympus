@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: registry.ramoneees.com/mundados-postgres:latest
+          image: git.ramoneees.com/ramoneees/mundados-postgres:latest
           imagePullPolicy: Always
           ports:
             - name: postgres

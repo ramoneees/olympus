@@ -17,7 +17,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: recolha
-              image: registry.ramoneees.com/mundados-recolha:latest
+              image: git.ramoneees.com/ramoneees/mundados-recolha:latest
               env:
                 - name: DATABASE_URL
                   valueFrom:
