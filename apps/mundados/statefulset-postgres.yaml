@@ -32,6 +32,8 @@ spec:
       labels:
         app: mundados-postgres
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: homeserver
       containers:
         - name: postgres
           image: git.ramoneees.com/ramoneees/mundados-postgres:latest
