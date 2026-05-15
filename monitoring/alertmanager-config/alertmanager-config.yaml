@@ -19,6 +19,10 @@ spec:
       webhookConfigs:
         - url: https://n8n.ramoneees.com/webhook/prometheus-alerts
           sendResolved: true
+    - name: mundados-webhook
+      webhookConfigs:
+        - url: https://n8n.ramoneees.com/webhook/mundados-alerts
+          sendResolved: true
     - name: "null"
     - name: default
       webhookConfigs:
@@ -34,6 +38,13 @@ spec:
     repeatInterval: 4h
     receiver: default
     routes:
+      # Mundados alerts → dedicated workflow with log collection
+      - matchers:
+          - name: alertname
+            value: MundadosPortalDown|MundadosRecolhaJobFailed|MundadosRecolhaMissed|MundadosForjaJobFailed
+            matchType: =~
+        receiver: mundados-webhook
+        continue: false
       # Critical severity → Hermes auto-remediation path
       - matchers:
           - name: severity

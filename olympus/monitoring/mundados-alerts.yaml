@@ -1,0 +1,56 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: mundados-alerts
+  namespace: olympus
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: mundados
+      rules:
+        # Portal has 0 ready replicas — users can't access the app
+        - alert: MundadosPortalDown
+          expr: |
+            kube_deployment_status_replicas_available{namespace="apps", deployment="mundados-portal"} == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "mundados-portal is down (0 available replicas)"
+            description: "kubectl get pods -n apps -l app=mundados-portal"
+
+        # CronJob spawned a Job that failed — data collection broken
+        - alert: MundadosRecolhaJobFailed
+          expr: |
+            kube_job_status_failed{namespace="apps", job_name=~"mundados-recolha-.+"} > 0
+          for: 0m
+          labels:
+            severity: critical
+          annotations:
+            summary: "mundados-recolha job failed — municipal data not collected"
+            description: "kubectl logs -n apps -l app=mundados-recolha --tail=100"
+
+        # CronJob ran but hasn't succeeded in 26h (2am daily + 2h grace)
+        - alert: MundadosRecolhaMissed
+          expr: |
+            kube_cronjob_status_last_successful_time{namespace="apps", cronjob="mundados-recolha"} > 0
+            and
+            time() - kube_cronjob_status_last_successful_time{namespace="apps", cronjob="mundados-recolha"} > 93600
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "mundados-recolha has not succeeded in 26h — data is stale"
+            description: "kubectl get cronjob mundados-recolha -n apps && kubectl get jobs -n apps | grep recolha"
+
+        # Forja transform/embedding job failed — warehouse not updated
+        - alert: MundadosForjaJobFailed
+          expr: |
+            kube_job_status_failed{namespace="apps", job_name=~"mundados-forja.*"} > 0
+          for: 0m
+          labels:
+            severity: critical
+          annotations:
+            summary: "mundados-forja job failed — warehouse transforms not applied"
+            description: "kubectl logs -n apps -l app=mundados-forja --tail=100"

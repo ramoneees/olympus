@@ -1,0 +1,65 @@
+{
+  "id": "lT7m8vvlCLfMboul",
+  "name": "Mundados Alert Handler",
+  "nodes": [
+    {
+      "name": "Mundados Alert Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 0],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mundados-alerts",
+        "authentication": "none",
+        "responseMode": "onReceived"
+      }
+    },
+    {
+      "name": "Fetch Pod Logs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [224, 0],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "const fs = require('fs');\nconst body = $input.first().json.body;\nconst alert = body?.alerts?.[0] || {};\nconst labels = alert.labels || {};\nconst annotations = alert.annotations || {};\nconst alertname = labels.alertname || 'Unknown';\nconst severity = labels.severity || 'warning';\nconst ns = labels.namespace || 'apps';\nconst deployment = labels.deployment || '';\nconst jobName = labels.job_name || '';\nconst summary = annotations.summary || '';\nconst description = annotations.description || '';\nconst status = body.status || '';\n\nlet token = '';\ntry {\n  token = fs.readFileSync('/var/run/secrets/kubernetes.io/serviceaccount/token', 'utf8').trim();\n} catch (e) {\n  return [{ json: {\n    alertname, severity, namespace: ns, deployment, job_name: jobName,\n    summary, description, status, podName: '', logs: 'No K8s token: ' + e.message\n  }}];\n}\n\nlet podName = '';\nlet logs = '';\n\ntry {\n  let labelSelector = '';\n  if (alertname === 'MundadosPortalDown') {\n    labelSelector = 'app=mundados-portal';\n  } else if (jobName) {\n    labelSelector = 'job-name=' + jobName;\n  } else if (alertname === 'MundadosRecolhaMissed') {\n    labelSelector = 'app=mundados-recolha';\n  } else {\n    labelSelector = 'app=mundados';\n  }\n\n  const podsResp = await fetch(\n    'https://kubernetes.default.svc/api/v1/namespaces/' + ns + '/pods?labelSelector=' + labelSelector,\n    { headers: { 'Authorization': 'Bearer ' + token } }\n  );\n  const podsData = await podsResp.json();\n  const pods = podsData.items || [];\n  podName = pods.length > 0 ? pods[0].metadata.name : '';\n\n  if (podName) {\n    const logResp = await fetch(\n      'https://kubernetes.default.svc/api/v1/namespaces/' + ns + '/pods/' + podName + '/log?tailLines=50',\n      { headers: { 'Authorization': 'Bearer ' + token } }\n    );\n    logs = await logResp.text();\n  } else {\n    logs = 'No pods found for selector: ' + labelSelector;\n  }\n} catch (e) {\n  logs = 'Failed to fetch logs: ' + e.message;\n}\n\nreturn [{ json: {\n  alertname, severity, namespace: ns, deployment, job_name: jobName,\n  summary, description, status, podName, logs\n}}];\n"
+      }
+    },
+    {
+      "name": "Build Notification",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [448, 0],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [{
+            "id": "msg-field",
+            "name": "message",
+            "type": "string",
+            "value": "={{ $json.severity === \"critical\" ? \"🔴\" : \"🟡\" }} MUNDADOS ALERT: {{ $json.alertname }}\\n\\nSummary: {{ $json.summary }}\\nStatus: {{ $json.status }}\\nNamespace: {{ $json.namespace }}{{ $json.deployment ? \"\\nDeployment: \" + $json.deployment : \"\" }}{{ $json.podName ? \"\\nPod: \" + $json.podName : \"\" }}{{ $json.job_name ? \"\\nJob: \" + $json.job_name : \"\" }}\\n\\n--- Recent Logs (tail 50) ---\\n{{ $json.logs ? $json.logs.substring(0, 2000) : \"No logs available\" }}"
+          }]
+        }
+      }
+    },
+    {
+      "name": "Notify Hermes",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [672, 0],
+      "parameters": {
+        "source": "database",
+        "workflowId": "D1X5OyGlkuo7UwdR",
+        "workflowInputs": "={{ JSON.stringify({ message: $json.message }) }}",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Mundados Alert Webhook": { "main": [[{ "node": "Fetch Pod Logs" }]] },
+    "Fetch Pod Logs": { "main": [[{ "node": "Build Notification" }]] },
+    "Build Notification": { "main": [[{ "node": "Notify Hermes" }]] }
+  }
+}

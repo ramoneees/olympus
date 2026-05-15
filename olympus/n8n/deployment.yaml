@@ -19,6 +19,7 @@ spec:
       labels:
         app: n8n
     spec:
+      serviceAccountName: n8n
       nodeSelector:
         kubernetes.io/hostname: olympus
       securityContext:

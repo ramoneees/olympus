@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: apps
+
+resources:
+  - configmap.yaml
+  - rbac-ci.yaml
+  - statefulset-postgres.yaml
+  - deployment-minio.yaml
+  - create-buckets-job.yaml
+  - deployment-portal.yaml
+  - cronjob-recolha.yaml
+  - job-forja.yaml
+  - ingress.yaml
