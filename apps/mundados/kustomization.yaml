@@ -8,7 +8,7 @@ resources:
   - rbac-ci.yaml
   - statefulset-postgres.yaml
   - deployment-minio.yaml
-  - secrets.yaml
+  # secrets.yaml managed out-of-band — mundados-secrets applied manually to cluster
   - create-buckets-job.yaml
   - deployment-portal.yaml
   - cronjob-recolha.yaml
