@@ -8,6 +8,7 @@ resources:
   - rbac-ci.yaml
   - statefulset-postgres.yaml
   - deployment-minio.yaml
+  - secrets.yaml
   - create-buckets-job.yaml
   - deployment-portal.yaml
   - cronjob-recolha.yaml
