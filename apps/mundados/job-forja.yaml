@@ -18,7 +18,6 @@ spec:
         - name: forja
           image: git.ramoneees.com/ramoneees/mundados-forja:latest
           imagePullPolicy: Always
-          command: ["clj", "-M:run"]
           env:
             - name: DATABASE_URL
               valueFrom:
