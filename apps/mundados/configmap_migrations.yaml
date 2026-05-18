@@ -19,7 +19,7 @@ data:
     -- DIMENSION: dim_date
     -- ============================================================
     
-    CREATE TABLE warehouse.dim_date (
+    CREATE TABLE IF NOT EXISTS warehouse.dim_date (
         id_date         SERIAL          PRIMARY KEY,
         year            SMALLINT        NOT NULL,
         quarter         SMALLINT        CHECK (quarter BETWEEN 1 AND 4),
@@ -39,7 +39,7 @@ data:
     -- DIMENSION: dim_municipality
     -- ============================================================
     
-    CREATE TABLE warehouse.dim_municipality (
+    CREATE TABLE IF NOT EXISTS warehouse.dim_municipality (
         id_municipality     SERIAL          PRIMARY KEY,
         official_code       VARCHAR(8)      NOT NULL UNIQUE,
         municipality_name   TEXT            NOT NULL,
@@ -62,7 +62,7 @@ data:
     -- DIMENSION: dim_theme
     -- ============================================================
     
-    CREATE TABLE warehouse.dim_theme (
+    CREATE TABLE IF NOT EXISTS warehouse.dim_theme (
         id_theme        SERIAL      PRIMARY KEY,
         theme_code      VARCHAR(50) NOT NULL UNIQUE,
         theme_name      TEXT        NOT NULL,
@@ -86,7 +86,7 @@ data:
     -- DIMENSION: dim_source
     -- ============================================================
     
-    CREATE TABLE warehouse.dim_source (
+    CREATE TABLE IF NOT EXISTS warehouse.dim_source (
         id_source       SERIAL      PRIMARY KEY,
         source_code     VARCHAR(50) NOT NULL UNIQUE,
         source_name     TEXT        NOT NULL,
@@ -119,7 +119,7 @@ data:
     -- DIMENSION: dim_indicator
     -- ============================================================
     
-    CREATE TABLE warehouse.dim_indicator (
+    CREATE TABLE IF NOT EXISTS warehouse.dim_indicator (
         id_indicator                SERIAL          PRIMARY KEY,
         indicator_code              VARCHAR(100)    NOT NULL UNIQUE,
         name                        TEXT            NOT NULL,
@@ -147,7 +147,7 @@ data:
     -- FACT TABLE: fact_indicator_value
     -- ============================================================
     
-    CREATE TABLE warehouse.fact_indicator_value (
+    CREATE TABLE IF NOT EXISTS warehouse.fact_indicator_value (
         id_municipality     INTEGER         NOT NULL REFERENCES warehouse.dim_municipality(id_municipality),
         id_date             INTEGER         NOT NULL REFERENCES warehouse.dim_date(id_date),
         id_indicator        INTEGER         NOT NULL REFERENCES warehouse.dim_indicator(id_indicator),
@@ -170,7 +170,7 @@ data:
     -- MAPPING: map_municipality_source_name
     -- ============================================================
     
-    CREATE TABLE warehouse.map_municipality_source_name (
+    CREATE TABLE IF NOT EXISTS warehouse.map_municipality_source_name (
         id              SERIAL      PRIMARY KEY,
         id_municipality INTEGER     NOT NULL REFERENCES warehouse.dim_municipality(id_municipality),
         id_source       INTEGER     NOT NULL REFERENCES warehouse.dim_source(id_source),
@@ -185,7 +185,7 @@ data:
     -- AUDIT: ingestion_log
     -- ============================================================
     
-    CREATE TABLE warehouse.ingestion_log (
+    CREATE TABLE IF NOT EXISTS warehouse.ingestion_log (
         id              UUID        PRIMARY KEY DEFAULT uuid_generate_v4(),
         id_source       INTEGER     REFERENCES warehouse.dim_source(id_source),
         id_indicator    INTEGER     REFERENCES warehouse.dim_indicator(id_indicator),
@@ -204,7 +204,7 @@ data:
     -- GEOSPATIAL: municipality_geometry
     -- ============================================================
     
-    CREATE TABLE geospatial.municipality_geometry (
+    CREATE TABLE IF NOT EXISTS geospatial.municipality_geometry (
         id_municipality     INTEGER     NOT NULL REFERENCES warehouse.dim_municipality(id_municipality),
         geom                geometry(MultiPolygon, 4326) NOT NULL,
         caop_version_year   SMALLINT    NOT NULL,
@@ -277,7 +277,7 @@ data:
     -- Staging tables: raw landing zone for recolha
     
     -- PORDATA raw extracts
-    CREATE TABLE staging.stg_pordata_raw (
+    CREATE TABLE IF NOT EXISTS staging.stg_pordata_raw (
         id                      BIGSERIAL   PRIMARY KEY,
         source_file             TEXT,
         indicator_code_src      TEXT,
@@ -293,7 +293,7 @@ data:
     );
     
     -- Mais Transparência
-    CREATE TABLE staging.stg_mais_transparencia_raw (
+    CREATE TABLE IF NOT EXISTS staging.stg_mais_transparencia_raw (
         id                      BIGSERIAL   PRIMARY KEY,
         source_file             TEXT,
         indicator_code_src      TEXT,
@@ -309,7 +309,7 @@ data:
     );
     
     -- INE
-    CREATE TABLE staging.stg_ine_raw (
+    CREATE TABLE IF NOT EXISTS staging.stg_ine_raw (
         id                      BIGSERIAL   PRIMARY KEY,
         source_file             TEXT,
         indicator_code_src      TEXT,
@@ -327,7 +327,7 @@ data:
     );
     
     -- Generic municipal portal staging
-    CREATE TABLE staging.stg_municipal_portal_raw (
+    CREATE TABLE IF NOT EXISTS staging.stg_municipal_portal_raw (
         id                      BIGSERIAL   PRIMARY KEY,
         portal_id               TEXT        NOT NULL,
         dataset_name            TEXT,
@@ -358,7 +358,7 @@ data:
     
     CREATE SCHEMA IF NOT EXISTS rag;
     
-    CREATE TABLE rag.document_embeddings (
+    CREATE TABLE IF NOT EXISTS rag.document_embeddings (
         id          SERIAL PRIMARY KEY,
         content     TEXT NOT NULL,
         embedding   vector(1024) NOT NULL,
