@@ -1,0 +1,155 @@
+{
+  "name": "Gitea PR Code Review",
+  "nodes": [
+    {
+      "name": "PR Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 0],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "gitea-pr-review",
+        "authentication": "none",
+        "responseMode": "onReceived"
+      }
+    },
+    {
+      "name": "Set PR Params",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [224, 0],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "repo",
+              "name": "repo",
+              "type": "string",
+              "value": "={{ $json.body.repository.full_name }}"
+            },
+            {
+              "id": "pr_number",
+              "name": "pr_number",
+              "type": "number",
+              "value": "={{ $json.body.pull_request.number }}"
+            },
+            {
+              "id": "commit_sha",
+              "name": "commit_sha",
+              "type": "string",
+              "value": "={{ $json.body.pull_request.head.sha }}"
+            },
+            {
+              "id": "action",
+              "name": "action",
+              "type": "string",
+              "value": "={{ $json.body.action }}"
+            },
+            {
+              "id": "depth",
+              "name": "depth",
+              "type": "string",
+              "value": "={{ ($json.body.pull_request.labels || []).some(l => l.name === 'deep-review') ? 'deep' : 'quick' }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Fetch PR Diff",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [448, 0],
+      "parameters": {
+        "method": "GET",
+        "url": "=http://gitea-gitea-web.apps.svc.cluster.local:3000/api/v1/repos/{{ $json.repo }}/pulls/{{ $json.pr_number }}.diff",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text",
+              "fullResponse": false
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "gitea-header-auth",
+          "name": "Gitea API Token"
+        }
+      }
+    },
+    {
+      "name": "Call OpenClaude Review",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [672, 0],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "const params = $('Set PR Params').first().json;\nconst rawDiff = $input.first().json.data || '';\nconst depth = params.depth;\nconst maxChars = depth === 'deep' ? 32000 : 16000;\nconst diff = rawDiff.length > maxChars\n  ? rawDiff.substring(0, maxChars) + '\\n\\n... [diff truncated to ' + maxChars + ' chars]'\n  : rawDiff;\n\nlet result = { review_text: '', model_used: 'unknown' };\ntry {\n  const resp = await fetch('http://openclaude.olympus.svc.cluster.local:8080/review', {\n    method: 'POST',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify({\n      diff,\n      repo_url: 'http://gitea-gitea-web.apps.svc.cluster.local:3000/' + params.repo,\n      pr_number: params.pr_number,\n      branch: '',\n      depth,\n      commit_sha: params.commit_sha,\n      prompt_type: 'code-review'\n    }),\n    signal: AbortSignal.timeout(depth === 'deep' ? 310000 : 130000)\n  });\n  result = await resp.json();\n} catch (err) {\n  result.review_text = '⚠️ Review failed: ' + err.message;\n}\n\nreturn [{ json: {\n  ...params,\n  review_text: result.review_text || result.error || 'No review generated',\n  model_used: result.model_used || 'unknown'\n}}];\n"
+      }
+    },
+    {
+      "name": "Post Gitea Comment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [896, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "=http://gitea-gitea-web.apps.svc.cluster.local:3000/api/v1/repos/{{ $json.repo }}/issues/{{ $json.pr_number }}/comments",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "contentType": "json",
+        "body": "={{ JSON.stringify({ body: '[AI Review - ' + $json.depth.toUpperCase() + '] (model: ' + $json.model_used + ' | commit: ' + $json.commit_sha.substring(0, 7) + ')\\n\\n' + $json.review_text }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "gitea-header-auth",
+          "name": "Gitea API Token"
+        }
+      }
+    },
+    {
+      "name": "Notify Hermes",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [1120, 0],
+      "parameters": {
+        "source": "database",
+        "workflowId": "D1X5OyGlkuo7UwdR",
+        "workflowInputs": "={{ JSON.stringify({ message: '✅ Code review complete — PR #' + $json.pr_number + ' in ' + $json.repo + ' [' + $json.depth + ' via ' + $json.model_used + ']', webhook_url: 'http://192.168.50.11:8644/webhooks/n8n-complete' }) }}",
+        "options": { "waitForSubWorkflow": true }
+      }
+    },
+    {
+      "name": "Notify Hermes on Error",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [896, 200],
+      "parameters": {
+        "source": "database",
+        "workflowId": "D1X5OyGlkuo7UwdR",
+        "workflowInputs": "={{ JSON.stringify({ message: '⚠️ PR code review pipeline error — ' + $json.message, webhook_url: 'http://192.168.50.11:8644/webhooks/n8n-complete' }) }}",
+        "options": { "waitForSubWorkflow": false }
+      }
+    }
+  ],
+  "connections": {
+    "PR Webhook": { "main": [[{ "node": "Set PR Params" }]] },
+    "Set PR Params": { "main": [[{ "node": "Fetch PR Diff" }]] },
+    "Fetch PR Diff": { "main": [[{ "node": "Call OpenClaude Review" }]] },
+    "Call OpenClaude Review": { "main": [[{ "node": "Post Gitea Comment" }]] },
+    "Post Gitea Comment": { "main": [[{ "node": "Notify Hermes" }]] }
+  },
+  "active": false,
+  "settings": {
+    "errorWorkflow": "",
+    "saveManualExecutions": true,
+    "callerPolicy": "any"
+  }
+}

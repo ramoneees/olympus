@@ -1,4 +1,4 @@
-# n8n needs K8s API access to fetch pod logs for alert diagnostics
+# n8n needs K8s API access to fetch pod logs for alert diagnostics and backup digests
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -27,6 +27,29 @@ rules:
     verbs: ["get", "list"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: n8n-pod-reader
+  namespace: databases
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: n8n-pod-reader
+  namespace: monitoring
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: n8n-pod-reader-apps
@@ -45,6 +68,34 @@ kind: RoleBinding
 metadata:
   name: n8n-pod-reader-olympus
   namespace: olympus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: n8n-pod-reader
+subjects:
+  - kind: ServiceAccount
+    name: n8n
+    namespace: olympus
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: n8n-pod-reader-databases
+  namespace: databases
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: n8n-pod-reader
+subjects:
+  - kind: ServiceAccount
+    name: n8n
+    namespace: olympus
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: n8n-pod-reader-monitoring
+  namespace: monitoring
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role

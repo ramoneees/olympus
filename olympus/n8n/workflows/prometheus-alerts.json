@@ -5,44 +5,140 @@
     {
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 0],
       "parameters": {
+        "httpMethod": "POST",
         "path": "prometheus-alerts",
-        "authentication": "none"
-      },
-      "position": [250, 300]
+        "authentication": "none",
+        "responseMode": "onReceived"
+      }
     },
     {
       "name": "Build Alert Message",
       "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [224, 0],
       "parameters": {
         "mode": "manual",
         "includeOtherFields": false,
         "assignments": {
-          "assignments": [{
-            "name": "message",
-            "type": "string",
-            "value": "={{ JSON.stringify({ severity: $json.body.alerts[0].labels.severity, alert: $json.body.alerts[0].labels.alertname, summary: $json.body.alerts[0].annotations.summary, description: $json.body.alerts[0].annotations.description, status: $json.body.status }) }}"
-          }]
+          "assignments": [
+            {
+              "id": "alertname",
+              "name": "alertname",
+              "type": "string",
+              "value": "={{ $json.body.alerts[0].labels.alertname || 'Unknown' }}"
+            },
+            {
+              "id": "severity",
+              "name": "severity",
+              "type": "string",
+              "value": "={{ $json.body.alerts[0].labels.severity || 'warning' }}"
+            },
+            {
+              "id": "namespace",
+              "name": "namespace",
+              "type": "string",
+              "value": "={{ $json.body.alerts[0].labels.namespace || '' }}"
+            },
+            {
+              "id": "pod",
+              "name": "pod",
+              "type": "string",
+              "value": "={{ $json.body.alerts[0].labels.pod || $json.body.alerts[0].labels.deployment || '' }}"
+            },
+            {
+              "id": "summary",
+              "name": "summary",
+              "type": "string",
+              "value": "={{ $json.body.alerts[0].annotations.summary || '' }}"
+            },
+            {
+              "id": "description",
+              "name": "description",
+              "type": "string",
+              "value": "={{ $json.body.alerts[0].annotations.description || '' }}"
+            },
+            {
+              "id": "status",
+              "name": "status",
+              "type": "string",
+              "value": "={{ $json.body.status || 'firing' }}"
+            }
+          ]
         }
-      },
-      "position": [500, 300]
+      }
+    },
+    {
+      "name": "Gather K8s Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [448, 0],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "const fs = require('fs');\nconst alert = $input.first().json;\nconst ns = alert.namespace || 'olympus';\nconst pod = alert.pod || '';\n\nlet token = '';\ntry {\n  token = fs.readFileSync('/var/run/secrets/kubernetes.io/serviceaccount/token', 'utf8').trim();\n} catch (e) {\n  return [{ json: { ...alert, k8s_context: 'No K8s token available: ' + e.message } }];\n}\n\nconst headers = { 'Authorization': 'Bearer ' + token };\nlet contextLines = [];\n\ntry {\n  // Fetch pod logs for the affected pod\n  if (pod) {\n    const logResp = await fetch(\n      'https://kubernetes.default.svc/api/v1/namespaces/' + ns + '/pods/' + pod + '/log?tailLines=50',\n      { headers }\n    );\n    const logs = await logResp.text();\n    contextLines.push('=== Pod logs: ' + pod + ' ===');\n    contextLines.push(logs.substring(0, 3000));\n  } else {\n    // Try to find pods by namespace\n    const podsResp = await fetch(\n      'https://kubernetes.default.svc/api/v1/namespaces/' + ns + '/pods',\n      { headers }\n    );\n    const podsData = await podsResp.json();\n    const pods = (podsData.items || []).slice(0, 3);\n    for (const p of pods) {\n      const pName = p.metadata.name;\n      const logResp = await fetch(\n        'https://kubernetes.default.svc/api/v1/namespaces/' + ns + '/pods/' + pName + '/log?tailLines=20',\n        { headers }\n      );\n      contextLines.push('=== ' + pName + ' (tail 20) ===');\n      contextLines.push((await logResp.text()).substring(0, 500));\n    }\n  }\n\n  // For database alerts, also check recent backup jobs\n  if (ns === 'databases' || alert.alertname.toLowerCase().includes('backup')) {\n    const jobsResp = await fetch(\n      'https://kubernetes.default.svc/apis/batch/v1/namespaces/databases/jobs',\n      { headers }\n    );\n    const jobsData = await jobsResp.json();\n    const recentJobs = (jobsData.items || [])\n      .sort((a, b) => new Date(b.metadata.creationTimestamp) - new Date(a.metadata.creationTimestamp))\n      .slice(0, 3)\n      .map(j => j.metadata.name + ': ' + (j.status.succeeded ? 'succeeded' : j.status.failed ? 'failed' : 'active'));\n    contextLines.push('=== Recent backup jobs ===');\n    contextLines.push(recentJobs.join('\\n'));\n  }\n} catch (e) {\n  contextLines.push('K8s API error: ' + e.message);\n}\n\nreturn [{ json: { ...alert, k8s_context: contextLines.join('\\n') } }];\n"
+      }
+    },
+    {
+      "name": "Call OpenClaude Triage",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [672, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "http://openclaude.olympus.svc.cluster.local:8080/review",
+        "contentType": "json",
+        "body": "={{ JSON.stringify({ diff: 'Alert: ' + $json.alertname + '\\nSeverity: ' + $json.severity + '\\nNamespace: ' + $json.namespace + '\\nPod: ' + $json.pod + '\\nSummary: ' + $json.summary + '\\nDescription: ' + $json.description + '\\nStatus: ' + $json.status + '\\n\\n' + ($json.k8s_context || ''), depth: 'quick', pr_number: 0, commit_sha: '', repo_url: '', branch: '', prompt_type: 'alert-triage' }) }}",
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Build Enriched Message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [896, 0],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "message",
+              "name": "message",
+              "type": "string",
+              "value": "={{ ($('Call OpenClaude Triage').item.json.review_text ? ($('Build Alert Message').item.json.severity === 'critical' ? '🔴' : '🟡') + ' ALERT: ' + $('Build Alert Message').item.json.alertname + ' [' + $('Build Alert Message').item.json.status + ']\\n\\nSummary: ' + $('Build Alert Message').item.json.summary + '\\nNamespace: ' + $('Build Alert Message').item.json.namespace + ($('Build Alert Message').item.json.pod ? '\\nPod: ' + $('Build Alert Message').item.json.pod : '') + '\\n\\n--- AI Triage ---\\n' + $('Call OpenClaude Triage').item.json.review_text : ($('Build Alert Message').item.json.severity === 'critical' ? '🔴' : '🟡') + ' ALERT: ' + $('Build Alert Message').item.json.alertname + '\\nSummary: ' + $('Build Alert Message').item.json.summary + '\\nNamespace: ' + $('Build Alert Message').item.json.namespace) }}"
+            }
+          ]
+        }
+      }
     },
     {
       "name": "Notify Hermes",
       "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [1120, 0],
       "parameters": {
         "source": "database",
         "workflowId": "D1X5OyGlkuo7UwdR",
-        "workflowInputs": "={{ JSON.stringify({ message: $json.message }) }}",
-        "options": {
-          "waitForSubWorkflow": true
-        }
-      },
-      "position": [750, 300]
+        "workflowInputs": "={{ JSON.stringify({ message: $json.message, webhook_url: 'http://192.168.50.11:8644/webhooks/k8s-alerts' }) }}",
+        "options": { "waitForSubWorkflow": true }
+      }
     }
   ],
   "connections": {
     "Webhook": { "main": [[{ "node": "Build Alert Message" }]] },
-    "Build Alert Message": { "main": [[{ "node": "Notify Hermes" }]] }
-  }
+    "Build Alert Message": { "main": [[{ "node": "Gather K8s Context" }]] },
+    "Gather K8s Context": { "main": [[{ "node": "Call OpenClaude Triage" }]] },
+    "Call OpenClaude Triage": { "main": [[{ "node": "Build Enriched Message" }]] },
+    "Build Enriched Message": { "main": [[{ "node": "Notify Hermes" }]] }
+  },
+  "active": true
 }
