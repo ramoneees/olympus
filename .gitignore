@@ -17,6 +17,7 @@ passwords.txt
 !monitoring/**/*secrets*.yaml
 openclaw-previous-config
 .sisyphus
+.omc    
 
 # olympus/openclaw/deployment.yaml — now tracked (moved from baremetal to K8s)
 olympus/openclaw/configmap.yaml
