@@ -26,10 +26,7 @@ spec:
             - name: PGDATABASE
               value: "mundata"
             - name: PGUSER
-              valueFrom:
-                secretKeyRef:
-                  name: mundados-secrets
-                  key: postgres-user
+              value: "mundata"
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
