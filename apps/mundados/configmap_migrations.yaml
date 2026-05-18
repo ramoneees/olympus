@@ -80,7 +80,8 @@ data:
         ('TRANSPARENCY',        'Transparência e Governação',   'Índices de transparência, contratos públicos, participação cidadã',                       6),
         ('ENVIRONMENT',         'Ambiente e Território',        'Uso do solo, espaço verde, qualidade do ar, gestão de resíduos',                          7),
         ('INFRASTRUCTURE',      'Infraestruturas e Habitação',  'Estradas, transportes, parque habitacional, conectividade digital',                       8),
-        ('SOCIAL',              'Coesão Social e Bem-Estar',    'Pobreza, apoio social, criminalidade, desigualdade',                                      9);
+        ('SOCIAL',              'Coesão Social e Bem-Estar',    'Pobreza, apoio social, criminalidade, desigualdade',                                      9)
+    ON CONFLICT (theme_code) DO NOTHING;
     
     -- ============================================================
     -- DIMENSION: dim_source
@@ -113,7 +114,8 @@ data:
         ('DGT',             'DGT',                              'official_statistics',  'https://www.dgterritorio.gov.pt',      'Direção-Geral do Território',                            'annual'),
         ('CML_LISBOA',      'Lisboa Aberta (CML)',               'municipal_portal',     'https://lisboaaberta.cm-lisboa.pt',    'Open data portal of Lisbon',                             'continuous'),
         ('CM_PORTO',        'Porto Data (CMP)',                  'municipal_portal',     'https://opendata.cm-porto.pt',         'Open data portal of Porto',                              'continuous'),
-        ('DGAL',            'DGAL',                              'official_statistics',  'https://www.dgal.gov.pt',              'Direção-Geral das Autarquias Locais',                    'annual');
+        ('DGAL',            'DGAL',                              'official_statistics',  'https://www.dgal.gov.pt',              'Direção-Geral das Autarquias Locais',                    'annual')
+    ON CONFLICT (source_code) DO NOTHING;
     
     -- ============================================================
     -- DIMENSION: dim_indicator
