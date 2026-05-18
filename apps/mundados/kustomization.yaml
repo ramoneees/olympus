@@ -5,6 +5,7 @@ namespace: apps
 
 resources:
   - configmap.yaml
+  - configmap_migrations.yaml
   - rbac-ci.yaml
   - statefulset-postgres.yaml
   - deployment-minio.yaml
@@ -13,4 +14,5 @@ resources:
   - deployment-portal.yaml
   - cronjob-recolha.yaml
   - job-forja.yaml
+  - job-migrations.yaml
   - ingress.yaml

@@ -1,0 +1,64 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mundados-migrations
+  namespace: apps
+  labels:
+    app: mundados-migrations
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 3600
+  activeDeadlineSeconds: 300
+  template:
+    metadata:
+      labels:
+        app: mundados-migrations
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrations
+          image: postgres:16-alpine
+          env:
+            - name: PGHOST
+              value: "mundados-postgres-svc.apps.svc.cluster.local"
+            - name: PGPORT
+              value: "5432"
+            - name: PGDATABASE
+              value: "mundata"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: mundados-secrets
+                  key: postgres-user
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mundados-secrets
+                  key: postgres-password
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              echo "=== Applying V001_warehouse.sql ==="
+              psql -v ON_ERROR_STOP=1 -f /scripts/V001_warehouse.sql
+              echo "=== Applying V002_staging.sql ==="
+              psql -v ON_ERROR_STOP=1 -f /scripts/V002_staging.sql
+              echo "=== Applying V003_rag_schema.sql ==="
+              psql -v ON_ERROR_STOP=1 -f /scripts/V003_rag_schema.sql
+              echo "=== Applying V010_seed_municipalities.sql ==="
+              psql -v ON_ERROR_STOP=1 -f /scripts/V010_seed_municipalities.sql
+              echo "=== Applying V011_seed_dates.sql ==="
+              psql -v ON_ERROR_STOP=1 -f /scripts/V011_seed_dates.sql
+              echo "=== Applying V012_seed_indicators.sql ==="
+              psql -v ON_ERROR_STOP=1 -f /scripts/V012_seed_indicators.sql
+              echo "=== Applying V013_seed_fact_values.sql ==="
+              psql -v ON_ERROR_STOP=1 -f /scripts/V013_seed_fact_values.sql
+              echo "=== All migrations and seeds applied successfully ==="
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+      volumes:
+        - name: scripts
+          configMap:
+            name: mundados-migrations
