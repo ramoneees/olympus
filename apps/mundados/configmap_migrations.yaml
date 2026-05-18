@@ -220,58 +220,58 @@ data:
     -- ============================================================
     
     -- fact_indicator_value
-    CREATE INDEX idx_fact_indicator_covering
+    CREATE INDEX IF NOT EXISTS idx_fact_indicator_covering
         ON warehouse.fact_indicator_value (id_indicator, id_date, id_municipality)
         INCLUDE (value, quality_flag);
     
-    CREATE INDEX idx_fact_municipality_covering
+    CREATE INDEX IF NOT EXISTS idx_fact_municipality_covering
         ON warehouse.fact_indicator_value (id_municipality, id_date, id_indicator)
         INCLUDE (value, quality_flag);
     
-    CREATE INDEX idx_fact_date_indicator
+    CREATE INDEX IF NOT EXISTS idx_fact_date_indicator
         ON warehouse.fact_indicator_value (id_date, id_indicator)
         INCLUDE (id_municipality, value);
     
-    CREATE INDEX idx_fact_verified
+    CREATE INDEX IF NOT EXISTS idx_fact_verified
         ON warehouse.fact_indicator_value (id_indicator, id_date, id_municipality)
         WHERE quality_flag IN ('verified', 'provisional');
     
-    CREATE INDEX idx_fact_ingestion_brin
+    CREATE INDEX IF NOT EXISTS idx_fact_ingestion_brin
         ON warehouse.fact_indicator_value USING BRIN (ingestion_timestamp);
     
     -- dim_municipality
-    CREATE INDEX idx_municipality_nuts2
+    CREATE INDEX IF NOT EXISTS idx_municipality_nuts2
         ON warehouse.dim_municipality (nuts2_region);
     
-    CREATE INDEX idx_municipality_nuts3
+    CREATE INDEX IF NOT EXISTS idx_municipality_nuts3
         ON warehouse.dim_municipality (nuts3_region);
     
-    CREATE INDEX idx_municipality_name_trgm
+    CREATE INDEX IF NOT EXISTS idx_municipality_name_trgm
         ON warehouse.dim_municipality USING GIN (municipality_name gin_trgm_ops);
     
     -- dim_indicator
-    CREATE INDEX idx_indicator_theme
+    CREATE INDEX IF NOT EXISTS idx_indicator_theme
         ON warehouse.dim_indicator (id_theme);
     
-    CREATE INDEX idx_indicator_source
+    CREATE INDEX IF NOT EXISTS idx_indicator_source
         ON warehouse.dim_indicator (id_primary_source);
     
-    CREATE INDEX idx_indicator_name_trgm
+    CREATE INDEX IF NOT EXISTS idx_indicator_name_trgm
         ON warehouse.dim_indicator USING GIN (name gin_trgm_ops);
     
     -- dim_date
-    CREATE INDEX idx_date_year
+    CREATE INDEX IF NOT EXISTS idx_date_year
         ON warehouse.dim_date (year);
     
     -- map_municipality_source_name
-    CREATE INDEX idx_map_municipality_source
+    CREATE INDEX IF NOT EXISTS idx_map_municipality_source
         ON warehouse.map_municipality_source_name (id_municipality, id_source);
     
-    CREATE INDEX idx_map_source_name
+    CREATE INDEX IF NOT EXISTS idx_map_source_name
         ON warehouse.map_municipality_source_name (id_source, name_in_source);
     
     -- geospatial
-    CREATE INDEX idx_municipality_geom
+    CREATE INDEX IF NOT EXISTS idx_municipality_geom
         ON geospatial.municipality_geometry USING GIST (geom);
     
 
@@ -347,10 +347,10 @@ data:
     );
     
     -- BRIN indexes on append-only staging tables
-    CREATE INDEX idx_stg_pordata_loaded   ON staging.stg_pordata_raw            USING BRIN (loaded_at);
-    CREATE INDEX idx_stg_mt_loaded        ON staging.stg_mais_transparencia_raw  USING BRIN (loaded_at);
-    CREATE INDEX idx_stg_ine_loaded       ON staging.stg_ine_raw                 USING BRIN (loaded_at);
-    CREATE INDEX idx_stg_municipal_loaded ON staging.stg_municipal_portal_raw    USING BRIN (loaded_at);
+    CREATE INDEX IF NOT EXISTS idx_stg_pordata_loaded   ON staging.stg_pordata_raw            USING BRIN (loaded_at);
+    CREATE INDEX IF NOT EXISTS idx_stg_mt_loaded        ON staging.stg_mais_transparencia_raw  USING BRIN (loaded_at);
+    CREATE INDEX IF NOT EXISTS idx_stg_ine_loaded       ON staging.stg_ine_raw                 USING BRIN (loaded_at);
+    CREATE INDEX IF NOT EXISTS idx_stg_municipal_loaded ON staging.stg_municipal_portal_raw    USING BRIN (loaded_at);
     
 
   V003_rag_schema.sql: |
@@ -371,12 +371,12 @@ data:
         updated_at  TIMESTAMPTZ DEFAULT NOW()
     );
     
-    CREATE INDEX idx_rag_embedding_hnsw ON rag.document_embeddings
+    CREATE INDEX IF NOT EXISTS idx_rag_embedding_hnsw ON rag.document_embeddings
         USING hnsw (embedding vector_cosine_ops) WITH (m = 16, ef_construction = 200);
     
-    CREATE INDEX idx_rag_metadata_gin ON rag.document_embeddings USING GIN (metadata);
+    CREATE INDEX IF NOT EXISTS idx_rag_metadata_gin ON rag.document_embeddings USING GIN (metadata);
     
-    CREATE INDEX idx_rag_batch_id ON rag.document_embeddings (batch_id);
+    CREATE INDEX IF NOT EXISTS idx_rag_batch_id ON rag.document_embeddings (batch_id);
     
 
   V010_seed_municipalities.sql: |
