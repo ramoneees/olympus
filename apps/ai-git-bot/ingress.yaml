@@ -1,17 +1,18 @@
+# Traefik IngressRoute for AI-Git-Bot Web UI
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: ai-gitea-bot
+  name: ai-git-bot
   namespace: apps
 spec:
   entryPoints:
     - websecure
   routes:
-    - kind: Rule
-      match: Host(`aibot.ramoneees.com`)
+    - match: Host(`reviews.ramoneees.com`)
+      kind: Rule
       services:
-        - name: ai-gitea-bot
+        - name: ai-git-bot
           port: 8080
   tls:
     secretName: wildcard-ramoneees-com-tls
