@@ -25,7 +25,6 @@ spec:
         - name: openclaude
           image: git.ramoneees.com/ramoneees/openclaude:latest
           imagePullPolicy: Always
-          command: ["node", "dist/cli.mjs", "dev:grpc"]
           ports:
             - name: grpc
               containerPort: 50051
