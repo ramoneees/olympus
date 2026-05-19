@@ -30,8 +30,6 @@ gitea:
       ENABLED: true  # Built-in container registry — replaces standalone registry
       LIMIT_TOTAL_OWNER_SIZE: 5368709120   # 5 GiB total per user/org
       LIMIT_SIZE_CONTAINER: 2147483648      # 2 GiB per container package
-    webhook:
-      ALLOWED_HOST_LIST: external,10.43.0.0/16,ai-git-bot.apps.svc.cluster.local
     actions:
       ENABLED: true  # Gitea Actions — replaces Jenkins
     mailer:
