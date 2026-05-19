@@ -14,7 +14,7 @@ devicePlugin:
 
 # Disable components we don't need in a 2-node homelab
 dcgmExporter:
-  enabled: false
+  enabled: true
 
 migManager:
   enabled: false

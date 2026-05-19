@@ -1,5 +1,5 @@
 # Ollama — Local LLM inference server (GPU-pinned to olympus node)
-# Serves: qwen2.5-coder:7b, deepseek-r1:7b, qwen3:8b, qwen3.5:9b, nomic-embed-text-v2, qwen3-vl:8b
+# Serves: bge-m3 (embedding), qwen3.5:7b, qwen3.6-35b-a3b (MoE — 3B active, 35B total)
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -34,6 +34,15 @@ spec:
               value: "0.0.0.0"
             - name: OLLAMA_MODELS
               value: "/models"
+            # Performance tuning
+            - name: OLLAMA_NUM_PARALLEL
+              value: "4"
+            - name: OLLAMA_FLASH_ATTENTION
+              value: "1"
+            - name: OLLAMA_KEEP_ALIVE
+              value: "24h"
+            - name: OLLAMA_MAX_LOADED_MODELS
+              value: "1"
           volumeMounts:
             - name: models
               mountPath: /models
