@@ -23,9 +23,9 @@ spec:
         kubernetes.io/hostname: olympus
       containers:
         - name: openclaude
-          image: git.ramoneees.com/olympus/openclaude:latest
+          image: git.ramoneees.com/ramoneees/openclaude:latest
           imagePullPolicy: Always
-          command: ["node", "dist/scripts/start-grpc.mjs"]
+          command: ["node", "dist/cli.mjs", "dev:grpc"]
           ports:
             - name: grpc
               containerPort: 50051
@@ -84,7 +84,7 @@ spec:
             timeoutSeconds: 5
 
         - name: http-adapter
-          image: git.ramoneees.com/olympus/openclaude:latest
+          image: git.ramoneees.com/ramoneees/openclaude:latest
           imagePullPolicy: Always
           command: ["node", "http-adapter/index.js"]
           ports:
