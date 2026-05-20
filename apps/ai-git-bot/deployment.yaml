@@ -28,7 +28,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: ai-git-bot
-          image: tmseidel/ai-git-bot:1.6.0
+          image: git.ramoneees.com/ramoneees/ai-git-bot:latest
           ports:
             - name: http
               containerPort: 8080
