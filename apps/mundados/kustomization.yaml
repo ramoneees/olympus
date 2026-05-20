@@ -13,6 +13,6 @@ resources:
   - create-buckets-job.yaml
   - deployment-portal.yaml
   - cronjob-recolha.yaml
-  - job-forja.yaml
+  - cronjob-forja.yaml
   - job-migrations.yaml
   - ingress.yaml
