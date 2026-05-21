@@ -29,6 +29,7 @@ spec:
       containers:
         - name: ai-git-bot
           image: git.ramoneees.com/ramoneees/ai-git-bot:latest
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 8080
