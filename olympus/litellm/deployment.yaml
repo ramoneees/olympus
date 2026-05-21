@@ -284,6 +284,14 @@ data:
         model_info:
           mode: audio
       # Alibaba Cloud — Token Plan (ap-southeast-1 MaaS)
+      - model_name: qwen3.7-max
+        litellm_params:
+          model: openai/qwen3.7-max
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
+        model_info:
+          max_input_tokens: 1000000
+          max_tokens: 65536
       - model_name: qwen3.6-plus
         litellm_params:
           model: openai/qwen3.6-plus
@@ -292,6 +300,81 @@ data:
         model_info:
           max_input_tokens: 1000000
           max_tokens: 65536
+      - model_name: qwen3.6-flash
+        litellm_params:
+          model: openai/qwen3.6-flash
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
+        model_info:
+          max_input_tokens: 1000000
+          max_tokens: 65536
+          supports_vision: true
+      # Alibaba — Qwen Image Generation
+      - model_name: qwen-image-2.0
+        litellm_params:
+          model: openai/qwen-image-2.0
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
+        model_info:
+          mode: image_generation
+      - model_name: qwen-image-2.0-pro
+        litellm_params:
+          model: openai/qwen-image-2.0-pro
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
+        model_info:
+          mode: image_generation
+      # Alibaba — Wan Image Generation
+      - model_name: wan2.7-image
+        litellm_params:
+          model: openai/wan2.7-image
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
+        model_info:
+          mode: image_generation
+      - model_name: wan2.7-image-pro
+        litellm_params:
+          model: openai/wan2.7-image-pro
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
+        model_info:
+          mode: image_generation
+      # Alibaba — DeepSeek
+      - model_name: deepseek-v4-pro
+        litellm_params:
+          model: openai/deepseek-v4-pro
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
+        model_info:
+          max_input_tokens: 131072
+          max_tokens: 16384
+      - model_name: deepseek-v4-flash
+        litellm_params:
+          model: openai/deepseek-v4-flash
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
+        model_info:
+          max_input_tokens: 131072
+          max_tokens: 16384
+      # Alibaba — Moonshot (Kimi)
+      - model_name: kimi-k2.6
+        litellm_params:
+          model: openai/kimi-k2.6
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
+        model_info:
+          max_input_tokens: 1000000
+          max_tokens: 65536
+          supports_vision: true
+      - model_name: kimi-k2.5
+        litellm_params:
+          model: openai/kimi-k2.5
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_TOKEN_API_KEY
+        model_info:
+          max_input_tokens: 1000000
+          max_tokens: 65536
+          supports_vision: true
       - model_name: deepseek-v3.2
         litellm_params:
           model: openai/deepseek-v3.2
