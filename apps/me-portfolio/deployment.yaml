@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: me-portfolio
-          image: gitea.ramoneees.com/ramon/me-portfolio:latest
+          image: git.ramoneees.com/ramoneees/me-portfolio:latest
           imagePullPolicy: Always
           ports:
             - name: http
