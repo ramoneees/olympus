@@ -26,7 +26,9 @@ spec:
               containerPort: 2368
           env:
             - name: url
-              value: http://me.ramoneees.com
+              value: https://me.ramoneees.com
+            - name: trust_proxy
+              value: "true"
             - name: database__client
               value: mysql
             - name: database__connection__host
