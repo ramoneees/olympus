@@ -4,6 +4,5 @@ resources:
   - litellm/
   - n8n/
   - ollama/
-  - librechat/
   - monitoring/
   - openclaude/
