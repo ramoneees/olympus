@@ -10,6 +10,7 @@ resources:
   - home-assistant/
   - homebox/
   - invoice-ninja/
+  - me-portfolio/
   - obsidian/
   - toolbox/
   - weserve/
