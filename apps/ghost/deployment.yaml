@@ -1,0 +1,97 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ghost
+  namespace: apps
+  labels:
+    app: ghost
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: ghost
+  template:
+    metadata:
+      labels:
+        app: ghost
+    spec:
+      containers:
+        - name: ghost
+          image: ghost:latest
+          ports:
+            - name: http
+              containerPort: 2368
+          env:
+            - name: url
+              value: https://me.ramoneees.com
+            - name: database__client
+              value: mysql
+            - name: database__connection__host
+              value: mariadb.databases.svc.cluster.local
+            - name: database__connection__port
+              value: "3306"
+            - name: database__connection__database
+              value: ghost
+            - name: database__connection__user
+              value: ghost
+            - name: database__connection__password
+              valueFrom:
+                secretKeyRef:
+                  name: ghost-secret
+                  key: db-password
+          volumeMounts:
+            - name: ghost-content
+              mountPath: /var/lib/ghost/content
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: ghost-content
+          persistentVolumeClaim:
+            claimName: ghost-content
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ghost-content
+  namespace: apps
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ghost
+  namespace: apps
+spec:
+  type: ClusterIP
+  selector:
+    app: ghost
+  ports:
+    - name: http
+      port: 2368
+      targetPort: 2368

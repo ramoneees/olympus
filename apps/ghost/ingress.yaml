@@ -2,7 +2,7 @@
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: me-portfolio
+  name: ghost
   namespace: apps
 spec:
   entryPoints:
@@ -11,7 +11,7 @@ spec:
     - match: Host(`me.ramoneees.com`)
       kind: Rule
       services:
-        - name: me-portfolio
-          port: 80
+        - name: ghost
+          port: 2368
   tls:
     secretName: wildcard-ramoneees-com-tls
