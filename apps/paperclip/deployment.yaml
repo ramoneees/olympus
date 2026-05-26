@@ -35,11 +35,11 @@ spec:
                 node -e "
                   const fs = require('fs');
                   const c = JSON.parse(fs.readFileSync('$CONFIG', 'utf8'));
-                  c.deploymentMode = 'authenticated';
-                  c.host = '0.0.0.0';
-                  c.reachability = 'lan';
+                  c.server.deploymentMode = 'authenticated';
+                  c.server.host = '0.0.0.0';
+                  c.server.bind = 'lan';
                   fs.writeFileSync('$CONFIG', JSON.stringify(c, null, 2));
-                  console.log('Config patched:', JSON.stringify({deploymentMode: c.deploymentMode, host: c.host}));
+                  console.log('Config patched:', JSON.stringify({deploymentMode: c.server.deploymentMode, host: c.server.host, bind: c.server.bind}));
                 "
                 chown 1000:1000 "$CONFIG"
               fi
