@@ -20,6 +20,22 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          securityContext:
+            runAsUser: 0
+          command:
+            - sh
+            - -c
+            - |
+              chown -R 1000:1000 /paperclip
+              if [ -f /paperclip/instances/default/config.json ]; then
+                sed -i 's/"local_trusted"/"authenticated"/g' /paperclip/instances/default/config.json
+              fi
+          volumeMounts:
+            - name: paperclip-data
+              mountPath: /paperclip
       containers:
         - name: paperclip
           image: ghcr.io/paperclipai/paperclip:latest
