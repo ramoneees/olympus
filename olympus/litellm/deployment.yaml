@@ -801,6 +801,7 @@ data:
       drop_params: true
       set_verbose: false
       json_logs: true
+      use_responses_api: false
       success_callback: ["prometheus"]
       failure_callback: ["prometheus"]
       cache: true
