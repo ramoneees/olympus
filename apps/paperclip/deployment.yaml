@@ -49,6 +49,13 @@ spec:
                 secretKeyRef:
                   name: paperclip-secret
                   key: better-auth-secret
+            - name: ANTHROPIC_BASE_URL
+              value: "http://litellm.olympus.svc.cluster.local:4000"
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: paperclip-secret
+                  key: litellm-api-key
           volumeMounts:
             - name: paperclip-data
               mountPath: /paperclip
