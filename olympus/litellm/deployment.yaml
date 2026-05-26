@@ -517,27 +517,27 @@ data:
       # ─────────────────────────────────────────────────────────────────────────
       - model_name: claude-haiku-4-5-20251001
         litellm_params:
-          model: openai/glm-4.7-flash
+          model: openai/glm-4.7
           api_base: https://api.z.ai/api/coding/paas/v4
           api_key: os.environ/GLM_API_KEY
           use_responses_api: false
         model_info:
-          max_input_tokens: 200000
+          max_input_tokens: 202752
           max_tokens: 16384
         rpm_limit: 120
         tpm_limit: 300000
         order: 1
       - model_name: claude-haiku-4-5-20251001
         litellm_params:
-          model: openai/glm-4.5-flash
-          api_base: https://api.z.ai/api/coding/paas/v4
-          api_key: os.environ/GLM_API_KEY
+          model: openai/MiniMax-M2.5
+          api_base: https://api.minimax.io/v1
+          api_key: os.environ/MINIMAX_API_KEY
           use_responses_api: false
         model_info:
-          max_input_tokens: 131072
+          max_input_tokens: 196608
           max_tokens: 16384
-        rpm_limit: 120
-        tpm_limit: 300000
+        rpm_limit: 60
+        tpm_limit: 200000
         order: 1
       - model_name: claude-haiku-4-5-20251001
         litellm_params:
