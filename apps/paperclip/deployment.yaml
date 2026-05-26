@@ -22,7 +22,7 @@ spec:
         fsGroup: 1000
       initContainers:
         - name: fix-permissions
-          image: busybox
+          image: ghcr.io/paperclipai/paperclip:latest
           securityContext:
             runAsUser: 0
           command:
@@ -30,8 +30,18 @@ spec:
             - -c
             - |
               chown -R 1000:1000 /paperclip
-              if [ -f /paperclip/instances/default/config.json ]; then
-                sed -i 's/"local_trusted"/"authenticated"/g' /paperclip/instances/default/config.json
+              CONFIG=/paperclip/instances/default/config.json
+              if [ -f "$CONFIG" ]; then
+                node -e "
+                  const fs = require('fs');
+                  const c = JSON.parse(fs.readFileSync('$CONFIG', 'utf8'));
+                  c.deploymentMode = 'authenticated';
+                  c.host = '0.0.0.0';
+                  c.reachability = 'lan';
+                  fs.writeFileSync('$CONFIG', JSON.stringify(c, null, 2));
+                  console.log('Config patched:', JSON.stringify({deploymentMode: c.deploymentMode, host: c.host}));
+                "
+                chown 1000:1000 "$CONFIG"
               fi
           volumeMounts:
             - name: paperclip-data
