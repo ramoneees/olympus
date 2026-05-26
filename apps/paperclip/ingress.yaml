@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: paperclip
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`tekton.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: paperclip
+          port: 3100
+  tls:
+    secretName: wildcard-ramoneees-com-tls
