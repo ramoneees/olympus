@@ -419,8 +419,8 @@ data:
       # CLAUDE-OPUS-4-7 — GLM-5.1 → MiniMax-M2.7 → Alibaba qwen3.6-plus → Ollama
       - model_name: claude-opus-4-7
         litellm_params:
-          model: openai/glm-5.1
-          api_base: https://api.z.ai/api/coding/paas/v4
+          model: anthropic/glm-5.1
+          api_base: https://api.z.ai/api/anthropic
           api_key: os.environ/GLM_API_KEY
         model_info:
           max_input_tokens: 202752
@@ -465,8 +465,8 @@ data:
       # ─────────────────────────────────────────────────────────────────────────
       - model_name: claude-sonnet-4-6
         litellm_params:
-          model: openai/glm-5-turbo
-          api_base: https://api.z.ai/api/coding/paas/v4
+          model: anthropic/glm-5-turbo
+          api_base: https://api.z.ai/api/anthropic
           api_key: os.environ/GLM_API_KEY
         model_info:
           max_input_tokens: 202752
@@ -487,8 +487,8 @@ data:
         order: 1
       - model_name: claude-sonnet-4-6
         litellm_params:
-          model: openai/glm-4.7
-          api_base: https://api.z.ai/api/coding/paas/v4
+          model: anthropic/glm-4.7
+          api_base: https://api.z.ai/api/anthropic
           api_key: os.environ/GLM_API_KEY
         model_info:
           max_input_tokens: 202752
@@ -511,8 +511,8 @@ data:
       # ─────────────────────────────────────────────────────────────────────────
       - model_name: claude-haiku-4-5-20251001
         litellm_params:
-          model: openai/glm-4.7-flash
-          api_base: https://api.z.ai/api/coding/paas/v4
+          model: anthropic/glm-4.7-flash
+          api_base: https://api.z.ai/api/anthropic
           api_key: os.environ/GLM_API_KEY
         model_info:
           max_input_tokens: 200000
@@ -522,8 +522,8 @@ data:
         order: 1
       - model_name: claude-haiku-4-5-20251001
         litellm_params:
-          model: openai/glm-4.5-flash
-          api_base: https://api.z.ai/api/coding/paas/v4
+          model: anthropic/glm-4.5-flash
+          api_base: https://api.z.ai/api/anthropic
           api_key: os.environ/GLM_API_KEY
         model_info:
           max_input_tokens: 131072
