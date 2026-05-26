@@ -54,3 +54,9 @@ CREATE DATABASE aigiteabot;
 CREATE USER aigiteabot WITH PASSWORD 'cc8QKWq62g0NMtGd';
 GRANT ALL PRIVILEGES ON DATABASE aigiteabot TO aigiteabot;
 ALTER DATABASE aigiteabot OWNER TO aigiteabot;
+
+-- Paperclip
+CREATE DATABASE paperclip;
+CREATE USER paperclip WITH PASSWORD 'CHANGE_ME';
+GRANT ALL PRIVILEGES ON DATABASE paperclip TO paperclip;
+ALTER DATABASE paperclip OWNER TO paperclip;
