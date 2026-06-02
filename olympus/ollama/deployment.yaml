@@ -1,5 +1,5 @@
 # Ollama — Local LLM inference server (GPU-pinned to olympus node)
-# Serves: bge-m3 (embedding), qwen3.5:7b, qwen3.6-35b-a3b (MoE — 3B active, 35B total)
+# Serves: bge-m3 (embedding), phi4-mini (3.8B), lfm2.5 (3B) — all fit in RTX 2080 8GB VRAM
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -36,7 +36,7 @@ spec:
               value: "/models"
             # Performance tuning
             - name: OLLAMA_NUM_PARALLEL
-              value: "4"
+              value: "2"
             - name: OLLAMA_FLASH_ATTENTION
               value: "1"
             - name: OLLAMA_KEEP_ALIVE
