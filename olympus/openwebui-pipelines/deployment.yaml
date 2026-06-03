@@ -1,0 +1,98 @@
+# OpenWebUI Pipelines — extensible Python pipeline/tool/filter server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openwebui-pipelines
+  namespace: olympus
+  labels:
+    app: openwebui-pipelines
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: openwebui-pipelines
+  template:
+    metadata:
+      labels:
+        app: openwebui-pipelines
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: pipelines
+          image: ghcr.io/open-webui/pipelines:main
+          ports:
+            - name: http
+              containerPort: 9099
+          env:
+            - name: PIPELINES_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openwebui-pipelines-secret
+                  key: pipelines-api-key
+            # LiteLLM backend for pipelines that call LLMs
+            - name: OPENAI_API_BASE_URL
+              value: "http://litellm.olympus.svc.cluster.local:4000/v1"
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openwebui-pipelines-secret
+                  key: litellm-api-key
+          volumeMounts:
+            - name: pipelines-data
+              mountPath: /app/pipelines
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: pipelines-data
+          persistentVolumeClaim:
+            claimName: openwebui-pipelines-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: openwebui-pipelines-data
+  namespace: olympus
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openwebui-pipelines
+  namespace: olympus
+spec:
+  type: ClusterIP
+  selector:
+    app: openwebui-pipelines
+  ports:
+    - name: http
+      port: 9099
+      targetPort: 9099

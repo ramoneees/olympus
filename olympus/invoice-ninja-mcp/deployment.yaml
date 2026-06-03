@@ -1,0 +1,70 @@
+# invoice-ninja-mcp — MCP server for Invoice Ninja, exposed via HTTP/SSE (supergateway)
+# Build image first: cd /path/to/invoice-ninja-mcp && docker build -t git.ramoneees.com/ramoneees/invoice-ninja-mcp-server:latest . && docker push git.ramoneees.com/ramoneees/invoice-ninja-mcp-server:latest
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: invoice-ninja-mcp
+  namespace: olympus
+  labels:
+    app: invoice-ninja-mcp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: invoice-ninja-mcp
+  template:
+    metadata:
+      labels:
+        app: invoice-ninja-mcp
+    spec:
+      containers:
+        - name: invoice-ninja-mcp
+          image: git.ramoneees.com/ramoneees/invoice-ninja-mcp-server:latest
+          ports:
+            - name: http
+              containerPort: 8000
+          env:
+            - name: INVOICE_NINJA_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: invoice-ninja-mcp-secret
+                  key: api-token
+            - name: INVOICE_NINJA_BASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: invoice-ninja-mcp-secret
+                  key: base-url
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: "500m"
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: invoice-ninja-mcp
+  namespace: olympus
+spec:
+  type: ClusterIP
+  selector:
+    app: invoice-ninja-mcp
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
