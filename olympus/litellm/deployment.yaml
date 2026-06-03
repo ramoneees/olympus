@@ -124,9 +124,9 @@ data:
           max_input_tokens: 8192
           max_tokens: 1
           mode: embedding
-      - model_name: phi4-mini:3.8b-q8_0
+      - model_name: phi4-mini:3.8b-q8_0-fixed
         litellm_params:
-          model: ollama/phi4-mini:3.8b-q8_0
+          model: ollama/phi4-mini:3.8b-q8_0-fixed
           api_base: http://ollama.olympus.svc.cluster.local:11434
         model_info:
           max_input_tokens: 128000
@@ -445,7 +445,7 @@ data:
         order: 1
       - model_name: claude-opus-4-7
         litellm_params:
-          model: ollama/phi4-mini:3.8b-q8_0
+          model: ollama/phi4-mini:3.8b-q8_0-fixed
           api_base: http://ollama.olympus.svc.cluster.local:11434
         model_info:
           max_input_tokens: 128000
@@ -490,7 +490,7 @@ data:
         order: 1
       - model_name: claude-sonnet-4-6
         litellm_params:
-          model: ollama/phi4-mini:3.8b-q8_0
+          model: ollama/phi4-mini:3.8b-q8_0-fixed
           api_base: http://ollama.olympus.svc.cluster.local:11434
         model_info:
           max_input_tokens: 128000
@@ -649,7 +649,7 @@ data:
         order: 1
       - model_name: coding
         litellm_params:
-          model: ollama/phi4-mini:3.8b-q8_0
+          model: ollama/phi4-mini:3.8b-q8_0-fixed
           api_base: http://ollama.olympus.svc.cluster.local:11434
         model_info:
           max_input_tokens: 128000
@@ -683,7 +683,7 @@ data:
         order: 1
       - model_name: personal
         litellm_params:
-          model: ollama/phi4-mini:3.8b-q8_0
+          model: ollama/phi4-mini:3.8b-q8_0-fixed
           api_base: http://ollama.olympus.svc.cluster.local:11434
         model_info:
           max_input_tokens: 128000

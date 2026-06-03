@@ -1,0 +1,76 @@
+# Creates phi4-mini:3.8b-q8_0-fixed with a corrected chat template.
+# Ollama 0.30.0 ships a broken template for phi4-mini; this job overrides it.
+# Re-run: kubectl delete job ollama-phi4-mini-fix -n olympus && kubectl apply -f ...
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: phi4-mini-modelfile
+  namespace: olympus
+data:
+  Modelfile: |
+    FROM phi4-mini:3.8b-q8_0
+
+    TEMPLATE """{{ if .System }}<|system|>
+    {{ .System }}<|end|>
+    {{ end }}{{ range .Messages }}{{ if eq .Role "user" }}<|user|>
+    {{ .Content }}<|end|>
+    <|assistant|>
+    {{ else if eq .Role "assistant" }}{{ .Content }}<|end|>
+    {{ end }}{{ end }}"""
+
+    PARAMETER stop "<|end|>"
+    PARAMETER stop "<|endoftext|>"
+    PARAMETER stop "<|user|>"
+    PARAMETER stop "<|system|>"
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ollama-phi4-mini-fix
+  namespace: olympus
+  labels:
+    app: ollama
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app: ollama-phi4-mini-fix
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: create
+          image: ollama/ollama:0.30.0
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for Ollama to be ready..."
+              until ollama list >/dev/null 2>&1; do sleep 5; done
+              echo "Waiting for phi4-mini:3.8b-q8_0 base model..."
+              until ollama list 2>/dev/null | grep -q "phi4-mini:3.8b-q8_0"; do
+                echo "  Not yet available, retrying in 15s..."
+                sleep 15
+              done
+              echo "Creating phi4-mini:3.8b-q8_0-fixed with corrected chat template..."
+              ollama create phi4-mini:3.8b-q8_0-fixed -f /modelfile/Modelfile
+              echo "Done."
+          env:
+            - name: OLLAMA_HOST
+              value: "http://ollama.olympus.svc.cluster.local:11434"
+          volumeMounts:
+            - name: modelfile
+              mountPath: /modelfile
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+      volumes:
+        - name: modelfile
+          configMap:
+            name: phi4-mini-modelfile

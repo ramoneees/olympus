@@ -4,3 +4,4 @@ resources:
   - deployment.yaml
   - ingress.yaml
   - model-pull-job.yaml
+  - phi4-mini-fix-job.yaml
