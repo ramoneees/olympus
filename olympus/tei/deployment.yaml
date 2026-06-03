@@ -1,0 +1,95 @@
+# TEI — Text Embeddings Inference for bge-m3 (CPU, OpenAI-compatible /v1/embeddings)
+# Replaces Ollama for embeddings; supports dense, sparse, and ColBERT outputs.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tei
+  namespace: olympus
+  labels:
+    app: tei
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: tei
+  template:
+    metadata:
+      labels:
+        app: tei
+    spec:
+      containers:
+        - name: tei
+          image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.5
+          args:
+            - "--model-id"
+            - "BAAI/bge-m3"
+            - "--port"
+            - "80"
+          ports:
+            - name: http
+              containerPort: 80
+          env:
+            - name: HF_HOME
+              value: "/data"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              cpu: 200m
+              memory: 1Gi
+            limits:
+              cpu: "4"
+              memory: 4Gi
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            failureThreshold: 60
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 30
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 15
+            failureThreshold: 3
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: tei-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tei-data
+  namespace: olympus
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tei
+  namespace: olympus
+spec:
+  type: ClusterIP
+  selector:
+    app: tei
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

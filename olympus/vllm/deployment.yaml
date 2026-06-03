@@ -1,0 +1,116 @@
+# vLLM — phi4-mini-instruct, INT8 via bitsandbytes, OpenAI-compatible API
+# Replaces Ollama for phi4-mini; uses native phi4_mini_json tool-call parser.
+# Strategy: Recreate — GPU is exclusive, rolling update not possible.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm
+  namespace: olympus
+  labels:
+    app: vllm
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: vllm
+  template:
+    metadata:
+      labels:
+        app: vllm
+    spec:
+      runtimeClassName: nvidia
+      nodeSelector:
+        kubernetes.io/hostname: olympus
+      containers:
+        - name: vllm
+          image: vllm/vllm-openai:v0.8.5
+          args:
+            - "--model"
+            - "microsoft/Phi-4-mini-instruct"
+            - "--quantization"
+            - "bitsandbytes"
+            - "--load-format"
+            - "bitsandbytes"
+            - "--dtype"
+            - "float16"
+            - "--tool-call-parser"
+            - "phi4_mini_json"
+            - "--enable-auto-tool-choice"
+            - "--served-model-name"
+            - "phi4-mini"
+            - "--max-model-len"
+            - "16384"
+            - "--gpu-memory-utilization"
+            - "0.90"
+            - "--port"
+            - "8000"
+          ports:
+            - name: http
+              containerPort: 8000
+          env:
+            - name: HF_HOME
+              value: "/models"
+          volumeMounts:
+            - name: models
+              mountPath: /models
+          resources:
+            requests:
+              cpu: 500m
+              memory: 4Gi
+            limits:
+              cpu: "8"
+              memory: 48Gi
+              nvidia.com/gpu: "1"
+          # startupProbe allows up to 20 min for first-run model download from HuggingFace
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            failureThreshold: 120
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 30
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 15
+            failureThreshold: 3
+      volumes:
+        - name: models
+          persistentVolumeClaim:
+            claimName: vllm-models
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vllm-models
+  namespace: olympus
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 30Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm
+  namespace: olympus
+spec:
+  type: ClusterIP
+  selector:
+    app: vllm
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000

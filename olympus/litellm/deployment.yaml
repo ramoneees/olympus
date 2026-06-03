@@ -115,19 +115,19 @@ metadata:
 data:
   config.yaml: |
     model_list:
-      # Local Ollama models (only models actually pulled - optimized for RTX 2080 8GB VRAM)
+      # Local models — vLLM (phi4-mini INT8, GPU) + TEI (bge-m3, CPU), RTX 2080 8GB
       - model_name: bge-m3
         litellm_params:
-          model: ollama/bge-m3:latest
-          api_base: http://ollama.olympus.svc.cluster.local:11434
+          model: openai/bge-m3
+          api_base: http://tei.olympus.svc.cluster.local:80/v1
         model_info:
           max_input_tokens: 8192
           max_tokens: 1
           mode: embedding
-      - model_name: phi4-mini:3.8b-q8_0-fixed
+      - model_name: phi4-mini
         litellm_params:
-          model: ollama/phi4-mini:3.8b-q8_0-fixed
-          api_base: http://ollama.olympus.svc.cluster.local:11434
+          model: openai/phi4-mini
+          api_base: http://vllm.olympus.svc.cluster.local:8000/v1
         model_info:
           max_input_tokens: 128000
           max_tokens: 4096
@@ -445,8 +445,8 @@ data:
         order: 1
       - model_name: claude-opus-4-7
         litellm_params:
-          model: ollama/phi4-mini:3.8b-q8_0-fixed
-          api_base: http://ollama.olympus.svc.cluster.local:11434
+          model: openai/phi4-mini
+          api_base: http://vllm.olympus.svc.cluster.local:8000/v1
         model_info:
           max_input_tokens: 128000
           max_tokens: 4096
@@ -490,8 +490,8 @@ data:
         order: 1
       - model_name: claude-sonnet-4-6
         litellm_params:
-          model: ollama/phi4-mini:3.8b-q8_0-fixed
-          api_base: http://ollama.olympus.svc.cluster.local:11434
+          model: openai/phi4-mini
+          api_base: http://vllm.olympus.svc.cluster.local:8000/v1
         model_info:
           max_input_tokens: 128000
           max_tokens: 4096
@@ -649,8 +649,8 @@ data:
         order: 1
       - model_name: coding
         litellm_params:
-          model: ollama/phi4-mini:3.8b-q8_0-fixed
-          api_base: http://ollama.olympus.svc.cluster.local:11434
+          model: openai/phi4-mini
+          api_base: http://vllm.olympus.svc.cluster.local:8000/v1
         model_info:
           max_input_tokens: 128000
           max_tokens: 4096
@@ -683,8 +683,8 @@ data:
         order: 1
       - model_name: personal
         litellm_params:
-          model: ollama/phi4-mini:3.8b-q8_0-fixed
-          api_base: http://ollama.olympus.svc.cluster.local:11434
+          model: openai/phi4-mini
+          api_base: http://vllm.olympus.svc.cluster.local:8000/v1
         model_info:
           max_input_tokens: 128000
           max_tokens: 4096

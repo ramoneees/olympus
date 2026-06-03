@@ -3,7 +3,8 @@ kind: Kustomization
 resources:
   - litellm/
   - n8n/
-  - ollama/
+  - tei/
+  - vllm/
   - monitoring/
   - openclaude/
   - openwebui/
