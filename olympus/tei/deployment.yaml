@@ -34,6 +34,8 @@ spec:
           env:
             - name: HF_HOME
               value: "/data"
+            - name: HF_ENDPOINT
+              value: "https://huggingface.co"
           volumeMounts:
             - name: data
               mountPath: /data
