@@ -16,4 +16,4 @@ spec:
     name: olympus
   path: ./olympus
   prune: true
-  timeout: 5m
+  timeout: 30m

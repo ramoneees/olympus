@@ -24,6 +24,9 @@ spec:
       runtimeClassName: nvidia
       nodeSelector:
         kubernetes.io/hostname: olympus
+      # Kubernetes injects VLLM_PORT=tcp://... from the Service, which crashes vLLM's
+      # internal int(os.getenv('VLLM_PORT')) call. Disable service link injection.
+      enableServiceLinks: false
       containers:
         - name: vllm
           image: vllm/vllm-openai:v0.8.5

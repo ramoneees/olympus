@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: tei
-          image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.5
+          image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.6
           args:
             - "--model-id"
             - "BAAI/bge-m3"
