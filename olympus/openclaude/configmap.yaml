@@ -5,7 +5,7 @@ metadata:
   name: openclaude-config
   namespace: olympus
 data:
-  QUICK_MODEL: "qwen2.5-coder:7b"
+  QUICK_MODEL: "phi4-mini"
   DEEP_MODEL: "glm-5-turbo"
   WEB_SEARCH_PROVIDER: "brave"
 

@@ -10,7 +10,7 @@ metadata:
   annotations:
     reloader.stakater.com/auto: "true"
 spec:
-  replicas: 0  # scaled down: container has a port conflict (openclaude + http-adapter both bind :8080) and QUICK_MODEL points to a model LiteLLM doesn't expose; fix before scaling back up
+  replicas: 1
   selector:
     matchLabels:
       app: openclaude

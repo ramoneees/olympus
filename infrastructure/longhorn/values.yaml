@@ -11,8 +11,7 @@ defaultSettings:
   # Backup target — Backblaze B2 via S3-compatible API
   backupTarget: "s3://ramoneees-olympus-longhorn-backups@eu-central-003/"
   backupTargetCredentialSecret: longhorn-b2-credentials
-  # Guaranteed engine manager CPU
-  guaranteedInstanceManagerCPU: 12
+  guaranteedInstanceManagerCPU: 6
   # Storage over-provisioning — allow 200% for 2-node homelab
   storageOverProvisioningPercentage: 200
   storageMinimalAvailablePercentage: 10
