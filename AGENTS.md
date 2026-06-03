@@ -6,13 +6,13 @@ Guide for AI agents working on the OLYMPUS homelab Kubernetes infrastructure.
 
 OLYMPUS is a GitOps-managed k3s Kubernetes cluster with:
 - **2 nodes**: Control plane (N100, 16GB) + GPU worker (Ryzen 5600X, 64GB, RTX 2080)
-- **GitOps**: ArgoCD auto-syncs from Gitea → no manual `kubectl apply`
+- **GitOps**: Flux CD auto-syncs from Gitea → no manual `kubectl apply`
 - **Workloads**: Self-hosted apps (Mattermost, Firefly III, Vikunja, etc.) + AI agents (OpenClaw)
 
 ## Repository Structure
 
 ```
-bootstrap/              One-time setup (MetalLB, cert-manager, ArgoCD)
+bootstrap/              One-time setup (MetalLB, cert-manager, Flux CD)
 infrastructure/         Longhorn, Traefik, GPU Operator, AdGuard, secrets/
 databases/              PostgreSQL, MariaDB, Redis + backup jobs
 apps/                   Application workloads (one dir per app)
@@ -24,11 +24,11 @@ olympus/                GPU-pinned workloads
   ├── n8n/                      Workflow automation
   └── openwebui/    Web UI for LLM chat
 monitoring/             Prometheus, Grafana, Loki, Promtail
-argocd/                 App-of-apps Application manifests (see argocd/AGENTS.md)
+clusters/olympus/       Flux Kustomizations + Git sources (see clusters/olympus/)
 scripts/                Utility scripts
 ```
 
-**Subdirectory guides:** `olympus/olympus-openclaw-config/AGENTS.md`, `argocd/AGENTS.md`
+**Subdirectory guides:** `olympus/olympus-openclaw-config/AGENTS.md`, `clusters/olympus/`
 
 ## Making Changes
 
@@ -36,7 +36,7 @@ scripts/                Utility scripts
 
 1. **Edit YAML manifests** in the appropriate directory
 2. **Commit and push** to Gitea
-3. **ArgoCD auto-syncs** — changes apply automatically
+3. **Flux CD auto-syncs** — changes apply automatically
 
 No manual `kubectl apply` after bootstrap. The cluster watches this repo.
 
@@ -48,7 +48,7 @@ No manual `kubectl apply` after bootstrap. The cluster watches this repo.
 | Infra component | `infrastructure/<component>/` |
 | Database | `databases/<db-type>/` |
 | AI/GPU workload | `olympus/<workload>/` |
-| ArgoCD app definition | `argocd/<app>.yaml` |
+| Flux Kustomization / HelmRelease | `clusters/olympus/<layer>.yaml` |
 
 ## Conventions
 
@@ -89,7 +89,7 @@ apps/<app-name>/
 Before considering a change complete:
 
 1. **Syntax check**: `kubectl apply --dry-run=client -f <file.yaml>`
-2. **ArgoCD sync**: Check `argocd.ramoneees.com` for sync status
+2. **Flux sync**: `flux get kustomizations` and `flux get helmreleases -A`
 3. **Pod health**: `kubectl get pods -n <namespace>`
 4. **Logs if needed**: `kubectl logs <pod> -n <namespace>`
 
@@ -104,8 +104,9 @@ k9s
 kubectl describe pod <pod> -n <namespace>
 kubectl logs <pod> -n <namespace>
 
-# Force ArgoCD sync (if auto-sync delayed)
-argocd app sync <app-name>
+# Force Flux reconcile (if auto-sync delayed)
+flux reconcile kustomization <name>
+flux reconcile helmrelease <name> --namespace <ns>
 
 # Check resource usage
 kubectl top nodes
@@ -126,7 +127,7 @@ kubectl top pods -A
 
 | Service | URL | Purpose |
 |---------|-----|---------|
-| ArgoCD | argocd.ramoneees.com | GitOps dashboard |
+| Flux CD | (CLI) `flux get kustomizations` | GitOps controller |
 | Gitea | git.ramoneees.com | Git hosting |
 | Mattermost | chat.ramoneees.com | Team chat |
 | Vikunja | tasks.ramoneees.com | Task management |
@@ -176,4 +177,4 @@ See `databases/backups/` for backup manifests.
 - Does this affect GPU-pinned workloads?
 - Are there existing patterns in similar apps to follow?
 - Does this require new secrets? If so, create template only.
-- Will this break ArgoCD sync if applied incorrectly?
+- Will this break Flux reconcile if applied incorrectly?

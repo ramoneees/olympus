@@ -1,7 +1,7 @@
 # Longhorn Helm values
 # Chart: longhorn
 # Repo: https://charts.longhorn.io
-# Managed by ArgoCD after bootstrap
+# Managed by Flux CD after bootstrap
 
 defaultSettings:
   # 1 replica — 2-node cluster has insufficient storage for 2 replicas

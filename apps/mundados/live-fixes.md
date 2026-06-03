@@ -120,9 +120,8 @@ EXPOSE 3000
 CMD ["node", "server.js"]
 ```
 
-## ArgoCD vs Flux
+## Flux CD
 
-- **ArgoCD**: Dead. `argocd` namespace stuck in `Terminating` since 2026-04-09.
 - **Flux CD**: Active. GitRepository `olympus` → Kustomizations: apps, databases, infrastructure, monitoring, namespaces, olympus.
 - All mundados changes synced via Flux `apps` kustomization.
 

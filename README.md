@@ -1,6 +1,6 @@
 # OLYMPUS
 
-A personal homelab Kubernetes infrastructure with an integrated multi-agent AI orchestration system. Pure GitOps — YAML manifests for a self-hosted k3s cluster running on two physical servers, automatically synced via ArgoCD.
+A personal homelab Kubernetes infrastructure with an integrated multi-agent AI orchestration system. Pure GitOps — YAML manifests for a self-hosted k3s cluster running on two physical servers, automatically synced via Flux CD.
 
 ## Infrastructure
 
@@ -17,17 +17,17 @@ A personal homelab Kubernetes infrastructure with an integrated multi-agent AI o
 ## GitOps Workflow
 
 ```
-Edit YAML → git push to Gitea → ArgoCD auto-sync → cluster applies changes
+Edit YAML → git push to Gitea → Flux CD auto-sync → cluster applies changes
 ```
 
-No manual `kubectl apply` after initial bootstrap. ArgoCD uses an app-of-apps pattern with phased rollout.
+No manual `kubectl apply` after initial bootstrap. Flux CD reconciles from `clusters/olympus/` with layered Kustomizations.
 
 ## Repo Structure
 
 ```
-bootstrap/          One-time installs (MetalLB, cert-manager, ArgoCD)
+bootstrap/          One-time installs (MetalLB, cert-manager, Flux CD)
 ├── install.sh      Bootstrap script
-infrastructure/     ArgoCD-managed infra
+infrastructure/     Flux-managed infra
 ├── longhorn/       Distributed storage
 ├── traefik/        Ingress configuration
 databases/          Shared database instances
@@ -61,14 +61,14 @@ olympus/            GPU-pinned workloads
 monitoring/         Observability stack
 ├── kube-prometheus-stack/    Prometheus + Grafana
 ├── loki/           Log aggregation
-argocd/             ArgoCD Application manifests
-├── root.yaml       App-of-apps root
-├── namespaces.yaml
-├── infrastructure.yaml
-├── databases.yaml
-├── apps.yaml
-├── apps-phase4.yaml
-├── adguard.yaml
+clusters/olympus/    Flux Kustomizations + Git sources
+├── sources.yaml    GitRepository + HelmRepository sources
+├── namespaces.yaml Namespaces Kustomization
+├── infrastructure.yaml Infra layer
+├── databases.yaml  Databases layer
+├── apps.yaml       Apps layer
+├── olympus.yaml    GPU/Olympus layer
+├── monitoring.yaml Monitoring layer
 docs/               Architecture documentation
 ```
 
@@ -82,7 +82,6 @@ docs/               Architecture documentation
 | Data Importer | firefly-import.ramoneees.com | Firefly III data import |
 | Invoice Ninja | invoice.ramoneees.com | Invoicing |
 | Gitea | git.ramoneees.com | Git hosting |
-| ArgoCD | argocd.ramoneees.com | GitOps deployment |
 | Uptime Kuma | status.ramoneees.com | Uptime monitoring |
 | Vaultwarden | vault.ramoneees.com | Password manager |
 | AdGuard | adguard.ramoneees.com | DNS ad-blocking |
@@ -142,17 +141,17 @@ Plutus (finance agent) must use **local models exclusively** — financial data 
 ### Bootstrap
 
 ```bash
-# One-time setup (before ArgoCD exists)
+# One-time setup (before Flux CD exists)
 ./bootstrap/install.sh
 ```
 
-This installs MetalLB, cert-manager, and ArgoCD. After bootstrap, all changes are managed through GitOps.
+This installs MetalLB, cert-manager, and Flux CD. After bootstrap, all changes are managed through GitOps.
 
 ### Day-to-Day
 
 ```bash
 # All changes go through git
-git commit && git push   # ArgoCD auto-syncs from Gitea
+git commit && git push   # Flux CD auto-syncs from Gitea
 
 # Debugging
 k9s                        # Interactive cluster monitor

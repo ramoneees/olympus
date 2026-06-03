@@ -64,7 +64,7 @@ git commit -m "Add sealed vikunja agent secrets"
 git push
 ```
 
-ArgoCD syncs the SealedSecret → the controller decrypts it → a regular Secret appears in the cluster.
+Flux CD syncs the SealedSecret → the controller decrypts it → a regular Secret appears in the cluster.
 
 ## 4. Example SealedSecret Manifest
 

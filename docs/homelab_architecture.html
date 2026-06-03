@@ -693,7 +693,7 @@
   <div class="section-title">Backup Strategy</div>
   <div class="service-box">
     <div class="service-name">3-Layer Database Backup</div>
-    <p>All backups run on staggered UTC schedules. ArgoCD manages all manifests via GitOps.</p>
+    <p>All backups run on staggered UTC schedules. Flux CD manages all manifests via GitOps.</p>
     <table>
       <tr>
         <th>Time (UTC)</th>
@@ -756,7 +756,7 @@
       <div class="step-title">Layer 2 — Longhorn Volume Snapshots to B2</div>
       <p>Longhorn RecurringJobs create block-level volume snapshots and upload to Backblaze B2 (<code>eu-central-003</code> region). 7-backup retention managed by Longhorn (no B2 lifecycle rules).</p>
       <p>Volumes must opt in via labels: <code>recurring-job.longhorn.io/&lt;job-name&gt;: enabled</code> on the Longhorn Volume CR.</p>
-      <p>Manifests: <code>infrastructure/longhorn-extras/</code> (RecurringJobs + B2 secret), synced by ArgoCD app <code>longhorn-extras</code>.</p>
+      <p>Manifests: <code>infrastructure/longhorn-extras/</code> (RecurringJobs + B2 secret), synced by Flux Kustomization <code>infrastructure</code>.</p>
       <p>Backup target configured in <code>infrastructure/longhorn/values.yaml</code> via <code>backupTarget</code> + <code>backupTargetCredentialSecret</code>.</p>
     </div>
 
