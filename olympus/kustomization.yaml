@@ -6,3 +6,4 @@ resources:
   - ollama/
   - monitoring/
   - openclaude/
+  - openwebui/

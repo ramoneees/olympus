@@ -50,7 +50,7 @@ olympus/            GPU-pinned workloads
 ├── ollama/         Local LLM inference
 ├── litellm/        Unified LLM proxy
 ├── openclaw/       Multi-agent orchestrator (baremetal, ingress routing only)
-├── librechat/      LLM chat (image gen, TTS/STT)
+├── openwebui/   Web UI for LLM chat
 ├── jellyfin/       Media server
 ├── n8n/            Workflow automation
 ├── nextcloud/      File sync & collaboration
@@ -90,7 +90,7 @@ docs/               Architecture documentation
 | Homebox | homebox.ramoneees.com | Home inventory |
 | Authentik | — | SSO / Identity (ingress pending) |
 | Grafana | — | Dashboards & monitoring (ingress pending) |
-| LibreChat | ai.ramoneees.com | LLM chat (image gen, TTS/STT) |
+| OpenWebUI | ai.ramoneees.com | Web UI for LLM chat |
 | OpenClaw | openclaw.ramoneees.com | Multi-agent AI orchestrator (baremetal) |
 | Jellyfin | — | Media server (ingress pending) |
 | n8n | — | Workflow automation (ingress pending) |

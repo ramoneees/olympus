@@ -15,7 +15,7 @@ spec:
           expr: |
             kube_deployment_status_replicas_available{
               namespace="olympus",
-              deployment=~"n8n|litellm|ollama|librechat"
+              deployment=~"n8n|litellm|ollama|openwebui"
             } == 0
           for: 2m
           labels:

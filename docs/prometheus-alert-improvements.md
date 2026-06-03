@@ -74,16 +74,16 @@ Without it, `OllamaDown` can only be detected via `kube_pod_status_phase`.
 - A sidecar prometheus-agent or use `n8n/node-exporter` as a workaround
 - Or instrument ollama with a `/metrics` proxy sidecar
 
-### 2. LibreChat ServiceMonitor
+### 2. OpenWebUI ServiceMonitor
 
-**What**: Add metrics scraping for LibreChat to alert on API error rates.
-**Why**: Currently LibreChat can only be monitored via pod uptime.
-**Effort**: LibreChat doesn't expose Prometheus metrics. Would need instrumentation.
+**What**: Add metrics scraping for OpenWebUI to alert on API error rates.
+**Why**: Currently OpenWebUI can only be monitored via pod uptime.
+**Effort**: OpenWebUI doesn't expose Prometheus metrics. Would need instrumentation.
 
 ### 3. MongoDB ServiceMonitor (olympus namespace)
 
 **What**: Add ServiceMonitor for the mongodb StatefulSet in olympus.
-**Why**: MongoDB is a dependency of LibreChat but has no observability.
+**Why**: MongoDB may be a dependency of some workloads but has no observability.
 **Effort**: MongoDB has an exporter (`mongodb_exporter`) but requires a sidecar or operator.
 
 ### 4. Mariadb Metrics
