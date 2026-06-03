@@ -1,5 +1,5 @@
 # Ollama — Local LLM inference server (GPU-pinned to olympus node)
-# Serves: bge-m3 (embedding), phi4-mini (3.8B), lfm2.5 (3B) — all fit in RTX 2080 8GB VRAM
+# Serves: bge-m3 (embedding), phi4-mini:q8_0 (3.8B Q8) — both fit in RTX 2080 8GB VRAM
 ---
 apiVersion: apps/v1
 kind: Deployment

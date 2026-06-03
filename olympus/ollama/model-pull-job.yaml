@@ -33,8 +33,7 @@ spec:
 
               for MODEL in \
                 "bge-m3:latest" \
-                "phi4-mini" \
-                "lfm2.5"; do
+                "phi4-mini:q8_0"; do
                 echo "Pulling $MODEL..."
                 curl -sf "$OLLAMA/api/pull" -d "{\"name\":\"$MODEL\"}" || echo "WARN: Failed to pull $MODEL"
                 echo ""
