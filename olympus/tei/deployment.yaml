@@ -1,5 +1,5 @@
 # TEI — Text Embeddings Inference for bge-m3 (CPU, OpenAI-compatible /v1/embeddings)
-# Replaces Ollama for embeddings; supports dense, sparse, and ColBERT outputs.
+# Local embeddings; supports dense, sparse, and ColBERT outputs.
 ---
 apiVersion: apps/v1
 kind: Deployment

@@ -85,7 +85,7 @@ Run `./scripts/create-agent-accounts.sh` first, then work through this list.
 - [ ] Add HTTP monitors for all running services (60s interval):
   - Vikunja, Firefly III, Invoice Ninja, Mattermost, Authentik,
     Vaultwarden, Homebox, Cloudbeaver, AdGuard, Traefik,
-    Ollama, LiteLLM, OpenClaw
+    vLLM, TEI, LiteLLM, Hermes Agent
 
 ---
 

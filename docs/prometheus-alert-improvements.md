@@ -65,14 +65,12 @@ Then enable alerts like:
 
 ## Future Improvements (requires significant setup)
 
-### 1. Ollama ServiceMonitor / PodMonitor
+### 1. vLLM ServiceMonitor / PodMonitor
 
-**What**: Add a PodMonitor to scrape ollama and get an `up{job="olympus/ollama"}` metric.
-**Why**: Currently ollama has no `/metrics` endpoint and no ServiceMonitor.
-Without it, `OllamaDown` can only be detected via `kube_pod_status_phase`.
-**Effort**: Ollama doesn't expose Prometheus metrics natively. Would need:
-- A sidecar prometheus-agent or use `n8n/node-exporter` as a workaround
-- Or instrument ollama with a `/metrics` proxy sidecar
+**What**: Add a PodMonitor to scrape vLLM metrics and get an `up{job="olympus/vllm"}` metric.
+**Why**: vLLM exposes metrics on `/metrics` but has no ServiceMonitor yet.
+Currently vLLM can only be monitored via pod uptime.
+**Effort**: vLLM has a `/metrics` endpoint. Create a ServiceMonitor scraping port 8000.
 
 ### 2. OpenWebUI ServiceMonitor
 
@@ -93,10 +91,10 @@ Without it, `OllamaDown` can only be detected via `kube_pod_status_phase`.
 **Effort**: Add `--metrics` flag to the mariadb Helm values in `databases/mariadb/values.yaml`.
 Then add a ServiceMonitor.
 
-### 5. GPU Monitoring for Ollama
+### 5. GPU Monitoring for vLLM
 
-**What**: Alert if GPU becomes unavailable to ollama.
-**Why**: Ollama is the only GPU workload. GPU driver crashes or device loss would be silent.
+**What**: Alert if GPU becomes unavailable to vLLM.
+**Why**: vLLM is the primary GPU workload. GPU driver crashes or device loss would be silent.
 **Effort**: Requires `nvidia-dcgm` exporter or `gpu-operator` with prometheus metrics.
 Current cluster uses `gpu-operator` but DCGM metrics may not be scraped.
 

@@ -15,12 +15,8 @@ passwords.txt
 !infrastructure/secrets/agent-secrets-template/
 !infrastructure/secrets/agent-secrets-template/*.yaml
 !monitoring/**/*secrets*.yaml
-openclaw-previous-config
-.sisyphus
-.omc    
-
-# olympus/openclaw/deployment.yaml — now tracked (moved from baremetal to K8s)
-olympus/openclaw/configmap.yaml
+# Hermes Agent
+hermes-agent/
 .omc# Graphify output
 graphify-out/cache/
 graphify-out/.graphify_*

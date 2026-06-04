@@ -15,7 +15,7 @@ spec:
           expr: |
             kube_deployment_status_replicas_available{
               namespace="olympus",
-              deployment=~"n8n|litellm|ollama|openwebui"
+              deployment=~"n8n|litellm|openwebui|vllm|tei"
             } == 0
           for: 2m
           labels:
@@ -59,16 +59,6 @@ spec:
             severity: critical
           annotations:
             summary: "litellm metrics endpoint is down"
-
-        - alert: OllamaModelPullFailed
-          expr: |
-            kube_job_status_failed{namespace="olympus", job_name=~"ollama-model-pull.*"} > 0
-          for: 5m
-          labels:
-            severity: critical
-          annotations:
-            summary: "ollama-model-pull job failed — models may not be loaded"
-            description: "Run: kubectl get jobs -n olympus -l app=ollama-model-pull"
 
         - alert: DatabasePodNotRunning
           expr: |

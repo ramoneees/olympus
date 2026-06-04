@@ -7,7 +7,7 @@ Guide for AI agents working on the OLYMPUS homelab Kubernetes infrastructure.
 OLYMPUS is a GitOps-managed k3s Kubernetes cluster with:
 - **2 nodes**: Control plane (N100, 16GB) + GPU worker (Ryzen 5600X, 64GB, RTX 2080)
 - **GitOps**: Flux CD auto-syncs from Gitea → no manual `kubectl apply`
-- **Workloads**: Self-hosted apps (Mattermost, Firefly III, Vikunja, etc.) + AI agents (OpenClaw)
+- **Workloads**: Self-hosted apps (Mattermost, Firefly III, Vikunja, etc.) + AI agents (Hermes Agent)
 
 ## Repository Structure
 
@@ -17,9 +17,9 @@ infrastructure/         Longhorn, Traefik, GPU Operator, AdGuard, secrets/
 databases/              PostgreSQL, MariaDB, Redis + backup jobs
 apps/                   Application workloads (one dir per app)
 olympus/                GPU-pinned workloads
-  ├── olympus-openclaw-config/   Agent configs (see olympus-openclaw-config/AGENTS.md)
-  ├── openclaw/                 Ingress routing only — baremetal systemd service on olympus node
-  ├── ollama/                   Local LLM inference
+  ├── hermes-agent/              Hermes Agent (baremetal, nousresearch.com)
+  ├── vllm/                     Local LLM inference (phi4-mini)
+  ├── tei/                      Local embeddings (bge-m3)
   ├── litellm/                  Unified LLM proxy
   ├── n8n/                      Workflow automation
   └── openwebui/    Web UI for LLM chat
@@ -28,7 +28,7 @@ clusters/olympus/       Flux Kustomizations + Git sources (see clusters/olympus/
 scripts/                Utility scripts
 ```
 
-**Subdirectory guides:** `olympus/olympus-openclaw-config/AGENTS.md`, `clusters/olympus/`
+**Subdirectory guides:** `olympus/hermes-agent/`, `clusters/olympus/`
 
 ## Making Changes
 
@@ -121,7 +121,7 @@ kubectl top pods -A
 4. **GPU workloads must have resource limits** — prevent node starvation
 5. **Plutus agent must use local models only** — no cloud APIs for financial data
 6. **Hermes MCP tools are non-delegatable** — calendar/tasks/n8n MCPs are Hermes-only
-7. **OpenClaw is baremetal** — do not re-add a K8s Deployment for OpenClaw; it runs as systemd on olympus node
+7. **Hermes Agent is baremetal** — runs on ourmetal node via nousresearch.com endpoint; do not re-add as K8s Deployment
 
 ## Key Services
 
@@ -133,12 +133,12 @@ kubectl top pods -A
 | Vikunja | tasks.ramoneees.com | Task management |
 | Firefly III | firefly.ramoneees.com | Finance tracking |
 | OpenWebUI | ai.ramoneees.com | Web UI for LLM chat |
-| OpenClaw | openclaw.ramoneees.com | Multi-agent AI orchestrator (baremetal) |
+| Hermes Agent | hermes-agent.nousresearch.com | Multi-agent AI orchestrator (baremetal) |
 | Grafana | grafana.ramoneees.com | Monitoring dashboards |
 
-## Multi-Agent System (OpenClaw)
+## Multi-Agent System (Hermes Agent)
 
-OLYMPUS runs specialized AI agents via OpenClaw (baremetal systemd service on olympus node, port 18789):
+OLYMPUS runs specialized AI agents via Hermes Agent (baremetal at https://hermes-agent.nousresearch.com/):
 
 | Agent | Role | Model |
 |-------|------|-------|
@@ -156,10 +156,10 @@ OLYMPUS runs specialized AI agents via OpenClaw (baremetal systemd service on ol
 | Argus | Monitoring | MiniMax-M2.5 (cloud) |
 | Persephone | Planning/GTD | MiniMax-M2.5 (cloud) |
 
-Agent configs: `olympus/olympus-openclaw-config/config/`
-Workspace prompts: `olympus/olympus-openclaw-config/workspaces/<agent>/`
+Agent configs: `olympus/hermes-agent/config/`
+Workspace prompts: `olympus/hermes-agent/workspaces/<agent>/`
 
-See `olympus/olympus-openclaw-config/AGENTS.md` for full architecture.
+See `olympus/hermes-agent/` for Hermes Agent configuration.
 
 ## Backup Architecture
 

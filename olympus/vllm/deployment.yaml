@@ -1,5 +1,5 @@
 # vLLM — phi4-mini-instruct, INT8 via bitsandbytes, OpenAI-compatible API
-# Replaces Ollama for phi4-mini; uses native phi4_mini_json tool-call parser.
+# Local LLM inference for phi4-mini; uses native phi4_mini_json tool-call parser.
 # Strategy: Recreate — GPU is exclusive, rolling update not possible.
 ---
 apiVersion: apps/v1

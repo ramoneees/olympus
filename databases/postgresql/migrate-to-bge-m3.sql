@@ -1,13 +1,13 @@
 -- Migration: Reindex from nomic-embed-text-v2 (768d) to bge-m3 (1024d)
 -- This script migrates existing memory entries to the new embedding model
--- 
--- IMPORTANT: This requires re-generating ALL embeddings via Ollama.
+--
+-- IMPORTANT: This requires re-generating ALL embeddings via TEI.
 -- The old vectors (768d) cannot be converted - they must be recomputed.
 --
 -- Steps:
 -- 1. Create new table with bge-m3 schema (1024 dimensions)
 -- 2. Export existing content (without embeddings)
--- 3. Regenerate embeddings via Ollama API (bge-m3 model)
+-- 3. Regenerate embeddings via TEI /v1/embeddings endpoint (bge-m3 model)
 -- 4. Import into new table
 -- 5. Swap tables or update application config
 
@@ -54,7 +54,7 @@ CREATE INDEX idx_memory_timestamp ON memory_entries (timestamp DESC);
 CREATE INDEX idx_memory_ns_time ON memory_entries (namespace, timestamp DESC);
 CREATE INDEX idx_memory_source ON memory_entries (source_agent);
 
--- Step 4: Create function to regenerate embeddings via Ollama
+-- Step 4: Create function to regenerate embeddings via TEI
 -- This will be called by the migration job to populate embeddings
 CREATE OR REPLACE FUNCTION regenerate_embedding(content_text TEXT)
 RETURNS vector(1024) AS $$
@@ -62,10 +62,11 @@ DECLARE
     embedding_json JSONB;
     embedding_vector vector(1024);
 BEGIN
-    -- Note: Actual embedding generation happens in the migration job via HTTP call to Ollama
+    -- Note: Actual embedding generation happens in the migration job via HTTP call to TEI
     -- This function is a placeholder for the schema - the job will do:
-    -- curl -X POST http://ollama.olympus.svc.cluster.local:11434/api/embeddings \
-    --   -d '{"model": "bge-m3", "prompt": "content_text"}'
+    -- curl -X POST http://tei.olympus.svc.cluster.local:80/v1/embeddings \
+    --   -H "Content-Type: application/json" \
+    --   -d '{"model": "bge-m3", "input": "content_text"}'
     -- and insert the result
     RETURN NULL;  -- Populated by migration job
 END;
@@ -95,7 +96,7 @@ INSERT INTO embedding_migrations (
 ) VALUES (
     'nomic-embed-text-v2', 'bge-m3', 768, 1024,
     'pending',
-    'Migration from nomic-embed-text-v2 (768d) to bge-m3 (1024d). Requires re-embedding all content via Ollama.'
+    'Migration from nomic-embed-text-v2 (768d) to bge-m3 (1024d). Requires re-embedding all content via TEI.'
 );
 
 -- Step 6: Helper view for migration progress

@@ -44,7 +44,7 @@ INSERT INTO memory_entries (
 );
 ```
 
-### 4. Generate Embeddings via LiteLLM/Ollama
+### 4. Generate Embeddings via TEI
 
 ```bash
 # From within your cluster or with port-forward

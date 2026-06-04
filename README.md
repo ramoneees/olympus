@@ -47,9 +47,9 @@ apps/               Application workloads
 ├── homebox/        Home inventory
 ├── adguard/        DNS ad-blocking
 olympus/            GPU-pinned workloads
-├── ollama/         Local LLM inference
+├── vllm/           Local LLM inference (vLLM)
 ├── litellm/        Unified LLM proxy
-├── openclaw/       Multi-agent orchestrator (baremetal, ingress routing only)
+├── hermes-agent/   Hermes Agent (baremetal, nousresearch.com)
 ├── openwebui/   Web UI for LLM chat
 ├── jellyfin/       Media server
 ├── n8n/            Workflow automation
@@ -57,7 +57,7 @@ olympus/            GPU-pinned workloads
 ├── browserless/    Headless browser service
 ├── firefox/        Browser instance
 ├── agents-avatars/ Agent profile images
-├── olympus-openclaw-config/  Agent configuration
+├── olympus-agent-config/  Agent configuration
 monitoring/         Observability stack
 ├── kube-prometheus-stack/    Prometheus + Grafana
 ├── loki/           Log aggregation
@@ -90,31 +90,31 @@ docs/               Architecture documentation
 | Authentik | — | SSO / Identity (ingress pending) |
 | Grafana | — | Dashboards & monitoring (ingress pending) |
 | OpenWebUI | ai.ramoneees.com | Web UI for LLM chat |
-| OpenClaw | openclaw.ramoneees.com | Multi-agent AI orchestrator (baremetal) |
+| Hermes Agent | hermes-agent.nousresearch.com | Multi-agent AI orchestrator (baremetal) |
 | Jellyfin | — | Media server (ingress pending) |
 | n8n | — | Workflow automation (ingress pending) |
 | Nextcloud | — | File sync (ingress pending) |
 
 ## OLYMPUS Multi-Agent System
 
-An AI orchestration layer powered by OpenClaw (running as baremetal systemd on the olympus node), with specialized agents communicating through Mattermost and coordinated by a central orchestrator.
+An AI orchestration layer powered by Hermes Agent (running baremetal via nousresearch.com), with specialized agents communicating through Mattermost and coordinated by a central orchestrator.
 
 ### Agents
 
 | Agent | Role | Model | Locality |
 |-------|------|-------|----------|
 | **Hermes** | Orchestrator — routes tasks, coordinates agents | GLM-5-Turbo | Cloud |
-| **Hephaestus** | Developer — code generation & review | qwen2.5-coder:7b | Local (GPU) |
-| **Prometheus** | Infrastructure — IaC & DevOps | qwen2.5-coder:7b | Local (GPU) |
+| **Hephaestus** | Developer — code generation & review | phi4-mini | Local (GPU/vLLM) |
+| **Prometheus** | Infrastructure — IaC & DevOps | phi4-mini | Local (GPU/vLLM) |
 | **Athena** | Researcher — docs & knowledge | GLM-5-Turbo | Cloud |
-| **Plutus** | Finance — LOCAL ONLY, no cloud APIs | deepseek-r1:7b | Local (GPU) |
+| **Plutus** | Finance — LOCAL ONLY, no cloud APIs | phi4-mini | Local (GPU/vLLM) |
 | **Themis** | Strategy & Audit | GLM-5-Turbo | Cloud |
-| **Mnemosyne** | Memory Curator | qwen3:8b | Local (GPU) |
+| **Mnemosyne** | Memory Curator | phi4-mini | Local (GPU/vLLM) |
 
 ### LLM Routing
 
 ```
-Ollama (local GPU inference) → LiteLLM (unified proxy) → Cloud APIs (fallback)
+vLLM (local GPU inference) → LiteLLM (unified proxy) → Cloud APIs (fallback)
 ```
 
 ### Memory Architecture

@@ -520,8 +520,8 @@
       </div>
       <p>Integrations → Outgoing Webhooks → Add. Channel: <code>olympus-general</code>. Trigger words:
         <code>@hermes</code>. Callback URL:
-        <code>http://openclaw.olympus.svc.cluster.local:18789/webhook/mattermost</code>. This routes your messages to
-        OpenClaw/Hermes.</p>
+        <code>https://hermes-agent.nousresearch.com/webhook/mattermost</code>. This routes your messages to
+        Hermes Agent.
     </div>
 
     <div class="secret-box">
@@ -601,7 +601,7 @@
     <div class="step">
       <div class="step-title"><span class="step-num">3</span> Add monitors for all running services</div>
       <p>Add HTTP monitors for: Vikunja, Firefly III, Invoice Ninja, Mattermost, Authentik, Vaultwarden, Homebox,
-        Cloudbeaver, AdGuard, Traefik, Ollama, LiteLLM, OpenClaw. Set check interval to 60s.</p>
+        Cloudbeaver, AdGuard, Traefik, vLLM, TEI, LiteLLM, Hermes Agent. Set check interval to 60s.</p>
     </div>
 
     <div class="secret-box">

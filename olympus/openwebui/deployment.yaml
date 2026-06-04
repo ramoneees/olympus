@@ -30,8 +30,6 @@ spec:
             - name: http
               containerPort: 8080
           env:
-            - name: OLLAMA_BASE_URL
-              value: "http://ollama.olympus.svc.cluster.local:11434"
             - name: WEBUI_SECRET
               valueFrom:
                 secretKeyRef:
@@ -39,21 +37,17 @@ spec:
                   key: webui-secret
             - name: DATA_DIR
               value: "/app/backend/data"
-            # Use locally-served bge-m3 for embeddings via Ollama, instead of
-            # downloading sentence-transformers/all-MiniLM-L6-v2 and
-            # TaylorAI/bge-micro-v2 from HuggingFace at startup (rate-limited).
-            - name: USE_EMBEDDING_MODEL_DOCKER
-              value: ""
-            - name: USE_AUXILIARY_EMBEDDING_MODEL_DOCKER
-              value: ""
+            # Use TEI (bge-m3) for embeddings instead of downloading from HuggingFace
             - name: RAG_EMBEDDING_ENGINE
-              value: "ollama"
+              value: "openai"
             - name: RAG_EMBEDDING_MODEL
-              value: "bge-m3:latest"
+              value: "bge-m3"
+            - name: RAG_OPENAI_API_BASE_URL
+              value: "http://tei.olympus.svc.cluster.local:80/v1"
+            - name: RAG_OPENAI_API_KEY
+              value: "none"
             - name: ENABLE_RAG_LOCAL_MODEL_FETCH
               value: "false"
-            - name: SENTENCE_TRANSFORMERS_HOME
-              value: "/app/backend/data/cache/embedding/models"
             - name: HF_HUB_OFFLINE
               value: "1"
             # Connect to LiteLLM proxy for all cloud models (GLM, MiniMax, Qwen, etc.)

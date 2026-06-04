@@ -1,4 +1,4 @@
-# LiteLLM Proxy — Unified LLM gateway (Ollama + cloud APIs)
+# LiteLLM Proxy — Unified LLM gateway (vLLM + TEI + cloud APIs)
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -410,7 +410,7 @@ data:
       # Anthropic model names — routing groups for Claude Code compatibility
       # Claude Code uses ANTHROPIC_BASE_URL=http://litellm... and standard model names.
       # ─────────────────────────────────────────────────────────────────────────
-      # CLAUDE-OPUS-4-7 — GLM-5.1 → MiniMax-M2.7 → Alibaba qwen3.6-plus → Ollama
+      # CLAUDE-OPUS-4-7 — GLM-5.1 → MiniMax-M2.7 → Alibaba qwen3.6-plus → vLLM
       - model_name: claude-opus-4-7
         litellm_params:
           model: openai/glm-5.1
@@ -455,7 +455,7 @@ data:
         tpm_limit: 80000
         order: 3
       # ─────────────────────────────────────────────────────────────────────────
-      # CLAUDE-SONNET-4-6 — MiniMax-M2.5 → MiniMax-M2.7 → OpenRouter → Ollama
+      # CLAUDE-SONNET-4-6 — MiniMax-M2.5 → MiniMax-M2.7 → OpenRouter → vLLM
       # ─────────────────────────────────────────────────────────────────────────
       - model_name: claude-sonnet-4-6
         litellm_params:
@@ -500,7 +500,7 @@ data:
         tpm_limit: 60000
         order: 3
       # ─────────────────────────────────────────────────────────────────────────
-      # CLAUDE-HAIKU-4-5-20251001 — MiniMax-M2.5 → OpenRouter/Gemini → Ollama
+      # CLAUDE-HAIKU-4-5-20251001 — MiniMax-M2.5 → OpenRouter/Gemini → vLLM
       # ─────────────────────────────────────────────────────────────────────────
       - model_name: claude-haiku-4-5-20251001
         litellm_params:
@@ -558,7 +558,7 @@ data:
         rpm_limit: 15
         tpm_limit: 500000
         order: 2
-      # Agent routing — high-throughput, short-to-medium requests (Hermes, OpenClaw)
+      # Agent routing — high-throughput, short-to-medium requests (Hermes)
       - model_name: agents
         litellm_params:
           model: openai/glm-4.7

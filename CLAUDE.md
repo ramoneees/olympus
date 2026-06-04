@@ -42,7 +42,7 @@ kubectl describe pod <pod>         # Pod events and status
 - `infrastructure/` — Flux-managed infra (Longhorn, Traefik config, GPU Operator, Reloader, Weave GitOps)
 - `databases/` — Shared database instances (PostgreSQL, MariaDB, Redis)
 - `apps/` — One directory per application, each with `values.yaml` + `ingress.yaml`
-- `olympus/` — AI/GPU workloads (Ollama, LiteLLM, OpenWebUI, n8n)
+- `olympus/` — AI/GPU workloads (vLLM, TEI, LiteLLM, OpenWebUI, n8n)
 - `monitoring/` — Prometheus stack, Loki, Promtail, Grafana
 - `scripts/` — Utility scripts (SSH firewall, etc.)
 
@@ -96,7 +96,7 @@ Helm-based apps use `HelmRelease` CRDs alongside existing `values.yaml` files. P
 - **Finance**: Firefly III, Invoice Ninja
 - **Automation**: n8n (Execute Command node enabled)
 - **GPU**: NVIDIA GPU Operator (Helm)
-- **AI**: Ollama (local inference), LiteLLM (proxy), OpenWebUI (chat UI at ai.ramoneees.com)
+- **AI**: vLLM (local inference), TEI (embeddings), LiteLLM (proxy), OpenWebUI (chat UI at ai.ramoneees.com)
 
 ## Monitoring Stack
 
