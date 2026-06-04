@@ -47,9 +47,9 @@ spec:
             - "--served-model-name"
             - "phi4-mini"
             - "--max-model-len"
-            - "16384"
+            - "16128"
             - "--gpu-memory-utilization"
-            - "0.90"
+            - "0.92"
             - "--port"
             - "8000"
           ports:
