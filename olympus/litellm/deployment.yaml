@@ -128,6 +128,7 @@ data:
         litellm_params:
           model: openai/phi4-mini
           api_base: http://vllm.olympus.svc.cluster.local:8000/v1
+          api_key: "none"  # vLLM has no auth - required for openai/ backend
         model_info:
           max_input_tokens: 128000
           max_tokens: 4096

@@ -1,18 +1,66 @@
 {
   "directed": false,
   "multigraph": false,
-  "graph": {},
+  "graph": {
+    "hyperedges": [
+      {
+        "id": "claude_routing_groups",
+        "label": "LiteLLM Claude Code Routing Tier System",
+        "nodes": [
+          "litellm_claude_opus_routing",
+          "litellm_claude_sonnet_routing",
+          "litellm_claude_haiku_routing",
+          "litellm_smart_routing",
+          "litellm_coding_routing",
+          "litellm_agents_routing",
+          "litellm_personal_routing"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "olympus/litellm/deployment.yaml"
+      },
+      {
+        "id": "database_helm_layer",
+        "label": "Database HelmRelease Layer (Bitnami Charts)",
+        "nodes": [
+          "postgresql_helmrelease",
+          "mariadb_helmrelease",
+          "redis_helmrelease"
+        ],
+        "relation": "participate_in",
+        "confidence": "INFERRED",
+        "confidence_score": 0.95,
+        "source_file": "databases/kustomization.yaml"
+      },
+      {
+        "id": "openclaude_sre_prompts",
+        "label": "OpenClaude Automated SRE/Review Prompts Suite",
+        "nodes": [
+          "alert_triage_prompt",
+          "backup_health_digest_prompt",
+          "quick_code_review_prompt",
+          "deep_architecture_review_prompt",
+          "manifest_validation_prompt"
+        ],
+        "relation": "participate_in",
+        "confidence": "INFERRED",
+        "confidence_score": 0.85,
+        "source_file": "olympus/openclaude/prompts/quick-review.md"
+      }
+    ]
+  },
   "nodes": [
     {
       "label": "LiteLLM Deployment",
       "file_type": "code",
       "source_file": "olympus/litellm/deployment.yaml",
-      "source_location": null,
+      "source_location": "L1-L109",
       "source_url": null,
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 4,
       "norm_label": "litellm deployment",
       "id": "litellm_deployment"
     },
@@ -25,7 +73,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 4,
       "norm_label": "litellm configmap",
       "id": "litellm_config"
     },
@@ -33,12 +81,12 @@
       "label": "Ollama Deployment",
       "file_type": "code",
       "source_file": "olympus/ollama/deployment.yaml",
-      "source_location": null,
+      "source_location": "L1-L72",
       "source_url": null,
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 4,
       "norm_label": "ollama deployment",
       "id": "ollama_deployment"
     },
@@ -51,7 +99,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 4,
       "norm_label": "n8n deployment",
       "id": "n8n_deployment"
     },
@@ -64,7 +112,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 4,
       "norm_label": "pdf toolkit sidecar",
       "id": "n8n_pdf_tool"
     },
@@ -77,7 +125,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 4,
       "norm_label": "pdf toolkit api documentation",
       "id": "pdf_api_docs"
     },
@@ -90,7 +138,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 4,
       "norm_label": "ollama model pull job",
       "id": "ollama_model_pull"
     },
@@ -103,7 +151,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 4,
       "norm_label": "olympus workload alerts",
       "id": "olympus_alerts"
     },
@@ -116,7 +164,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 4,
       "norm_label": "redis master",
       "id": "redis_service"
     },
@@ -129,7 +177,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 4,
       "norm_label": "postgresql database",
       "id": "postgresql_service"
     },
@@ -142,7 +190,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 13,
+      "community": 18,
       "norm_label": "olympus readme",
       "id": "olympus_readme"
     },
@@ -155,7 +203,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 14,
+      "community": 19,
       "norm_label": "agents.md",
       "id": "olympus_agents_md"
     },
@@ -168,7 +216,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 15,
+      "community": 20,
       "norm_label": "claude.md",
       "id": "olympus_claude_md"
     },
@@ -181,7 +229,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 2,
+      "community": 8,
       "norm_label": "k3s cluster",
       "id": "olympus_k3s"
     },
@@ -194,7 +242,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 2,
+      "community": 8,
       "norm_label": "argocd",
       "id": "olympus_argocd"
     },
@@ -207,7 +255,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 2,
+      "community": 8,
       "norm_label": "flux cd",
       "id": "olympus_flux"
     },
@@ -220,7 +268,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 16,
+      "community": 21,
       "norm_label": "longhorn",
       "id": "olympus_longhorn"
     },
@@ -233,7 +281,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 10,
+      "community": 14,
       "norm_label": "traefik",
       "id": "olympus_traefik"
     },
@@ -246,7 +294,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 15,
       "norm_label": "metallb",
       "id": "olympus_metallb"
     },
@@ -259,7 +307,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 10,
+      "community": 14,
       "norm_label": "cert-manager",
       "id": "olympus_cert_manager"
     },
@@ -272,7 +320,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 2,
+      "community": 8,
       "norm_label": "postgresql (pgvector)",
       "id": "olympus_postgresql"
     },
@@ -285,7 +333,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 9,
       "norm_label": "mariadb",
       "id": "olympus_mariadb"
     },
@@ -298,7 +346,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 2,
+      "community": 8,
       "norm_label": "redis",
       "id": "olympus_redis"
     },
@@ -311,7 +359,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 2,
+      "community": 8,
       "norm_label": "gitea",
       "id": "olympus_gitea"
     },
@@ -324,7 +372,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 7,
+      "community": 11,
       "norm_label": "mattermost",
       "id": "olympus_mattermost"
     },
@@ -337,7 +385,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 9,
       "norm_label": "firefly iii",
       "id": "olympus_firefly_iii"
     },
@@ -350,7 +398,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 9,
       "norm_label": "invoice ninja",
       "id": "olympus_invoice_ninja"
     },
@@ -363,7 +411,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 7,
+      "community": 11,
       "norm_label": "vikunja",
       "id": "olympus_vikunja"
     },
@@ -376,7 +424,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 7,
+      "community": 11,
       "norm_label": "openclaw",
       "id": "olympus_openclaw"
     },
@@ -389,7 +437,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 9,
       "norm_label": "ollama",
       "id": "olympus_ollama"
     },
@@ -402,7 +450,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 9,
       "norm_label": "litellm",
       "id": "olympus_litellm"
     },
@@ -415,7 +463,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 9,
       "norm_label": "librechat",
       "id": "olympus_librechat"
     },
@@ -428,7 +476,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 7,
+      "community": 11,
       "norm_label": "n8n",
       "id": "olympus_n8n"
     },
@@ -441,7 +489,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 15,
       "norm_label": "adguard home",
       "id": "olympus_adguard"
     },
@@ -454,7 +502,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 9,
+      "community": 13,
       "norm_label": "prometheus",
       "id": "olympus_prometheus"
     },
@@ -467,7 +515,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 9,
+      "community": 13,
       "norm_label": "grafana",
       "id": "olympus_grafana"
     },
@@ -480,7 +528,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 9,
+      "community": 13,
       "norm_label": "loki",
       "id": "olympus_loki"
     },
@@ -493,7 +541,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 2,
+      "community": 8,
       "norm_label": "mnemosyne memory (pgvector)",
       "id": "olympus_mnemosyne_db"
     },
@@ -506,7 +554,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 7,
+      "community": 11,
       "norm_label": "hermes (orchestrator)",
       "id": "olympus_agent_hermes"
     },
@@ -519,7 +567,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 9,
       "norm_label": "plutus (finance)",
       "id": "olympus_agent_plutus"
     },
@@ -532,7 +580,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 17,
+      "community": 22,
       "norm_label": "hephaestus (developer)",
       "id": "olympus_agent_hephaestus"
     },
@@ -545,7 +593,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 18,
+      "community": 23,
       "norm_label": "prometheus (infrastructure)",
       "id": "olympus_agent_prometheus"
     },
@@ -558,7 +606,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 2,
+      "community": 8,
       "norm_label": "mnemosyne (memory)",
       "id": "olympus_agent_mnemosyne"
     },
@@ -571,9 +619,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "deployment_n8n_deployment",
-      "community": 5,
-      "norm_label": "n8n deployment"
+      "community": 2,
+      "norm_label": "n8n deployment",
+      "id": "deployment_n8n_deployment"
     },
     {
       "label": "PDF Tool Sidecar (Flask API)",
@@ -584,9 +632,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "deployment_pdf_tool",
-      "community": 6,
-      "norm_label": "pdf tool sidecar (flask api)"
+      "community": 10,
+      "norm_label": "pdf tool sidecar (flask api)",
+      "id": "deployment_pdf_tool"
     },
     {
       "label": "PDF Decrypt Endpoint",
@@ -597,9 +645,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "deployment_decrypt",
-      "community": 6,
-      "norm_label": "pdf decrypt endpoint"
+      "community": 10,
+      "norm_label": "pdf decrypt endpoint",
+      "id": "deployment_decrypt"
     },
     {
       "label": "PDF Metadata Endpoint",
@@ -610,9 +658,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "deployment_metadata",
-      "community": 6,
-      "norm_label": "pdf metadata endpoint"
+      "community": 10,
+      "norm_label": "pdf metadata endpoint",
+      "id": "deployment_metadata"
     },
     {
       "label": "PDF to Images Endpoint",
@@ -623,9 +671,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "deployment_to_images",
-      "community": 6,
-      "norm_label": "pdf to images endpoint"
+      "community": 10,
+      "norm_label": "pdf to images endpoint",
+      "id": "deployment_to_images"
     },
     {
       "label": "PDF Extract Text Endpoint",
@@ -636,9 +684,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "deployment_extract_text",
-      "community": 6,
-      "norm_label": "pdf extract text endpoint"
+      "community": 10,
+      "norm_label": "pdf extract text endpoint",
+      "id": "deployment_extract_text"
     },
     {
       "label": "PDF Extract Pages Endpoint",
@@ -649,9 +697,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "deployment_extract_pages",
-      "community": 6,
-      "norm_label": "pdf extract pages endpoint"
+      "community": 10,
+      "norm_label": "pdf extract pages endpoint",
+      "id": "deployment_extract_pages"
     },
     {
       "label": "n8n Data PVC",
@@ -662,9 +710,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "deployment_n8n_data_pvc",
-      "community": 5,
-      "norm_label": "n8n data pvc"
+      "community": 2,
+      "norm_label": "n8n data pvc",
+      "id": "deployment_n8n_data_pvc"
     },
     {
       "label": "n8n Service (NodePort)",
@@ -675,9 +723,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "deployment_n8n_service",
-      "community": 3,
-      "norm_label": "n8n service (nodeport)"
+      "community": 2,
+      "norm_label": "n8n service (nodeport)",
+      "id": "deployment_n8n_service"
     },
     {
       "label": "n8n Kustomization",
@@ -688,9 +736,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "kustomization_n8n_kustomization",
-      "community": 5,
-      "norm_label": "n8n kustomization"
+      "community": 2,
+      "norm_label": "n8n kustomization",
+      "id": "kustomization_n8n_kustomization"
     },
     {
       "label": "n8n ServiceAccount",
@@ -701,9 +749,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "rbac_n8n_serviceaccount",
-      "community": 5,
-      "norm_label": "n8n serviceaccount"
+      "community": 2,
+      "norm_label": "n8n serviceaccount",
+      "id": "rbac_n8n_serviceaccount"
     },
     {
       "label": "n8n Pod Reader Role",
@@ -714,9 +762,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "rbac_n8n_pod_reader",
-      "community": 5,
-      "norm_label": "n8n pod reader role"
+      "community": 2,
+      "norm_label": "n8n pod reader role",
+      "id": "rbac_n8n_pod_reader"
     },
     {
       "label": "n8n Pod Reader RoleBinding (apps namespace)",
@@ -727,9 +775,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "rbac_n8n_pod_reader_apps",
-      "community": 5,
-      "norm_label": "n8n pod reader rolebinding (apps namespace)"
+      "community": 2,
+      "norm_label": "n8n pod reader rolebinding (apps namespace)",
+      "id": "rbac_n8n_pod_reader_apps"
     },
     {
       "label": "n8n Pod Reader RoleBinding (olympus namespace)",
@@ -740,9 +788,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "rbac_n8n_pod_reader_olympus",
-      "community": 5,
-      "norm_label": "n8n pod reader rolebinding (olympus namespace)"
+      "community": 2,
+      "norm_label": "n8n pod reader rolebinding (olympus namespace)",
+      "id": "rbac_n8n_pod_reader_olympus"
     },
     {
       "label": "MundadosPortalDown Alert",
@@ -753,9 +801,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "mundados_alerts_mundados_portal_down",
-      "community": 8,
-      "norm_label": "mundadosportaldown alert"
+      "community": 12,
+      "norm_label": "mundadosportaldown alert",
+      "id": "mundados_alerts_mundados_portal_down"
     },
     {
       "label": "MundadosRecolhaJobFailed Alert",
@@ -766,9 +814,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "mundados_alerts_mundados_recolha_job_failed",
-      "community": 8,
-      "norm_label": "mundadosrecolhajobfailed alert"
+      "community": 12,
+      "norm_label": "mundadosrecolhajobfailed alert",
+      "id": "mundados_alerts_mundados_recolha_job_failed"
     },
     {
       "label": "MundadosRecolhaMissed Alert",
@@ -779,9 +827,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "mundados_alerts_mundados_recolha_missed",
-      "community": 8,
-      "norm_label": "mundadosrecolhamissed alert"
+      "community": 12,
+      "norm_label": "mundadosrecolhamissed alert",
+      "id": "mundados_alerts_mundados_recolha_missed"
     },
     {
       "label": "MundadosForjaJobFailed Alert",
@@ -792,9 +840,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "mundados_alerts_mundados_forja_job_failed",
-      "community": 8,
-      "norm_label": "mundadosforjajobfailed alert"
+      "community": 12,
+      "norm_label": "mundadosforjajobfailed alert",
+      "id": "mundados_alerts_mundados_forja_job_failed"
     },
     {
       "label": "Monitoring Kustomization (olympus)",
@@ -805,9 +853,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "kustomization_mundados_kustomization",
-      "community": 8,
-      "norm_label": "monitoring kustomization (olympus)"
+      "community": 12,
+      "norm_label": "monitoring kustomization (olympus)",
+      "id": "kustomization_mundados_kustomization"
     },
     {
       "label": "Incident Routing AlertmanagerConfig",
@@ -818,9 +866,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "alertmanager_config_incident_routing",
-      "community": 3,
-      "norm_label": "incident routing alertmanagerconfig"
+      "community": 2,
+      "norm_label": "incident routing alertmanagerconfig",
+      "id": "alertmanager_config_incident_routing"
     },
     {
       "label": "Critical Receiver",
@@ -831,9 +879,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "alertmanager_config_receiver_critical",
-      "community": 3,
-      "norm_label": "critical receiver"
+      "community": 2,
+      "norm_label": "critical receiver",
+      "id": "alertmanager_config_receiver_critical"
     },
     {
       "label": "Warning Receiver",
@@ -844,9 +892,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "alertmanager_config_receiver_warning",
-      "community": 3,
-      "norm_label": "warning receiver"
+      "community": 2,
+      "norm_label": "warning receiver",
+      "id": "alertmanager_config_receiver_warning"
     },
     {
       "label": "Mundados Webhook Receiver",
@@ -857,9 +905,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "alertmanager_config_receiver_mundados_webhook",
-      "community": 3,
-      "norm_label": "mundados webhook receiver"
+      "community": 2,
+      "norm_label": "mundados webhook receiver",
+      "id": "alertmanager_config_receiver_mundados_webhook"
     },
     {
       "label": "Route: Mundados Alerts",
@@ -870,9 +918,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "alertmanager_config_routematch_mundados",
-      "community": 3,
-      "norm_label": "route: mundados alerts"
+      "community": 2,
+      "norm_label": "route: mundados alerts",
+      "id": "alertmanager_config_routematch_mundados"
     },
     {
       "label": "Route: Critical Severity",
@@ -883,9 +931,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "alertmanager_config_routematch_critical",
-      "community": 3,
-      "norm_label": "route: critical severity"
+      "community": 2,
+      "norm_label": "route: critical severity",
+      "id": "alertmanager_config_routematch_critical"
     },
     {
       "label": "Apps Kustomization",
@@ -896,9 +944,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "kustomization_apps_kustomization",
-      "community": 3,
-      "norm_label": "apps kustomization"
+      "community": 2,
+      "norm_label": "apps kustomization",
+      "id": "kustomization_apps_kustomization"
     },
     {
       "label": "mundados-config ConfigMap",
@@ -909,9 +957,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "configmap_mundados_config",
-      "community": 0,
-      "norm_label": "mundados-config configmap"
+      "community": 1,
+      "norm_label": "mundados-config configmap",
+      "id": "configmap_mundados_config"
     },
     {
       "label": "mundados-portal Deployment (Next.js)",
@@ -922,9 +970,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "deployment_mundados_portal",
-      "community": 0,
-      "norm_label": "mundados-portal deployment (next.js)"
+      "community": 1,
+      "norm_label": "mundados-portal deployment (next.js)",
+      "id": "deployment_mundados_portal"
     },
     {
       "label": "mundados-portal Service",
@@ -935,9 +983,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "service_mundados_portal",
-      "community": 0,
-      "norm_label": "mundados-portal service"
+      "community": 1,
+      "norm_label": "mundados-portal service",
+      "id": "service_mundados_portal"
     },
     {
       "label": "mundados-minio Deployment (S3/Object Store)",
@@ -948,9 +996,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "deployment_mundados_minio",
-      "community": 0,
-      "norm_label": "mundados-minio deployment (s3/object store)"
+      "community": 1,
+      "norm_label": "mundados-minio deployment (s3/object store)",
+      "id": "deployment_mundados_minio"
     },
     {
       "label": "minio Service (S3 port 9000)",
@@ -961,9 +1009,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "service_minio",
-      "community": 0,
-      "norm_label": "minio service (s3 port 9000)"
+      "community": 1,
+      "norm_label": "minio service (s3 port 9000)",
+      "id": "service_minio"
     },
     {
       "label": "minio-data PersistentVolumeClaim",
@@ -974,9 +1022,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "pvc_minio_data",
-      "community": 0,
-      "norm_label": "minio-data persistentvolumeclaim"
+      "community": 1,
+      "norm_label": "minio-data persistentvolumeclaim",
+      "id": "pvc_minio_data"
     },
     {
       "label": "mundados-postgres StatefulSet (PostGIS + pgvector)",
@@ -987,9 +1035,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "statefulset_mundados_postgres",
-      "community": 0,
-      "norm_label": "mundados-postgres statefulset (postgis + pgvector)"
+      "community": 1,
+      "norm_label": "mundados-postgres statefulset (postgis + pgvector)",
+      "id": "statefulset_mundados_postgres"
     },
     {
       "label": "postgres-svc Headless Service",
@@ -1000,9 +1048,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "service_postgres_svc",
-      "community": 0,
-      "norm_label": "postgres-svc headless service"
+      "community": 1,
+      "norm_label": "postgres-svc headless service",
+      "id": "service_postgres_svc"
     },
     {
       "label": "mundados-forja Job (Clojure ETL/Forge)",
@@ -1013,9 +1061,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "job_mundados_forja",
-      "community": 0,
-      "norm_label": "mundados-forja job (clojure etl/forge)"
+      "community": 1,
+      "norm_label": "mundados-forja job (clojure etl/forge)",
+      "id": "job_mundados_forja"
     },
     {
       "label": "mundados-create-buckets Job (MinIO bucket provisioning)",
@@ -1026,9 +1074,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "job_mundados_create_buckets",
-      "community": 0,
-      "norm_label": "mundados-create-buckets job (minio bucket provisioning)"
+      "community": 1,
+      "norm_label": "mundados-create-buckets job (minio bucket provisioning)",
+      "id": "job_mundados_create_buckets"
     },
     {
       "label": "mundados-seed-rag Job (RAG data seeding)",
@@ -1039,9 +1087,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "job_mundados_seed_rag",
-      "community": 0,
-      "norm_label": "mundados-seed-rag job (rag data seeding)"
+      "community": 1,
+      "norm_label": "mundados-seed-rag job (rag data seeding)",
+      "id": "job_mundados_seed_rag"
     },
     {
       "label": "mundados-recolha CronJob (Python ETL collector)",
@@ -1052,9 +1100,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "cronjob_mundados_recolha",
-      "community": 0,
-      "norm_label": "mundados-recolha cronjob (python etl collector)"
+      "community": 1,
+      "norm_label": "mundados-recolha cronjob (python etl collector)",
+      "id": "cronjob_mundados_recolha"
     },
     {
       "label": "mundados IngressRoute (Traefik)",
@@ -1065,9 +1113,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "ingressroute_mundados",
-      "community": 0,
-      "norm_label": "mundados ingressroute (traefik)"
+      "community": 1,
+      "norm_label": "mundados ingressroute (traefik)",
+      "id": "ingressroute_mundados"
     },
     {
       "label": "mundados Kustomization (app-of-resources)",
@@ -1078,9 +1126,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "kustomization_mundados",
-      "community": 0,
-      "norm_label": "mundados kustomization (app-of-resources)"
+      "community": 1,
+      "norm_label": "mundados kustomization (app-of-resources)",
+      "id": "kustomization_mundados"
     },
     {
       "label": "ci-deployer ServiceAccount + RBAC",
@@ -1091,9 +1139,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "rbac_ci_deployer",
-      "community": 0,
-      "norm_label": "ci-deployer serviceaccount + rbac"
+      "community": 1,
+      "norm_label": "ci-deployer serviceaccount + rbac",
+      "id": "rbac_ci_deployer"
     },
     {
       "label": "Mundados Live Fixes (troubleshooting log)",
@@ -1104,9 +1152,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "live_fixes",
-      "community": 0,
-      "norm_label": "mundados live fixes (troubleshooting log)"
+      "community": 1,
+      "norm_label": "mundados live fixes (troubleshooting log)",
+      "id": "live_fixes"
     },
     {
       "label": "mundados-raw S3 bucket",
@@ -1117,9 +1165,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "s3_bucket_mundados_raw",
-      "community": 0,
-      "norm_label": "mundados-raw s3 bucket"
+      "community": 1,
+      "norm_label": "mundados-raw s3 bucket",
+      "id": "s3_bucket_mundados_raw"
     },
     {
       "label": "mundados-bronze S3 bucket",
@@ -1130,9 +1178,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "s3_bucket_mundados_bronze",
-      "community": 0,
-      "norm_label": "mundados-bronze s3 bucket"
+      "community": 1,
+      "norm_label": "mundados-bronze s3 bucket",
+      "id": "s3_bucket_mundados_bronze"
     },
     {
       "label": "Registry migration: registry.ramoneees.com \u2192 git.ramoneees.com/ramoneees/",
@@ -1143,9 +1191,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "registry_change",
-      "community": 0,
-      "norm_label": "registry migration: registry.ramoneees.com \u2192 git.ramoneees.com/ramoneees/"
+      "community": 1,
+      "norm_label": "registry migration: registry.ramoneees.com \u2192 git.ramoneees.com/ramoneees/",
+      "id": "registry_change"
     },
     {
       "label": "Flux CD replaces failed ArgoCD",
@@ -1156,9 +1204,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "flux_instead_of_argocd",
-      "community": 12,
-      "norm_label": "flux cd replaces failed argocd"
+      "community": 1,
+      "norm_label": "flux cd replaces failed argocd",
+      "id": "flux_instead_of_argocd"
     },
     {
       "label": "GitOps sync via Flux apps kustomization",
@@ -1169,9 +1217,944 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "gitops_sync_mundados",
-      "community": 12,
-      "norm_label": "gitops sync via flux apps kustomization"
+      "community": 1,
+      "norm_label": "gitops sync via flux apps kustomization",
+      "id": "gitops_sync_mundados"
+    },
+    {
+      "label": "invoice_ninja.py",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L1",
+      "id": "olympus_openwebui_tools_invoice_ninja_py",
+      "community": 5,
+      "norm_label": "invoice_ninja.py"
+    },
+    {
+      "label": "Tools",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L14",
+      "id": "tools_invoice_ninja_tools",
+      "community": 5,
+      "norm_label": "tools"
+    },
+    {
+      "label": "Valves",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L15",
+      "id": "tools_invoice_ninja_valves",
+      "community": 5,
+      "norm_label": "valves"
+    },
+    {
+      "label": "BaseModel",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "id": "basemodel",
+      "community": 3,
+      "norm_label": "basemodel"
+    },
+    {
+      "label": ".__init__()",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L22",
+      "id": "tools_invoice_ninja_tools_init",
+      "community": 5,
+      "norm_label": ".__init__()"
+    },
+    {
+      "label": "._get()",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L25",
+      "id": "tools_invoice_ninja_tools_get",
+      "community": 5,
+      "norm_label": "._get()"
+    },
+    {
+      "label": "._post()",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L35",
+      "id": "tools_invoice_ninja_tools_post",
+      "community": 5,
+      "norm_label": "._post()"
+    },
+    {
+      "label": ".list_clients()",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L45",
+      "id": "tools_invoice_ninja_tools_list_clients",
+      "community": 5,
+      "norm_label": ".list_clients()"
+    },
+    {
+      "label": ".list_invoices()",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L63",
+      "id": "tools_invoice_ninja_tools_list_invoices",
+      "community": 5,
+      "norm_label": ".list_invoices()"
+    },
+    {
+      "label": ".create_invoice()",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L90",
+      "id": "tools_invoice_ninja_tools_create_invoice",
+      "community": 5,
+      "norm_label": ".create_invoice()"
+    },
+    {
+      "label": "title: Invoice Ninja description: Manage clients, invoices, and payments in Invo",
+      "file_type": "rationale",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L1",
+      "id": "tools_invoice_ninja_rationale_1",
+      "community": 5,
+      "norm_label": "title: invoice ninja description: manage clients, invoices, and payments in invo"
+    },
+    {
+      "label": "List clients in Invoice Ninja.         :param search: Optional search term to fi",
+      "file_type": "rationale",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L46",
+      "id": "tools_invoice_ninja_rationale_46",
+      "community": 5,
+      "norm_label": "list clients in invoice ninja.         :param search: optional search term to fi"
+    },
+    {
+      "label": "List invoices in Invoice Ninja.         :param status: Filter by status: draft,",
+      "file_type": "rationale",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L64",
+      "id": "tools_invoice_ninja_rationale_64",
+      "community": 5,
+      "norm_label": "list invoices in invoice ninja.         :param status: filter by status: draft,"
+    },
+    {
+      "label": "Create a new invoice in Invoice Ninja.         :param client_id: The client ID t",
+      "file_type": "rationale",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L91",
+      "id": "tools_invoice_ninja_rationale_91",
+      "community": 5,
+      "norm_label": "create a new invoice in invoice ninja.         :param client_id: the client id t"
+    },
+    {
+      "label": "n8n_webhook.py",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/n8n_webhook.py",
+      "source_location": "L1",
+      "id": "olympus_openwebui_tools_n8n_webhook_py",
+      "community": 3,
+      "norm_label": "n8n_webhook.py"
+    },
+    {
+      "label": "Tools",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/n8n_webhook.py",
+      "source_location": "L14",
+      "id": "tools_n8n_webhook_tools",
+      "community": 3,
+      "norm_label": "tools"
+    },
+    {
+      "label": "Valves",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/n8n_webhook.py",
+      "source_location": "L15",
+      "id": "tools_n8n_webhook_valves",
+      "community": 3,
+      "norm_label": "valves"
+    },
+    {
+      "label": ".__init__()",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/n8n_webhook.py",
+      "source_location": "L25",
+      "id": "tools_n8n_webhook_tools_init",
+      "community": 3,
+      "norm_label": ".__init__()"
+    },
+    {
+      "label": ".trigger_webhook()",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/n8n_webhook.py",
+      "source_location": "L28",
+      "id": "tools_n8n_webhook_tools_trigger_webhook",
+      "community": 3,
+      "norm_label": ".trigger_webhook()"
+    },
+    {
+      "label": "title: n8n Workflow Trigger description: Trigger n8n workflows via webhook. Usef",
+      "file_type": "rationale",
+      "source_file": "olympus/openwebui/tools/n8n_webhook.py",
+      "source_location": "L1",
+      "id": "tools_n8n_webhook_rationale_1",
+      "community": 3,
+      "norm_label": "title: n8n workflow trigger description: trigger n8n workflows via webhook. usef"
+    },
+    {
+      "label": "Trigger an n8n webhook workflow.         :param webhook_path: Webhook path (e.g.",
+      "file_type": "rationale",
+      "source_file": "olympus/openwebui/tools/n8n_webhook.py",
+      "source_location": "L33",
+      "id": "tools_n8n_webhook_rationale_33",
+      "community": 3,
+      "norm_label": "trigger an n8n webhook workflow.         :param webhook_path: webhook path (e.g."
+    },
+    {
+      "label": "web_search.py",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/web_search.py",
+      "source_location": "L1",
+      "id": "olympus_openwebui_tools_web_search_py",
+      "community": 3,
+      "norm_label": "web_search.py"
+    },
+    {
+      "label": "Tools",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/web_search.py",
+      "source_location": "L13",
+      "id": "tools_web_search_tools",
+      "community": 3,
+      "norm_label": "tools"
+    },
+    {
+      "label": "Valves",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/web_search.py",
+      "source_location": "L14",
+      "id": "tools_web_search_valves",
+      "community": 3,
+      "norm_label": "valves"
+    },
+    {
+      "label": ".__init__()",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/web_search.py",
+      "source_location": "L18",
+      "id": "tools_web_search_tools_init",
+      "community": 3,
+      "norm_label": ".__init__()"
+    },
+    {
+      "label": ".web_search()",
+      "file_type": "code",
+      "source_file": "olympus/openwebui/tools/web_search.py",
+      "source_location": "L21",
+      "id": "tools_web_search_tools_web_search",
+      "community": 3,
+      "norm_label": ".web_search()"
+    },
+    {
+      "label": "title: Web Search (Brave) description: Search the web using Brave Search API. Re",
+      "file_type": "rationale",
+      "source_file": "olympus/openwebui/tools/web_search.py",
+      "source_location": "L1",
+      "id": "tools_web_search_rationale_1",
+      "community": 3,
+      "norm_label": "title: web search (brave) description: search the web using brave search api. re"
+    },
+    {
+      "label": "Search the web for current information using Brave Search.         :param query:",
+      "file_type": "rationale",
+      "source_file": "olympus/openwebui/tools/web_search.py",
+      "source_location": "L22",
+      "id": "tools_web_search_rationale_22",
+      "community": 3,
+      "norm_label": "search the web for current information using brave search.         :param query:"
+    },
+    {
+      "label": "index.js",
+      "file_type": "code",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L1",
+      "id": "olympus_openclaude_http_adapter_index_js",
+      "community": 6,
+      "norm_label": "index.js"
+    },
+    {
+      "label": "express",
+      "file_type": "code",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L2",
+      "id": "http_adapter_index_express",
+      "community": 6,
+      "norm_label": "express"
+    },
+    {
+      "label": "grpc",
+      "file_type": "code",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L3",
+      "id": "http_adapter_index_grpc",
+      "community": 6,
+      "norm_label": "grpc"
+    },
+    {
+      "label": "protoLoader",
+      "file_type": "code",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L4",
+      "id": "http_adapter_index_protoloader",
+      "community": 6,
+      "norm_label": "protoloader"
+    },
+    {
+      "label": "path",
+      "file_type": "code",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L5",
+      "id": "http_adapter_index_path",
+      "community": 6,
+      "norm_label": "path"
+    },
+    {
+      "label": "crypto",
+      "file_type": "code",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L6",
+      "id": "http_adapter_index_crypto",
+      "community": 6,
+      "norm_label": "crypto"
+    },
+    {
+      "label": "app",
+      "file_type": "code",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L8",
+      "id": "http_adapter_index_app",
+      "community": 6,
+      "norm_label": "app"
+    },
+    {
+      "label": "PORT",
+      "file_type": "code",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L13",
+      "id": "http_adapter_index_port",
+      "community": 6,
+      "norm_label": "port"
+    },
+    {
+      "label": "createClient()",
+      "file_type": "code",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L17",
+      "id": "http_adapter_index_createclient",
+      "community": 6,
+      "norm_label": "createclient()"
+    },
+    {
+      "label": "getClient()",
+      "file_type": "code",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L42",
+      "id": "http_adapter_index_getclient",
+      "community": 6,
+      "norm_label": "getclient()"
+    },
+    {
+      "label": "resolveSystemPrompt()",
+      "file_type": "code",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L47",
+      "id": "http_adapter_index_resolvesystemprompt",
+      "community": 6,
+      "norm_label": "resolvesystemprompt()"
+    },
+    {
+      "label": "callOpenClaude()",
+      "file_type": "code",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L58",
+      "id": "http_adapter_index_callopenclaude",
+      "community": 6,
+      "norm_label": "callopenclaude()"
+    },
+    {
+      "label": "Alert Triage System Prompt",
+      "file_type": "document",
+      "source_file": "olympus/openclaude/prompts/alert-triage.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "alert_triage_prompt",
+      "community": 0,
+      "norm_label": "alert triage system prompt"
+    },
+    {
+      "label": "Backup Health Digest Prompt",
+      "file_type": "document",
+      "source_file": "olympus/openclaude/prompts/backup-digest.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "backup_health_digest_prompt",
+      "community": 0,
+      "norm_label": "backup health digest prompt"
+    },
+    {
+      "label": "Quick Code Review Prompt",
+      "file_type": "document",
+      "source_file": "olympus/openclaude/prompts/quick-review.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "quick_code_review_prompt",
+      "community": 16,
+      "norm_label": "quick code review prompt"
+    },
+    {
+      "label": "Deep Architecture Review Prompt",
+      "file_type": "document",
+      "source_file": "olympus/openclaude/prompts/deep-review.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "deep_architecture_review_prompt",
+      "community": 16,
+      "norm_label": "deep architecture review prompt"
+    },
+    {
+      "label": "Kubernetes Manifest Validation Prompt",
+      "file_type": "document",
+      "source_file": "olympus/openclaude/prompts/manifest-validation.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "manifest_validation_prompt",
+      "community": 0,
+      "norm_label": "kubernetes manifest validation prompt"
+    },
+    {
+      "label": "Olympus Workload PrometheusRule",
+      "file_type": "code",
+      "source_file": "olympus/monitoring/alerts.yaml",
+      "source_location": "L1-L100",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "olympus_workload_alerts",
+      "community": 0,
+      "norm_label": "olympus workload prometheusrule"
+    },
+    {
+      "label": "OlympusDeploymentUnavailable Alert",
+      "file_type": "code",
+      "source_file": "olympus/monitoring/alerts.yaml",
+      "source_location": "L14-L25",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "olympusdeploymentunavailable",
+      "community": 4,
+      "norm_label": "olympusdeploymentunavailable alert"
+    },
+    {
+      "label": "LitellmDown Alert",
+      "file_type": "code",
+      "source_file": "olympus/monitoring/alerts.yaml",
+      "source_location": "L54-L61",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "litellmdown",
+      "community": 4,
+      "norm_label": "litellmdown alert"
+    },
+    {
+      "label": "OllamaModelPullFailed Alert",
+      "file_type": "code",
+      "source_file": "olympus/monitoring/alerts.yaml",
+      "source_location": "L63-L71",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "ollamamodelpullfailed",
+      "community": 0,
+      "norm_label": "ollamamodelpullfailed alert"
+    },
+    {
+      "label": "DatabaseBackupMissing Alert",
+      "file_type": "code",
+      "source_file": "olympus/monitoring/alerts.yaml",
+      "source_location": "L92-L100",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "databasebackupmissing",
+      "community": 0,
+      "norm_label": "databasebackupmissing alert"
+    },
+    {
+      "label": "BackupJobStuck Alert",
+      "file_type": "code",
+      "source_file": "olympus/monitoring/alerts.yaml",
+      "source_location": "L82-L90",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "backupjobstuck",
+      "community": 0,
+      "norm_label": "backupjobstuck alert"
+    },
+    {
+      "label": "Ollama Models PVC",
+      "file_type": "code",
+      "source_file": "olympus/ollama/deployment.yaml",
+      "source_location": "L74-L85",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "ollama_models_pvc",
+      "community": 4,
+      "norm_label": "ollama models pvc"
+    },
+    {
+      "label": "Ollama Service",
+      "file_type": "code",
+      "source_file": "olympus/ollama/deployment.yaml",
+      "source_location": "L88-L99",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "ollama_service",
+      "community": 0,
+      "norm_label": "ollama service"
+    },
+    {
+      "label": "Ollama IngressRoute",
+      "file_type": "code",
+      "source_file": "olympus/ollama/ingress.yaml",
+      "source_location": "L1-L17",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "ollama_ingress",
+      "community": 0,
+      "norm_label": "ollama ingressroute"
+    },
+    {
+      "label": "Ollama Model Pull Job",
+      "file_type": "code",
+      "source_file": "olympus/ollama/model-pull-job.yaml",
+      "source_location": "L1-L49",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "ollama_model_pull_job",
+      "community": 0,
+      "norm_label": "ollama model pull job"
+    },
+    {
+      "label": "LiteLLM ConfigMap (Model Router)",
+      "file_type": "code",
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L110-L810",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "litellm_configmap",
+      "community": 0,
+      "norm_label": "litellm configmap (model router)"
+    },
+    {
+      "label": "LiteLLM Service",
+      "file_type": "code",
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L812-L824",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "litellm_service",
+      "community": 17,
+      "norm_label": "litellm service"
+    },
+    {
+      "label": "LiteLLM IngressRoute",
+      "file_type": "code",
+      "source_file": "olympus/litellm/ingress.yaml",
+      "source_location": "L1-L17",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "litellm_ingress",
+      "community": 17,
+      "norm_label": "litellm ingressroute"
+    },
+    {
+      "label": "LiteLLM ServiceMonitor",
+      "file_type": "code",
+      "source_file": "olympus/litellm/servicemonitor.yaml",
+      "source_location": "L1-L19",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "litellm_servicemonitor",
+      "community": 4,
+      "norm_label": "litellm servicemonitor"
+    },
+    {
+      "label": "PostgreSQL HelmRelease",
+      "file_type": "code",
+      "source_file": "databases/postgresql/helmrelease.yaml",
+      "source_location": "L1-L26",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "postgresql_helmrelease",
+      "community": 0,
+      "norm_label": "postgresql helmrelease"
+    },
+    {
+      "label": "MariaDB HelmRelease",
+      "file_type": "code",
+      "source_file": "databases/mariadb/helmrelease.yaml",
+      "source_location": "L1-L26",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "mariadb_helmrelease",
+      "community": 0,
+      "norm_label": "mariadb helmrelease"
+    },
+    {
+      "label": "Redis HelmRelease",
+      "file_type": "code",
+      "source_file": "databases/redis/helmrelease.yaml",
+      "source_location": "L1-L26",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "redis_helmrelease",
+      "community": 0,
+      "norm_label": "redis helmrelease"
+    },
+    {
+      "label": "pgvector Reindex Job (nomic\u2192bge-m3)",
+      "file_type": "code",
+      "source_file": "databases/postgresql/pgvector-reindex-job.yaml",
+      "source_location": "L1-L205",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "pgvector_reindex_bge_m3_job",
+      "community": 0,
+      "norm_label": "pgvector reindex job (nomic\u2192bge-m3)"
+    },
+    {
+      "label": "Memory Entries pgvector Schema",
+      "file_type": "code",
+      "source_file": "databases/postgresql/pgvector-reindex-job.yaml",
+      "source_location": "L230-L249",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "memory_entries_schema",
+      "community": 0,
+      "norm_label": "memory entries pgvector schema"
+    },
+    {
+      "label": "Embedding Migrations Tracking Table",
+      "file_type": "code",
+      "source_file": "databases/postgresql/pgvector-reindex-job.yaml",
+      "source_location": "L250-L264",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "embedding_migrations_table",
+      "community": 0,
+      "norm_label": "embedding migrations tracking table"
+    },
+    {
+      "label": "Claude Opus 4-7 Routing Group",
+      "file_type": "code",
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L420-L462",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "litellm_claude_opus_routing",
+      "community": 0,
+      "norm_label": "claude opus 4-7 routing group"
+    },
+    {
+      "label": "Claude Sonnet 4-6 Routing Group",
+      "file_type": "code",
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L466-L507",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "litellm_claude_sonnet_routing",
+      "community": 0,
+      "norm_label": "claude sonnet 4-6 routing group"
+    },
+    {
+      "label": "Claude Haiku 4-5 Routing Group",
+      "file_type": "code",
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L511-L541",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "litellm_claude_haiku_routing",
+      "community": 0,
+      "norm_label": "claude haiku 4-5 routing group"
+    },
+    {
+      "label": "Smart Routing Group",
+      "file_type": "code",
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L544-L576",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "litellm_smart_routing",
+      "community": 0,
+      "norm_label": "smart routing group"
+    },
+    {
+      "label": "Coding Routing Group",
+      "file_type": "code",
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L634-L686",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "litellm_coding_routing",
+      "community": 0,
+      "norm_label": "coding routing group"
+    },
+    {
+      "label": "Agents Routing Group",
+      "file_type": "code",
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L578-L631",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "litellm_agents_routing",
+      "community": 0,
+      "norm_label": "agents routing group"
+    },
+    {
+      "label": "Personal Routing Group",
+      "file_type": "code",
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L689-L741",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "litellm_personal_routing",
+      "community": 0,
+      "norm_label": "personal routing group"
+    },
+    {
+      "label": "Context Window Fallbacks",
+      "file_type": "code",
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L780-L787",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "litellm_context_window_fallbacks",
+      "community": 0,
+      "norm_label": "context window fallbacks"
+    },
+    {
+      "label": "Databases Layer Kustomization",
+      "file_type": "code",
+      "source_file": "databases/kustomization.yaml",
+      "source_location": "L1-L7",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "databases_kustomization",
+      "community": 0,
+      "norm_label": "databases layer kustomization"
+    },
+    {
+      "label": "Gitea Runner Kustomization",
+      "file_type": "code",
+      "source_file": "apps/gitea-runner/kustomization.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "secrets.yaml excluded \u2014 applied manually (not tracked in git) for security",
+      "id": "kustomization_gitea_runner",
+      "community": 7,
+      "norm_label": "gitea runner kustomization"
+    },
+    {
+      "label": "Publish npm Package Workflow",
+      "file_type": "code",
+      "source_file": "apps/gitea-runner/workflow-examples/npm-publish-on-merge.yaml",
+      "source_location": null,
+      "source_url": null,
+      "capted_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "npm_publish_on_merge_publish_npm_package",
+      "community": 7,
+      "norm_label": "publish npm package workflow"
+    },
+    {
+      "label": "Gitea npm Package Registry",
+      "file_type": "code",
+      "source_file": "apps/gitea-runner/workflow-examples/npm-publish-on-merge.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "npm_publish_on_merge_gitea_npm_registry",
+      "community": 7,
+      "norm_label": "gitea npm package registry"
+    },
+    {
+      "label": "NPM Registry Token Secret",
+      "file_type": "code",
+      "source_file": "apps/gitea-runner/workflow-examples/npm-publish-on-merge.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "npm_publish_on_merge_npm_registry_token",
+      "community": 7,
+      "norm_label": "npm registry token secret"
+    },
+    {
+      "label": "AI-Git-Bot Deployment",
+      "file_type": "code",
+      "source_file": "apps/ai-git-bot/deployment.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Do NOT override entrypoint \u2014 Dockerfile ENTRYPOINT includes -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 and --spring.profiles.active=docker",
+      "id": "deployment_ai_git_bot_deployment",
+      "community": 7,
+      "norm_label": "ai-git-bot deployment"
+    },
+    {
+      "label": "AI-Git-Bot Service",
+      "file_type": "code",
+      "source_file": "apps/ai-git-bot/deployment.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "deployment_ai_git_bot_service",
+      "community": 7,
+      "norm_label": "ai-git-bot service"
+    },
+    {
+      "label": "AI-Git-Bot Kubernetes Secret",
+      "file_type": "code",
+      "source_file": "apps/ai-git-bot/deployment.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "deployment_ai_git_bot_secret",
+      "community": 7,
+      "norm_label": "ai-git-bot kubernetes secret"
+    },
+    {
+      "label": "AI-Git-Bot IngressRoute",
+      "file_type": "code",
+      "source_file": "apps/ai-git-bot/ingress.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "ingress_ai_git_bot_ingressroute",
+      "community": 7,
+      "norm_label": "ai-git-bot ingressroute"
+    },
+    {
+      "label": "Wildcard TLS Certificate",
+      "file_type": "code",
+      "source_file": "apps/ai-git-bot/ingress.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "ingress_wildcard_ramoneees_com_tls",
+      "community": 7,
+      "norm_label": "wildcard tls certificate"
+    },
+    {
+      "label": "AI-Git-Bot Kustomization",
+      "file_type": "code",
+      "source_file": "apps/ai-git-bot/kustomization.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "secrets.yaml excluded \u2014 applied manually (not tracked in git) for security",
+      "id": "kustomization_ai_git_bot",
+      "community": 7,
+      "norm_label": "ai-git-bot kustomization"
     }
   ],
   "links": [
@@ -1206,6 +2189,46 @@
       "target": "olympus_alerts"
     },
     {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/monitoring/alerts.yaml",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "litellm_deployment",
+      "target": "olympusdeploymentunavailable"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/monitoring/alerts.yaml",
+      "source_location": "L56",
+      "weight": 1.0,
+      "source": "litellm_deployment",
+      "target": "litellmdown"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L105-L108",
+      "weight": 1.0,
+      "source": "litellm_deployment",
+      "target": "litellm_configmap"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/servicemonitor.yaml",
+      "source_location": "L10-L12",
+      "weight": 1.0,
+      "source": "litellm_deployment",
+      "target": "litellm_servicemonitor"
+    },
+    {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -1234,6 +2257,26 @@
       "weight": 1.0,
       "source": "ollama_deployment",
       "target": "olympus_alerts"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/monitoring/alerts.yaml",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "ollama_deployment",
+      "target": "olympusdeploymentunavailable"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/ollama/deployment.yaml",
+      "source_location": "L69-L72",
+      "weight": 1.0,
+      "source": "ollama_deployment",
+      "target": "ollama_models_pvc"
     },
     {
       "relation": "references",
@@ -1997,8 +3040,8 @@
     },
     {
       "relation": "conceptually_related_to",
-      "confidence": "AMBIGUOUS",
-      "confidence_score": 0.2,
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
       "source_file": "apps/mundados/statefulset-postgres.yaml",
       "source_location": null,
       "weight": 1.0,
@@ -2234,8 +3277,1042 @@
       "weight": 1.0,
       "source": "flux_instead_of_argocd",
       "target": "gitops_sync_mundados"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "olympus_openwebui_tools_invoice_ninja_py",
+      "target": "tools_invoice_ninja_tools",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "olympus_openwebui_tools_invoice_ninja_py",
+      "target": "tools_invoice_ninja_valves",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "olympus_openwebui_tools_invoice_ninja_py",
+      "target": "tools_invoice_ninja_rationale_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "tools_invoice_ninja_tools",
+      "target": "tools_invoice_ninja_tools_init",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "tools_invoice_ninja_tools",
+      "target": "tools_invoice_ninja_tools_get",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L35",
+      "weight": 1.0,
+      "source": "tools_invoice_ninja_tools",
+      "target": "tools_invoice_ninja_tools_post",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "tools_invoice_ninja_tools",
+      "target": "tools_invoice_ninja_tools_list_clients",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L63",
+      "weight": 1.0,
+      "source": "tools_invoice_ninja_tools",
+      "target": "tools_invoice_ninja_tools_list_invoices",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L90",
+      "weight": 1.0,
+      "source": "tools_invoice_ninja_tools",
+      "target": "tools_invoice_ninja_tools_create_invoice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "tools_invoice_ninja_valves",
+      "target": "basemodel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "tools_invoice_ninja_valves",
+      "target": "tools_invoice_ninja_tools_init",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/n8n_webhook.py",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "basemodel",
+      "target": "tools_n8n_webhook_valves",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/web_search.py",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "basemodel",
+      "target": "tools_web_search_valves",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L54",
+      "weight": 1.0,
+      "source": "tools_invoice_ninja_tools_get",
+      "target": "tools_invoice_ninja_tools_list_clients",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L77",
+      "weight": 1.0,
+      "source": "tools_invoice_ninja_tools_get",
+      "target": "tools_invoice_ninja_tools_list_invoices",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L107",
+      "weight": 1.0,
+      "source": "tools_invoice_ninja_tools_post",
+      "target": "tools_invoice_ninja_tools_create_invoice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "tools_invoice_ninja_tools_list_clients",
+      "target": "tools_invoice_ninja_rationale_46",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L64",
+      "weight": 1.0,
+      "source": "tools_invoice_ninja_tools_list_invoices",
+      "target": "tools_invoice_ninja_rationale_64",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/invoice_ninja.py",
+      "source_location": "L91",
+      "weight": 1.0,
+      "source": "tools_invoice_ninja_tools_create_invoice",
+      "target": "tools_invoice_ninja_rationale_91",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/n8n_webhook.py",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "olympus_openwebui_tools_n8n_webhook_py",
+      "target": "tools_n8n_webhook_tools",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/n8n_webhook.py",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "olympus_openwebui_tools_n8n_webhook_py",
+      "target": "tools_n8n_webhook_valves",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/n8n_webhook.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "olympus_openwebui_tools_n8n_webhook_py",
+      "target": "tools_n8n_webhook_rationale_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/n8n_webhook.py",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "tools_n8n_webhook_tools",
+      "target": "tools_n8n_webhook_tools_init",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/n8n_webhook.py",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "tools_n8n_webhook_tools",
+      "target": "tools_n8n_webhook_tools_trigger_webhook",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/n8n_webhook.py",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "tools_n8n_webhook_valves",
+      "target": "tools_n8n_webhook_tools_init",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/n8n_webhook.py",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "tools_n8n_webhook_tools_trigger_webhook",
+      "target": "tools_n8n_webhook_rationale_33",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/web_search.py",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "olympus_openwebui_tools_web_search_py",
+      "target": "tools_web_search_tools",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/web_search.py",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "olympus_openwebui_tools_web_search_py",
+      "target": "tools_web_search_valves",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/web_search.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "olympus_openwebui_tools_web_search_py",
+      "target": "tools_web_search_rationale_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/web_search.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "tools_web_search_tools",
+      "target": "tools_web_search_tools_init",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/web_search.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "tools_web_search_tools",
+      "target": "tools_web_search_tools_web_search",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/web_search.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "tools_web_search_valves",
+      "target": "tools_web_search_tools_init",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openwebui/tools/web_search.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "tools_web_search_tools_web_search",
+      "target": "tools_web_search_rationale_22",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "olympus_openclaude_http_adapter_index_js",
+      "target": "http_adapter_index_express",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "olympus_openclaude_http_adapter_index_js",
+      "target": "http_adapter_index_grpc",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "olympus_openclaude_http_adapter_index_js",
+      "target": "http_adapter_index_protoloader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "olympus_openclaude_http_adapter_index_js",
+      "target": "http_adapter_index_path",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "olympus_openclaude_http_adapter_index_js",
+      "target": "http_adapter_index_crypto",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "olympus_openclaude_http_adapter_index_js",
+      "target": "http_adapter_index_app",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "olympus_openclaude_http_adapter_index_js",
+      "target": "http_adapter_index_port",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "olympus_openclaude_http_adapter_index_js",
+      "target": "http_adapter_index_createclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "olympus_openclaude_http_adapter_index_js",
+      "target": "http_adapter_index_getclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L47",
+      "weight": 1.0,
+      "source": "olympus_openclaude_http_adapter_index_js",
+      "target": "http_adapter_index_resolvesystemprompt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "olympus_openclaude_http_adapter_index_js",
+      "target": "http_adapter_index_callopenclaude",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "http_adapter_index_createclient",
+      "target": "http_adapter_index_getclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "olympus/openclaude/http-adapter/index.js",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "http_adapter_index_resolvesystemprompt",
+      "target": "http_adapter_index_callopenclaude",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "olympus/openclaude/prompts/alert-triage.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "alert_triage_prompt",
+      "target": "olympus_workload_alerts"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "olympus/openclaude/prompts/alert-triage.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "alert_triage_prompt",
+      "target": "backup_health_digest_prompt"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "olympus/openclaude/prompts/backup-digest.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "backup_health_digest_prompt",
+      "target": "databasebackupmissing"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "olympus/openclaude/prompts/backup-digest.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "backup_health_digest_prompt",
+      "target": "backupjobstuck"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "olympus/openclaude/prompts/backup-digest.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "backup_health_digest_prompt",
+      "target": "postgresql_helmrelease"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "olympus/openclaude/prompts/backup-digest.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "backup_health_digest_prompt",
+      "target": "mariadb_helmrelease"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "olympus/openclaude/prompts/quick-review.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "quick_code_review_prompt",
+      "target": "deep_architecture_review_prompt"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "olympus/openclaude/prompts/manifest-validation.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "manifest_validation_prompt",
+      "target": "databases_kustomization"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/monitoring/alerts.yaml",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "ollamamodelpullfailed",
+      "target": "ollama_model_pull_job"
+    },
+    {
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "olympus/monitoring/alerts.yaml",
+      "source_location": "L94",
+      "weight": 1.0,
+      "source": "databasebackupmissing",
+      "target": "postgresql_helmrelease"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/ollama/ingress.yaml",
+      "source_location": "L13-L15",
+      "weight": 1.0,
+      "source": "ollama_service",
+      "target": "ollama_ingress"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/ollama/model-pull-job.yaml",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "ollama_service",
+      "target": "ollama_model_pull_job"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L122",
+      "weight": 1.0,
+      "source": "ollama_service",
+      "target": "litellm_configmap"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "databases/postgresql/pgvector-reindex-job.yaml",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "ollama_service",
+      "target": "pgvector_reindex_bge_m3_job"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L524-L525",
+      "weight": 1.0,
+      "source": "ollama_service",
+      "target": "litellm_claude_haiku_routing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L500-L501",
+      "weight": 1.0,
+      "source": "ollama_service",
+      "target": "litellm_claude_sonnet_routing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L624-L625",
+      "weight": 1.0,
+      "source": "ollama_service",
+      "target": "litellm_agents_routing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L679-L680",
+      "weight": 1.0,
+      "source": "ollama_service",
+      "target": "litellm_coding_routing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L713-L714",
+      "weight": 1.0,
+      "source": "ollama_service",
+      "target": "litellm_personal_routing"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "databases/postgresql/pgvector-reindex-job.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "ollama_model_pull_job",
+      "target": "pgvector_reindex_bge_m3_job"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L770-L798",
+      "weight": 1.0,
+      "source": "litellm_configmap",
+      "target": "redis_helmrelease"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L420",
+      "weight": 1.0,
+      "source": "litellm_configmap",
+      "target": "litellm_claude_opus_routing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L466",
+      "weight": 1.0,
+      "source": "litellm_configmap",
+      "target": "litellm_claude_sonnet_routing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L511",
+      "weight": 1.0,
+      "source": "litellm_configmap",
+      "target": "litellm_claude_haiku_routing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L544",
+      "weight": 1.0,
+      "source": "litellm_configmap",
+      "target": "litellm_smart_routing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L634",
+      "weight": 1.0,
+      "source": "litellm_configmap",
+      "target": "litellm_coding_routing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L578",
+      "weight": 1.0,
+      "source": "litellm_configmap",
+      "target": "litellm_agents_routing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L689",
+      "weight": 1.0,
+      "source": "litellm_configmap",
+      "target": "litellm_personal_routing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L780",
+      "weight": 1.0,
+      "source": "litellm_configmap",
+      "target": "litellm_context_window_fallbacks"
+    },
+    {
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L49-L53",
+      "weight": 1.0,
+      "source": "litellm_configmap",
+      "target": "postgresql_helmrelease"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "olympus/litellm/servicemonitor.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "litellm_configmap",
+      "target": "litellm_servicemonitor"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/ingress.yaml",
+      "source_location": "L13-L15",
+      "weight": 1.0,
+      "source": "litellm_service",
+      "target": "litellm_ingress"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "databases/kustomization.yaml",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "postgresql_helmrelease",
+      "target": "databases_kustomization"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "databases/postgresql/pgvector-reindex-job.yaml",
+      "source_location": "L33-L42",
+      "weight": 1.0,
+      "source": "postgresql_helmrelease",
+      "target": "pgvector_reindex_bge_m3_job"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "databases/kustomization.yaml",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "mariadb_helmrelease",
+      "target": "databases_kustomization"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "databases/kustomization.yaml",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "redis_helmrelease",
+      "target": "databases_kustomization"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "databases/postgresql/pgvector-reindex-job.yaml",
+      "source_location": "L104",
+      "weight": 1.0,
+      "source": "pgvector_reindex_bge_m3_job",
+      "target": "memory_entries_schema"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "databases/postgresql/pgvector-reindex-job.yaml",
+      "source_location": "L122",
+      "weight": 1.0,
+      "source": "pgvector_reindex_bge_m3_job",
+      "target": "embedding_migrations_table"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L785",
+      "weight": 1.0,
+      "source": "litellm_claude_opus_routing",
+      "target": "litellm_context_window_fallbacks"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "litellm_claude_opus_routing",
+      "target": "litellm_smart_routing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml",
+      "source_location": "L784",
+      "weight": 1.0,
+      "source": "litellm_smart_routing",
+      "target": "litellm_context_window_fallbacks"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/gitea-runner/workflow-examples/npm-publish-on-merge.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "kustomization_gitea_runner",
+      "target": "npm_publish_on_merge_publish_npm_package"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/gitea-runner/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "kustomization_gitea_runner",
+      "target": "kustomization_ai_git_bot"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/gitea-runner/workflow-examples/npm-publish-on-merge.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "npm_publish_on_merge_publish_npm_package",
+      "target": "npm_publish_on_merge_gitea_npm_registry"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/gitea-runner/workflow-examples/npm-publish-on-merge.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "npm_publish_on_merge_publish_npm_package",
+      "target": "npm_publish_on_merge_npm_registry_token"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/ai-git-bot/deployment.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "npm_publish_on_merge_gitea_npm_registry",
+      "target": "deployment_ai_git_bot_deployment"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/ai-git-bot/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_ai_git_bot_deployment",
+      "target": "kustomization_ai_git_bot"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "apps/ai-git-bot/deployment.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_ai_git_bot_deployment",
+      "target": "deployment_ai_git_bot_service"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/ai-git-bot/deployment.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_ai_git_bot_deployment",
+      "target": "deployment_ai_git_bot_secret"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/ai-git-bot/ingress.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_ai_git_bot_service",
+      "target": "ingress_ai_git_bot_ingressroute"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/ai-git-bot/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "ingress_ai_git_bot_ingressroute",
+      "target": "kustomization_ai_git_bot"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/ai-git-bot/ingress.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "ingress_ai_git_bot_ingressroute",
+      "target": "ingress_wildcard_ramoneees_com_tls"
     }
   ],
-  "hyperedges": [],
-  "built_at_commit": "45afd4316c8c33604ebe65290e6afc4df4492c3d"
+  "hyperedges": [
+    {
+      "id": "claude_routing_groups",
+      "label": "LiteLLM Claude Code Routing Tier System",
+      "nodes": [
+        "litellm_claude_opus_routing",
+        "litellm_claude_sonnet_routing",
+        "litellm_claude_haiku_routing",
+        "litellm_smart_routing",
+        "litellm_coding_routing",
+        "litellm_agents_routing",
+        "litellm_personal_routing"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/litellm/deployment.yaml"
+    },
+    {
+      "id": "database_helm_layer",
+      "label": "Database HelmRelease Layer (Bitnami Charts)",
+      "nodes": [
+        "postgresql_helmrelease",
+        "mariadb_helmrelease",
+        "redis_helmrelease"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "databases/kustomization.yaml"
+    },
+    {
+      "id": "openclaude_sre_prompts",
+      "label": "OpenClaude Automated SRE/Review Prompts Suite",
+      "nodes": [
+        "alert_triage_prompt",
+        "backup_health_digest_prompt",
+        "quick_code_review_prompt",
+        "deep_architecture_review_prompt",
+        "manifest_validation_prompt"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "olympus/openclaude/prompts/quick-review.md"
+    }
+  ],
+  "built_at_commit": "f0c148fa11849bdc608dcd77ff69059ae11efcfc"
 }
