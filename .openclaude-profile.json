@@ -1,0 +1,10 @@
+{
+  "profile": "openai",
+  "env": {
+    "OPENAI_BASE_URL": "https://litellm.ramoneees.com/v1",
+    "OPENAI_MODEL": "coding",
+    "OPENAI_API_FORMAT": "chat_completions",
+    "OPENAI_API_KEY": "sk-GjpgCyHpWo7YQIDuD9NniploUe12trtK"
+  },
+  "createdAt": "2026-05-08T11:36:40.277Z"
+}

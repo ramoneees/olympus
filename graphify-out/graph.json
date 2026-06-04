@@ -12,9 +12,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "litellm_deployment",
-      "community": 2,
-      "norm_label": "litellm deployment"
+      "community": 1,
+      "norm_label": "litellm deployment",
+      "id": "litellm_deployment"
     },
     {
       "label": "LiteLLM ConfigMap",
@@ -25,9 +25,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "litellm_config",
-      "community": 2,
-      "norm_label": "litellm configmap"
+      "community": 1,
+      "norm_label": "litellm configmap",
+      "id": "litellm_config"
     },
     {
       "label": "Ollama Deployment",
@@ -38,9 +38,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "ollama_deployment",
-      "community": 2,
-      "norm_label": "ollama deployment"
+      "community": 1,
+      "norm_label": "ollama deployment",
+      "id": "ollama_deployment"
     },
     {
       "label": "n8n Deployment",
@@ -51,9 +51,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "n8n_deployment",
-      "community": 4,
-      "norm_label": "n8n deployment"
+      "community": 1,
+      "norm_label": "n8n deployment",
+      "id": "n8n_deployment"
     },
     {
       "label": "PDF Toolkit Sidecar",
@@ -64,9 +64,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "n8n_pdf_tool",
-      "community": 4,
-      "norm_label": "pdf toolkit sidecar"
+      "community": 1,
+      "norm_label": "pdf toolkit sidecar",
+      "id": "n8n_pdf_tool"
     },
     {
       "label": "PDF Toolkit API Documentation",
@@ -77,9 +77,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "pdf_api_docs",
-      "community": 4,
-      "norm_label": "pdf toolkit api documentation"
+      "community": 1,
+      "norm_label": "pdf toolkit api documentation",
+      "id": "pdf_api_docs"
     },
     {
       "label": "Ollama Model Pull Job",
@@ -90,9 +90,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "ollama_model_pull",
-      "community": 2,
-      "norm_label": "ollama model pull job"
+      "community": 1,
+      "norm_label": "ollama model pull job",
+      "id": "ollama_model_pull"
     },
     {
       "label": "Olympus Workload Alerts",
@@ -103,9 +103,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_alerts",
-      "community": 2,
-      "norm_label": "olympus workload alerts"
+      "community": 1,
+      "norm_label": "olympus workload alerts",
+      "id": "olympus_alerts"
     },
     {
       "label": "Redis Master",
@@ -116,9 +116,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "redis_service",
-      "community": 2,
-      "norm_label": "redis master"
+      "community": 1,
+      "norm_label": "redis master",
+      "id": "redis_service"
     },
     {
       "label": "PostgreSQL Database",
@@ -129,9 +129,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "postgresql_service",
-      "community": 4,
-      "norm_label": "postgresql database"
+      "community": 1,
+      "norm_label": "postgresql database",
+      "id": "postgresql_service"
     },
     {
       "label": "OLYMPUS README",
@@ -142,9 +142,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_readme",
-      "community": 8,
-      "norm_label": "olympus readme"
+      "community": 13,
+      "norm_label": "olympus readme",
+      "id": "olympus_readme"
     },
     {
       "label": "AGENTS.md",
@@ -155,9 +155,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_agents_md",
-      "community": 9,
-      "norm_label": "agents.md"
+      "community": 14,
+      "norm_label": "agents.md",
+      "id": "olympus_agents_md"
     },
     {
       "label": "CLAUDE.md",
@@ -168,9 +168,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_claude_md",
-      "community": 10,
-      "norm_label": "claude.md"
+      "community": 15,
+      "norm_label": "claude.md",
+      "id": "olympus_claude_md"
     },
     {
       "label": "k3s Cluster",
@@ -181,9 +181,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_k3s",
-      "community": 0,
-      "norm_label": "k3s cluster"
+      "community": 2,
+      "norm_label": "k3s cluster",
+      "id": "olympus_k3s"
     },
     {
       "label": "ArgoCD",
@@ -194,9 +194,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_argocd",
-      "community": 0,
-      "norm_label": "argocd"
+      "community": 2,
+      "norm_label": "argocd",
+      "id": "olympus_argocd"
     },
     {
       "label": "Flux CD",
@@ -207,9 +207,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_flux",
-      "community": 0,
-      "norm_label": "flux cd"
+      "community": 2,
+      "norm_label": "flux cd",
+      "id": "olympus_flux"
     },
     {
       "label": "Longhorn",
@@ -220,9 +220,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_longhorn",
-      "community": 11,
-      "norm_label": "longhorn"
+      "community": 16,
+      "norm_label": "longhorn",
+      "id": "olympus_longhorn"
     },
     {
       "label": "Traefik",
@@ -233,9 +233,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_traefik",
-      "community": 7,
-      "norm_label": "traefik"
+      "community": 10,
+      "norm_label": "traefik",
+      "id": "olympus_traefik"
     },
     {
       "label": "MetalLB",
@@ -246,9 +246,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_metallb",
-      "community": 6,
-      "norm_label": "metallb"
+      "community": 11,
+      "norm_label": "metallb",
+      "id": "olympus_metallb"
     },
     {
       "label": "Cert-Manager",
@@ -259,9 +259,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_cert_manager",
-      "community": 7,
-      "norm_label": "cert-manager"
+      "community": 10,
+      "norm_label": "cert-manager",
+      "id": "olympus_cert_manager"
     },
     {
       "label": "PostgreSQL (pgvector)",
@@ -272,9 +272,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_postgresql",
-      "community": 0,
-      "norm_label": "postgresql (pgvector)"
+      "community": 2,
+      "norm_label": "postgresql (pgvector)",
+      "id": "olympus_postgresql"
     },
     {
       "label": "MariaDB",
@@ -285,9 +285,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_mariadb",
-      "community": 1,
-      "norm_label": "mariadb"
+      "community": 4,
+      "norm_label": "mariadb",
+      "id": "olympus_mariadb"
     },
     {
       "label": "Redis",
@@ -298,9 +298,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_redis",
-      "community": 0,
-      "norm_label": "redis"
+      "community": 2,
+      "norm_label": "redis",
+      "id": "olympus_redis"
     },
     {
       "label": "Gitea",
@@ -311,9 +311,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_gitea",
-      "community": 0,
-      "norm_label": "gitea"
+      "community": 2,
+      "norm_label": "gitea",
+      "id": "olympus_gitea"
     },
     {
       "label": "Mattermost",
@@ -324,9 +324,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_mattermost",
-      "community": 3,
-      "norm_label": "mattermost"
+      "community": 7,
+      "norm_label": "mattermost",
+      "id": "olympus_mattermost"
     },
     {
       "label": "Firefly III",
@@ -337,9 +337,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_firefly_iii",
-      "community": 1,
-      "norm_label": "firefly iii"
+      "community": 4,
+      "norm_label": "firefly iii",
+      "id": "olympus_firefly_iii"
     },
     {
       "label": "Invoice Ninja",
@@ -350,9 +350,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_invoice_ninja",
-      "community": 1,
-      "norm_label": "invoice ninja"
+      "community": 4,
+      "norm_label": "invoice ninja",
+      "id": "olympus_invoice_ninja"
     },
     {
       "label": "Vikunja",
@@ -363,9 +363,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_vikunja",
-      "community": 3,
-      "norm_label": "vikunja"
+      "community": 7,
+      "norm_label": "vikunja",
+      "id": "olympus_vikunja"
     },
     {
       "label": "OpenClaw",
@@ -376,9 +376,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_openclaw",
-      "community": 3,
-      "norm_label": "openclaw"
+      "community": 7,
+      "norm_label": "openclaw",
+      "id": "olympus_openclaw"
     },
     {
       "label": "Ollama",
@@ -389,9 +389,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_ollama",
-      "community": 1,
-      "norm_label": "ollama"
+      "community": 4,
+      "norm_label": "ollama",
+      "id": "olympus_ollama"
     },
     {
       "label": "LiteLLM",
@@ -402,9 +402,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_litellm",
-      "community": 1,
-      "norm_label": "litellm"
+      "community": 4,
+      "norm_label": "litellm",
+      "id": "olympus_litellm"
     },
     {
       "label": "LibreChat",
@@ -415,9 +415,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_librechat",
-      "community": 1,
-      "norm_label": "librechat"
+      "community": 4,
+      "norm_label": "librechat",
+      "id": "olympus_librechat"
     },
     {
       "label": "n8n",
@@ -428,9 +428,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_n8n",
-      "community": 3,
-      "norm_label": "n8n"
+      "community": 7,
+      "norm_label": "n8n",
+      "id": "olympus_n8n"
     },
     {
       "label": "AdGuard Home",
@@ -441,9 +441,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_adguard",
-      "community": 6,
-      "norm_label": "adguard home"
+      "community": 11,
+      "norm_label": "adguard home",
+      "id": "olympus_adguard"
     },
     {
       "label": "Prometheus",
@@ -454,9 +454,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_prometheus",
-      "community": 5,
-      "norm_label": "prometheus"
+      "community": 9,
+      "norm_label": "prometheus",
+      "id": "olympus_prometheus"
     },
     {
       "label": "Grafana",
@@ -467,9 +467,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_grafana",
-      "community": 5,
-      "norm_label": "grafana"
+      "community": 9,
+      "norm_label": "grafana",
+      "id": "olympus_grafana"
     },
     {
       "label": "Loki",
@@ -480,9 +480,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_loki",
-      "community": 5,
-      "norm_label": "loki"
+      "community": 9,
+      "norm_label": "loki",
+      "id": "olympus_loki"
     },
     {
       "label": "Mnemosyne Memory (pgvector)",
@@ -493,9 +493,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_mnemosyne_db",
-      "community": 0,
-      "norm_label": "mnemosyne memory (pgvector)"
+      "community": 2,
+      "norm_label": "mnemosyne memory (pgvector)",
+      "id": "olympus_mnemosyne_db"
     },
     {
       "label": "Hermes (Orchestrator)",
@@ -506,9 +506,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_agent_hermes",
-      "community": 3,
-      "norm_label": "hermes (orchestrator)"
+      "community": 7,
+      "norm_label": "hermes (orchestrator)",
+      "id": "olympus_agent_hermes"
     },
     {
       "label": "Plutus (Finance)",
@@ -519,9 +519,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_agent_plutus",
-      "community": 1,
-      "norm_label": "plutus (finance)"
+      "community": 4,
+      "norm_label": "plutus (finance)",
+      "id": "olympus_agent_plutus"
     },
     {
       "label": "Hephaestus (Developer)",
@@ -532,9 +532,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_agent_hephaestus",
-      "community": 12,
-      "norm_label": "hephaestus (developer)"
+      "community": 17,
+      "norm_label": "hephaestus (developer)",
+      "id": "olympus_agent_hephaestus"
     },
     {
       "label": "Prometheus (Infrastructure)",
@@ -545,9 +545,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_agent_prometheus",
-      "community": 13,
-      "norm_label": "prometheus (infrastructure)"
+      "community": 18,
+      "norm_label": "prometheus (infrastructure)",
+      "id": "olympus_agent_prometheus"
     },
     {
       "label": "Mnemosyne (Memory)",
@@ -558,9 +558,620 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "olympus_agent_mnemosyne",
+      "community": 2,
+      "norm_label": "mnemosyne (memory)",
+      "id": "olympus_agent_mnemosyne"
+    },
+    {
+      "label": "n8n Deployment",
+      "file_type": "code",
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "deployment_n8n_deployment",
+      "community": 5,
+      "norm_label": "n8n deployment"
+    },
+    {
+      "label": "PDF Tool Sidecar (Flask API)",
+      "file_type": "code",
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "deployment_pdf_tool",
+      "community": 6,
+      "norm_label": "pdf tool sidecar (flask api)"
+    },
+    {
+      "label": "PDF Decrypt Endpoint",
+      "file_type": "code",
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "deployment_decrypt",
+      "community": 6,
+      "norm_label": "pdf decrypt endpoint"
+    },
+    {
+      "label": "PDF Metadata Endpoint",
+      "file_type": "code",
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "deployment_metadata",
+      "community": 6,
+      "norm_label": "pdf metadata endpoint"
+    },
+    {
+      "label": "PDF to Images Endpoint",
+      "file_type": "code",
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "deployment_to_images",
+      "community": 6,
+      "norm_label": "pdf to images endpoint"
+    },
+    {
+      "label": "PDF Extract Text Endpoint",
+      "file_type": "code",
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "deployment_extract_text",
+      "community": 6,
+      "norm_label": "pdf extract text endpoint"
+    },
+    {
+      "label": "PDF Extract Pages Endpoint",
+      "file_type": "code",
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "deployment_extract_pages",
+      "community": 6,
+      "norm_label": "pdf extract pages endpoint"
+    },
+    {
+      "label": "n8n Data PVC",
+      "file_type": "code",
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "deployment_n8n_data_pvc",
+      "community": 5,
+      "norm_label": "n8n data pvc"
+    },
+    {
+      "label": "n8n Service (NodePort)",
+      "file_type": "code",
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "deployment_n8n_service",
+      "community": 3,
+      "norm_label": "n8n service (nodeport)"
+    },
+    {
+      "label": "n8n Kustomization",
+      "file_type": "code",
+      "source_file": "olympus/n8n/kustomization.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "kustomization_n8n_kustomization",
+      "community": 5,
+      "norm_label": "n8n kustomization"
+    },
+    {
+      "label": "n8n ServiceAccount",
+      "file_type": "code",
+      "source_file": "olympus/n8n/rbac.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "rbac_n8n_serviceaccount",
+      "community": 5,
+      "norm_label": "n8n serviceaccount"
+    },
+    {
+      "label": "n8n Pod Reader Role",
+      "file_type": "code",
+      "source_file": "olympus/n8n/rbac.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "rbac_n8n_pod_reader",
+      "community": 5,
+      "norm_label": "n8n pod reader role"
+    },
+    {
+      "label": "n8n Pod Reader RoleBinding (apps namespace)",
+      "file_type": "code",
+      "source_file": "olympus/n8n/rbac.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "rbac_n8n_pod_reader_apps",
+      "community": 5,
+      "norm_label": "n8n pod reader rolebinding (apps namespace)"
+    },
+    {
+      "label": "n8n Pod Reader RoleBinding (olympus namespace)",
+      "file_type": "code",
+      "source_file": "olympus/n8n/rbac.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "rbac_n8n_pod_reader_olympus",
+      "community": 5,
+      "norm_label": "n8n pod reader rolebinding (olympus namespace)"
+    },
+    {
+      "label": "MundadosPortalDown Alert",
+      "file_type": "code",
+      "source_file": "olympus/monitoring/mundados-alerts.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "mundados_alerts_mundados_portal_down",
+      "community": 8,
+      "norm_label": "mundadosportaldown alert"
+    },
+    {
+      "label": "MundadosRecolhaJobFailed Alert",
+      "file_type": "code",
+      "source_file": "olympus/monitoring/mundados-alerts.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "mundados_alerts_mundados_recolha_job_failed",
+      "community": 8,
+      "norm_label": "mundadosrecolhajobfailed alert"
+    },
+    {
+      "label": "MundadosRecolhaMissed Alert",
+      "file_type": "code",
+      "source_file": "olympus/monitoring/mundados-alerts.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "mundados_alerts_mundados_recolha_missed",
+      "community": 8,
+      "norm_label": "mundadosrecolhamissed alert"
+    },
+    {
+      "label": "MundadosForjaJobFailed Alert",
+      "file_type": "code",
+      "source_file": "olympus/monitoring/mundados-alerts.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "mundados_alerts_mundados_forja_job_failed",
+      "community": 8,
+      "norm_label": "mundadosforjajobfailed alert"
+    },
+    {
+      "label": "Monitoring Kustomization (olympus)",
+      "file_type": "code",
+      "source_file": "olympus/monitoring/kustomization.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "kustomization_mundados_kustomization",
+      "community": 8,
+      "norm_label": "monitoring kustomization (olympus)"
+    },
+    {
+      "label": "Incident Routing AlertmanagerConfig",
+      "file_type": "code",
+      "source_file": "monitoring/alertmanager-config/alertmanager-config.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "alertmanager_config_incident_routing",
+      "community": 3,
+      "norm_label": "incident routing alertmanagerconfig"
+    },
+    {
+      "label": "Critical Receiver",
+      "file_type": "code",
+      "source_file": "monitoring/alertmanager-config/alertmanager-config.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "alertmanager_config_receiver_critical",
+      "community": 3,
+      "norm_label": "critical receiver"
+    },
+    {
+      "label": "Warning Receiver",
+      "file_type": "code",
+      "source_file": "monitoring/alertmanager-config/alertmanager-config.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "alertmanager_config_receiver_warning",
+      "community": 3,
+      "norm_label": "warning receiver"
+    },
+    {
+      "label": "Mundados Webhook Receiver",
+      "file_type": "code",
+      "source_file": "monitoring/alertmanager-config/alertmanager-config.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "alertmanager_config_receiver_mundados_webhook",
+      "community": 3,
+      "norm_label": "mundados webhook receiver"
+    },
+    {
+      "label": "Route: Mundados Alerts",
+      "file_type": "code",
+      "source_file": "monitoring/alertmanager-config/alertmanager-config.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "alertmanager_config_routematch_mundados",
+      "community": 3,
+      "norm_label": "route: mundados alerts"
+    },
+    {
+      "label": "Route: Critical Severity",
+      "file_type": "code",
+      "source_file": "monitoring/alertmanager-config/alertmanager-config.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "alertmanager_config_routematch_critical",
+      "community": 3,
+      "norm_label": "route: critical severity"
+    },
+    {
+      "label": "Apps Kustomization",
+      "file_type": "code",
+      "source_file": "apps/kustomization.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "kustomization_apps_kustomization",
+      "community": 3,
+      "norm_label": "apps kustomization"
+    },
+    {
+      "label": "mundados-config ConfigMap",
+      "file_type": "code",
+      "source_file": "apps/mundados/configmap.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "configmap_mundados_config",
       "community": 0,
-      "norm_label": "mnemosyne (memory)"
+      "norm_label": "mundados-config configmap"
+    },
+    {
+      "label": "mundados-portal Deployment (Next.js)",
+      "file_type": "code",
+      "source_file": "apps/mundados/deployment-portal.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "deployment_mundados_portal",
+      "community": 0,
+      "norm_label": "mundados-portal deployment (next.js)"
+    },
+    {
+      "label": "mundados-portal Service",
+      "file_type": "code",
+      "source_file": "apps/mundados/deployment-portal.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "service_mundados_portal",
+      "community": 0,
+      "norm_label": "mundados-portal service"
+    },
+    {
+      "label": "mundados-minio Deployment (S3/Object Store)",
+      "file_type": "code",
+      "source_file": "apps/mundados/deployment-minio.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "deployment_mundados_minio",
+      "community": 0,
+      "norm_label": "mundados-minio deployment (s3/object store)"
+    },
+    {
+      "label": "minio Service (S3 port 9000)",
+      "file_type": "code",
+      "source_file": "apps/mundados/deployment-minio.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "service_minio",
+      "community": 0,
+      "norm_label": "minio service (s3 port 9000)"
+    },
+    {
+      "label": "minio-data PersistentVolumeClaim",
+      "file_type": "code",
+      "source_file": "apps/mundados/deployment-minio.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "pvc_minio_data",
+      "community": 0,
+      "norm_label": "minio-data persistentvolumeclaim"
+    },
+    {
+      "label": "mundados-postgres StatefulSet (PostGIS + pgvector)",
+      "file_type": "code",
+      "source_file": "apps/mundados/statefulset-postgres.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "statefulset_mundados_postgres",
+      "community": 0,
+      "norm_label": "mundados-postgres statefulset (postgis + pgvector)"
+    },
+    {
+      "label": "postgres-svc Headless Service",
+      "file_type": "code",
+      "source_file": "apps/mundados/statefulset-postgres.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "service_postgres_svc",
+      "community": 0,
+      "norm_label": "postgres-svc headless service"
+    },
+    {
+      "label": "mundados-forja Job (Clojure ETL/Forge)",
+      "file_type": "code",
+      "source_file": "apps/mundados/job-forja.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "job_mundados_forja",
+      "community": 0,
+      "norm_label": "mundados-forja job (clojure etl/forge)"
+    },
+    {
+      "label": "mundados-create-buckets Job (MinIO bucket provisioning)",
+      "file_type": "code",
+      "source_file": "apps/mundados/create-buckets-job.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "job_mundados_create_buckets",
+      "community": 0,
+      "norm_label": "mundados-create-buckets job (minio bucket provisioning)"
+    },
+    {
+      "label": "mundados-seed-rag Job (RAG data seeding)",
+      "file_type": "code",
+      "source_file": "apps/mundados/job-seed-rag.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "job_mundados_seed_rag",
+      "community": 0,
+      "norm_label": "mundados-seed-rag job (rag data seeding)"
+    },
+    {
+      "label": "mundados-recolha CronJob (Python ETL collector)",
+      "file_type": "code",
+      "source_file": "apps/mundados/cronjob-recolha.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "cronjob_mundados_recolha",
+      "community": 0,
+      "norm_label": "mundados-recolha cronjob (python etl collector)"
+    },
+    {
+      "label": "mundados IngressRoute (Traefik)",
+      "file_type": "code",
+      "source_file": "apps/mundados/ingress.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "ingressroute_mundados",
+      "community": 0,
+      "norm_label": "mundados ingressroute (traefik)"
+    },
+    {
+      "label": "mundados Kustomization (app-of-resources)",
+      "file_type": "code",
+      "source_file": "apps/mundados/kustomization.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "kustomization_mundados",
+      "community": 0,
+      "norm_label": "mundados kustomization (app-of-resources)"
+    },
+    {
+      "label": "ci-deployer ServiceAccount + RBAC",
+      "file_type": "code",
+      "source_file": "apps/mundados/rbac-ci.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "rbac_ci_deployer",
+      "community": 0,
+      "norm_label": "ci-deployer serviceaccount + rbac"
+    },
+    {
+      "label": "Mundados Live Fixes (troubleshooting log)",
+      "file_type": "rationale",
+      "source_file": "apps/mundados/live-fixes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "live_fixes",
+      "community": 0,
+      "norm_label": "mundados live fixes (troubleshooting log)"
+    },
+    {
+      "label": "mundados-raw S3 bucket",
+      "file_type": "code",
+      "source_file": "apps/mundados/configmap.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "s3_bucket_mundados_raw",
+      "community": 0,
+      "norm_label": "mundados-raw s3 bucket"
+    },
+    {
+      "label": "mundados-bronze S3 bucket",
+      "file_type": "code",
+      "source_file": "apps/mundados/configmap.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "s3_bucket_mundados_bronze",
+      "community": 0,
+      "norm_label": "mundados-bronze s3 bucket"
+    },
+    {
+      "label": "Registry migration: registry.ramoneees.com \u2192 git.ramoneees.com/ramoneees/",
+      "file_type": "rationale",
+      "source_file": "apps/mundados/live-fixes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "registry_change",
+      "community": 0,
+      "norm_label": "registry migration: registry.ramoneees.com \u2192 git.ramoneees.com/ramoneees/"
+    },
+    {
+      "label": "Flux CD replaces failed ArgoCD",
+      "file_type": "rationale",
+      "source_file": "apps/mundados/live-fixes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "flux_instead_of_argocd",
+      "community": 12,
+      "norm_label": "flux cd replaces failed argocd"
+    },
+    {
+      "label": "GitOps sync via Flux apps kustomization",
+      "file_type": "code",
+      "source_file": "apps/mundados/kustomization.yaml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "gitops_sync_mundados",
+      "community": 12,
+      "norm_label": "gitops sync via flux apps kustomization"
     }
   ],
   "links": [
@@ -591,8 +1202,8 @@
       "source_file": "olympus/monitoring/alerts.yaml",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_alerts",
-      "target": "litellm_deployment"
+      "source": "litellm_deployment",
+      "target": "olympus_alerts"
     },
     {
       "relation": "calls",
@@ -611,8 +1222,8 @@
       "source_file": "olympus/ollama/model-pull-job.yaml",
       "source_location": null,
       "weight": 1.0,
-      "source": "ollama_model_pull",
-      "target": "ollama_deployment"
+      "source": "ollama_deployment",
+      "target": "ollama_model_pull"
     },
     {
       "relation": "references",
@@ -621,8 +1232,8 @@
       "source_file": "olympus/monitoring/alerts.yaml",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_alerts",
-      "target": "ollama_deployment"
+      "source": "ollama_deployment",
+      "target": "olympus_alerts"
     },
     {
       "relation": "references",
@@ -651,8 +1262,8 @@
       "source_file": "olympus/monitoring/alerts.yaml",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_alerts",
-      "target": "n8n_deployment"
+      "source": "n8n_deployment",
+      "target": "olympus_alerts"
     },
     {
       "relation": "implements",
@@ -671,8 +1282,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_argocd",
-      "target": "olympus_k3s"
+      "source": "olympus_k3s",
+      "target": "olympus_argocd"
     },
     {
       "relation": "implements",
@@ -681,8 +1292,8 @@
       "source_file": "CLAUDE.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_flux",
-      "target": "olympus_k3s"
+      "source": "olympus_k3s",
+      "target": "olympus_flux"
     },
     {
       "relation": "references",
@@ -711,8 +1322,8 @@
       "source_file": "apps/adguard/service.yaml",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_adguard",
-      "target": "olympus_metallb"
+      "source": "olympus_metallb",
+      "target": "olympus_adguard"
     },
     {
       "relation": "calls",
@@ -721,8 +1332,8 @@
       "source_file": "apps/gitea/values.yaml",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_gitea",
-      "target": "olympus_postgresql"
+      "source": "olympus_postgresql",
+      "target": "olympus_gitea"
     },
     {
       "relation": "implements",
@@ -731,8 +1342,8 @@
       "source_file": "docs/external-memory-access.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_mnemosyne_db",
-      "target": "olympus_postgresql"
+      "source": "olympus_postgresql",
+      "target": "olympus_mnemosyne_db"
     },
     {
       "relation": "calls",
@@ -741,8 +1352,8 @@
       "source_file": "apps/firefly-iii/deployment.yaml",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_firefly_iii",
-      "target": "olympus_mariadb"
+      "source": "olympus_mariadb",
+      "target": "olympus_firefly_iii"
     },
     {
       "relation": "calls",
@@ -751,8 +1362,8 @@
       "source_file": "apps/invoice-ninja/deployment.yaml",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_invoice_ninja",
-      "target": "olympus_mariadb"
+      "source": "olympus_mariadb",
+      "target": "olympus_invoice_ninja"
     },
     {
       "relation": "calls",
@@ -761,8 +1372,8 @@
       "source_file": "apps/gitea/values.yaml",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_gitea",
-      "target": "olympus_redis"
+      "source": "olympus_redis",
+      "target": "olympus_gitea"
     },
     {
       "relation": "calls",
@@ -771,8 +1382,8 @@
       "source_file": "docs/agent-accounts.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_agent_hermes",
-      "target": "olympus_mattermost"
+      "source": "olympus_mattermost",
+      "target": "olympus_agent_hermes"
     },
     {
       "relation": "calls",
@@ -781,8 +1392,8 @@
       "source_file": "docs/agent-accounts.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_agent_plutus",
-      "target": "olympus_firefly_iii"
+      "source": "olympus_firefly_iii",
+      "target": "olympus_agent_plutus"
     },
     {
       "relation": "calls",
@@ -791,8 +1402,8 @@
       "source_file": "docs/agent-accounts.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_agent_hermes",
-      "target": "olympus_vikunja"
+      "source": "olympus_vikunja",
+      "target": "olympus_agent_hermes"
     },
     {
       "relation": "implements",
@@ -801,8 +1412,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_agent_hermes",
-      "target": "olympus_openclaw"
+      "source": "olympus_openclaw",
+      "target": "olympus_agent_hermes"
     },
     {
       "relation": "calls",
@@ -811,8 +1422,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_litellm",
-      "target": "olympus_ollama"
+      "source": "olympus_ollama",
+      "target": "olympus_litellm"
     },
     {
       "relation": "calls",
@@ -821,8 +1432,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_agent_plutus",
-      "target": "olympus_ollama"
+      "source": "olympus_ollama",
+      "target": "olympus_agent_plutus"
     },
     {
       "relation": "calls",
@@ -831,8 +1442,8 @@
       "source_file": "olympus/librechat/deployment.yaml",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_librechat",
-      "target": "olympus_litellm"
+      "source": "olympus_litellm",
+      "target": "olympus_librechat"
     },
     {
       "relation": "calls",
@@ -871,10 +1482,760 @@
       "source_file": "docs/agent-accounts.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "olympus_agent_mnemosyne",
-      "target": "olympus_mnemosyne_db"
+      "source": "olympus_mnemosyne_db",
+      "target": "olympus_agent_mnemosyne"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_n8n_deployment",
+      "target": "kustomization_n8n_kustomization"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_n8n_deployment",
+      "target": "deployment_pdf_tool"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_n8n_deployment",
+      "target": "deployment_n8n_data_pvc"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_n8n_deployment",
+      "target": "deployment_n8n_service"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_n8n_deployment",
+      "target": "rbac_n8n_serviceaccount"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_n8n_deployment",
+      "target": "kustomization_apps_kustomization"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "olympus/n8n/rbac.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_n8n_deployment",
+      "target": "rbac_n8n_pod_reader"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_pdf_tool",
+      "target": "deployment_decrypt"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_pdf_tool",
+      "target": "deployment_metadata"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_pdf_tool",
+      "target": "deployment_to_images"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_pdf_tool",
+      "target": "deployment_extract_text"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/deployment.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_pdf_tool",
+      "target": "deployment_extract_pages"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "monitoring/alertmanager-config/alertmanager-config.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_n8n_service",
+      "target": "alertmanager_config_receiver_critical"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "monitoring/alertmanager-config/alertmanager-config.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_n8n_service",
+      "target": "alertmanager_config_receiver_warning"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "monitoring/alertmanager-config/alertmanager-config.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_n8n_service",
+      "target": "alertmanager_config_receiver_mundados_webhook"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "kustomization_n8n_kustomization",
+      "target": "rbac_n8n_serviceaccount"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "kustomization_n8n_kustomization",
+      "target": "rbac_n8n_pod_reader"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "kustomization_n8n_kustomization",
+      "target": "rbac_n8n_pod_reader_apps"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "kustomization_n8n_kustomization",
+      "target": "rbac_n8n_pod_reader_olympus"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/rbac.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "rbac_n8n_serviceaccount",
+      "target": "rbac_n8n_pod_reader_apps"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/rbac.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "rbac_n8n_serviceaccount",
+      "target": "rbac_n8n_pod_reader_olympus"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/rbac.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "rbac_n8n_pod_reader",
+      "target": "rbac_n8n_pod_reader_apps"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/n8n/rbac.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "rbac_n8n_pod_reader",
+      "target": "rbac_n8n_pod_reader_olympus"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/monitoring/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "mundados_alerts_mundados_portal_down",
+      "target": "kustomization_mundados_kustomization"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/monitoring/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "mundados_alerts_mundados_recolha_job_failed",
+      "target": "kustomization_mundados_kustomization"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/monitoring/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "mundados_alerts_mundados_recolha_missed",
+      "target": "kustomization_mundados_kustomization"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "olympus/monitoring/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "mundados_alerts_mundados_forja_job_failed",
+      "target": "kustomization_mundados_kustomization"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "monitoring/alertmanager-config/alertmanager-config.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "alertmanager_config_incident_routing",
+      "target": "alertmanager_config_receiver_critical"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "monitoring/alertmanager-config/alertmanager-config.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "alertmanager_config_incident_routing",
+      "target": "alertmanager_config_receiver_warning"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "monitoring/alertmanager-config/alertmanager-config.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "alertmanager_config_incident_routing",
+      "target": "alertmanager_config_receiver_mundados_webhook"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "monitoring/alertmanager-config/alertmanager-config.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "alertmanager_config_incident_routing",
+      "target": "alertmanager_config_routematch_mundados"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "monitoring/alertmanager-config/alertmanager-config.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "alertmanager_config_incident_routing",
+      "target": "alertmanager_config_routematch_critical"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "monitoring/alertmanager-config/alertmanager-config.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "alertmanager_config_receiver_critical",
+      "target": "alertmanager_config_routematch_critical"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "monitoring/alertmanager-config/alertmanager-config.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "alertmanager_config_receiver_mundados_webhook",
+      "target": "alertmanager_config_routematch_mundados"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "alertmanager_config_routematch_mundados",
+      "target": "kustomization_apps_kustomization"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "alertmanager_config_routematch_critical",
+      "target": "kustomization_apps_kustomization"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "configmap_mundados_config",
+      "target": "kustomization_mundados"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/configmap.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "configmap_mundados_config",
+      "target": "s3_bucket_mundados_raw"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/configmap.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "configmap_mundados_config",
+      "target": "s3_bucket_mundados_bronze"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_mundados_portal",
+      "target": "kustomization_mundados"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/deployment-portal.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_mundados_portal",
+      "target": "service_mundados_portal"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "apps/mundados/deployment-portal.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_mundados_portal",
+      "target": "s3_bucket_mundados_raw"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/mundados/deployment-portal.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_mundados_portal",
+      "target": "statefulset_mundados_postgres"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/live-fixes.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_mundados_portal",
+      "target": "live_fixes"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/ingress.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "service_mundados_portal",
+      "target": "ingressroute_mundados"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_mundados_minio",
+      "target": "kustomization_mundados"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/deployment-minio.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_mundados_minio",
+      "target": "service_minio"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/deployment-minio.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_mundados_minio",
+      "target": "pvc_minio_data"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/mundados/deployment-minio.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_mundados_minio",
+      "target": "cronjob_mundados_recolha"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/mundados/deployment-minio.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_mundados_minio",
+      "target": "job_mundados_forja"
+    },
+    {
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/mundados/create-buckets-job.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_mundados_minio",
+      "target": "job_mundados_create_buckets"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.2,
+      "source_file": "apps/mundados/statefulset-postgres.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "deployment_mundados_minio",
+      "target": "statefulset_mundados_postgres"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "statefulset_mundados_postgres",
+      "target": "kustomization_mundados"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/statefulset-postgres.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "statefulset_mundados_postgres",
+      "target": "service_postgres_svc"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/mundados/statefulset-postgres.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "statefulset_mundados_postgres",
+      "target": "cronjob_mundados_recolha"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/mundados/statefulset-postgres.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "statefulset_mundados_postgres",
+      "target": "job_mundados_forja"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/mundados/job-seed-rag.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "statefulset_mundados_postgres",
+      "target": "job_mundados_seed_rag"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/live-fixes.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "statefulset_mundados_postgres",
+      "target": "live_fixes"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "job_mundados_forja",
+      "target": "kustomization_mundados"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/mundados/job-forja.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "job_mundados_forja",
+      "target": "s3_bucket_mundados_raw"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/mundados/job-forja.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "job_mundados_forja",
+      "target": "s3_bucket_mundados_bronze"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/live-fixes.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "job_mundados_forja",
+      "target": "live_fixes"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "job_mundados_create_buckets",
+      "target": "kustomization_mundados"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/create-buckets-job.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "job_mundados_create_buckets",
+      "target": "s3_bucket_mundados_raw"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/create-buckets-job.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "job_mundados_create_buckets",
+      "target": "s3_bucket_mundados_bronze"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/live-fixes.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "job_mundados_create_buckets",
+      "target": "live_fixes"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "cronjob_mundados_recolha",
+      "target": "kustomization_mundados"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/mundados/cronjob-recolha.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "cronjob_mundados_recolha",
+      "target": "s3_bucket_mundados_raw"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "apps/mundados/cronjob-recolha.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "cronjob_mundados_recolha",
+      "target": "s3_bucket_mundados_bronze"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/live-fixes.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "cronjob_mundados_recolha",
+      "target": "live_fixes"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "ingressroute_mundados",
+      "target": "kustomization_mundados"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/kustomization.yaml",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "kustomization_mundados",
+      "target": "rbac_ci_deployer"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/live-fixes.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "live_fixes",
+      "target": "registry_change"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/mundados/live-fixes.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "live_fixes",
+      "target": "flux_instead_of_argocd"
+    },
+    {
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "apps/mundados/live-fixes.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "flux_instead_of_argocd",
+      "target": "gitops_sync_mundados"
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "5e51b9911bc7afd6b4a4dbaa78e1224b48ae6f30"
+  "built_at_commit": "45afd4316c8c33604ebe65290e6afc4df4492c3d"
 }
