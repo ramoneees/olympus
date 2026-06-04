@@ -30,8 +30,8 @@ spec:
                       - homeserver
       containers:
         - name: toolbox
-          image: git.ramoneees.com/ramoneees/toolbox:v0.1.0
-          imagePullPolicy: IfNotPresent
+          image: git.ramoneees.com/ramoneees/toolbox:v0.2.0
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 8000
