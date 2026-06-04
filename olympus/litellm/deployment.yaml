@@ -132,6 +132,17 @@ data:
         model_info:
           max_input_tokens: 128000
           max_tokens: 4096
+      # phi4-mini-quick — direct vLLM route, no cloud fallback
+      - model_name: phi4-mini-quick
+        litellm_params:
+          model: openai/phi4-mini
+          api_base: http://vllm.olympus.svc.cluster.local:8000/v1
+          api_key: "none"
+        model_info:
+          max_input_tokens: 128000
+          max_tokens: 4096
+        rpm_limit: 80
+        tpm_limit: 60000
       # Cloud — ZAI (ZhipuAI) Coding Plan
       - model_name: glm-4.5
         litellm_params:
@@ -739,6 +750,9 @@ data:
           routing_strategy: simple-shuffle
         - group_name: claude-haiku-tier
           models: [claude-haiku-4-5-20251001]
+          routing_strategy: simple-shuffle
+        - group_name: phi4-mini-quick-tier
+          models: [phi4-mini-quick]
           routing_strategy: simple-shuffle
 
       redis_host: redis-master.databases.svc.cluster.local

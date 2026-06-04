@@ -29,7 +29,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: vllm
-          image: vllm/vllm-openai:v0.8.5
+          image: vllm/vllm-openai:v0.10.1
           args:
             - "--model"
             - "microsoft/Phi-4-mini-instruct"
@@ -42,6 +42,8 @@ spec:
             - "--tool-call-parser"
             - "phi4_mini_json"
             - "--enable-auto-tool-choice"
+            - "--chat-template"
+            - "/templates/tool_chat_template_phi4_mini.jinja"
             - "--served-model-name"
             - "phi4-mini"
             - "--max-model-len"
@@ -59,6 +61,8 @@ spec:
           volumeMounts:
             - name: models
               mountPath: /models
+            - name: chat-template
+              mountPath: /templates
           resources:
             requests:
               cpu: 500m
@@ -90,6 +94,9 @@ spec:
         - name: models
           persistentVolumeClaim:
             claimName: vllm-models
+        - name: chat-template
+          configMap:
+            name: vllm-chat-template
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
