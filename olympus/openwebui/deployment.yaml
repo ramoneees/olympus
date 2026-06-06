@@ -51,7 +51,7 @@ spec:
             - name: HF_HUB_OFFLINE
               value: "1"
             - name: DEFAULT_MODEL_PARAMS
-              value: '{"gemma-2b":{"temperature":0.3,"max_tokens":4096}}'
+              value: '{"gemma-4b":{"temperature":0.3,"max_tokens":4096}}'
             # Connect to LiteLLM proxy for all cloud models (GLM, MiniMax, Qwen, etc.)
             - name: OPENAI_API_BASE_URL
               value: "http://litellm.olympus.svc.cluster.local:4000/v1"

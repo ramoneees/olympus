@@ -1,5 +1,5 @@
-# vLLM — gemma-4-2b-it, INT8 via bitsandbytes, OpenAI-compatible API
-# Local LLM inference for gemma-4-2b-it (INT8 bitsandbytes).
+# vLLM — gemma-4-E4B-it, AWQ INT4, OpenAI-compatible API
+# Local LLM inference for gemma-4-E4B-it (AWQ INT4, ~3-4GB VRAM).
 # Strategy: Recreate — GPU is exclusive, rolling update not possible.
 ---
 apiVersion: apps/v1
@@ -32,15 +32,13 @@ spec:
           image: vllm/vllm-openai:v0.22.1
           args:
             - "--model"
-            - "google/gemma-4-E2B"
+            - "Chunity/gemma-4-E4B-it-AWQ-4bit"
             - "--quantization"
-            - "bitsandbytes"
-            - "--load-format"
-            - "bitsandbytes"
+            - "awq"
             - "--dtype"
             - "float16"
             - "--served-model-name"
-            - "gemma-2b"
+            - "gemma-4b"
             - "--max-model-len"
             - "16384"
             - "--gpu-memory-utilization"
