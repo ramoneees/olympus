@@ -54,6 +54,8 @@ spec:
               value: "/models"
             - name: PYTORCH_CUDA_ALLOC_CONF
               value: "expandable_segments:True"
+            - name: VLLM_USE_V1
+              value: "0"
           volumeMounts:
             - name: models
               mountPath: /models
