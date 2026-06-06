@@ -29,7 +29,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: vllm
-          image: vllm/vllm-openai:v0.10.1
+          image: vllm/vllm-openai:v0.22.1
           args:
             - "--model"
             - "google/gemma-4-E2B"
