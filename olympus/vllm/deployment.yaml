@@ -40,7 +40,7 @@ spec:
             - "--served-model-name"
             - "gemma-4b"
             - "--max-model-len"
-            - "16384"
+            - "8192"
             - "--gpu-memory-utilization"
             - "0.92"
             - "--port"
