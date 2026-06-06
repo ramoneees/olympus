@@ -42,7 +42,8 @@ spec:
             - "--max-model-len"
             - "8192"
             - "--gpu-memory-utilization"
-            - "0.92"
+            - "0.85"
+            - "--enforce-eager"
             - "--port"
             - "8000"
           ports:
@@ -51,6 +52,8 @@ spec:
           env:
             - name: HF_HOME
               value: "/models"
+            - name: PYTORCH_CUDA_ALLOC_CONF
+              value: "expandable_segments:True"
           volumeMounts:
             - name: models
               mountPath: /models
