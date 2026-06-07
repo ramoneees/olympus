@@ -41,6 +41,12 @@ spec:
               value: "/models"
             - name: OLLAMA_HOST
               value: "0.0.0.0"
+            - name: OLLAMA_CONTEXT_LENGTH
+              value: "4096"
+            - name: OLLAMA_GPU_OVERHEAD
+              value: "400000000"
+            - name: OLLAMA_KEEP_ALIVE
+              value: "30m"
           volumeMounts:
             - name: models
               mountPath: /models
