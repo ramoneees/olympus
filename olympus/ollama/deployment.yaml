@@ -31,7 +31,7 @@ spec:
             - |
               ollama serve &
               until ollama list > /dev/null 2>&1; do sleep 2; done
-              ollama pull gemma4:e4b-q4_K_M
+              ollama pull gemma4:e4b
               wait
           ports:
             - name: http
