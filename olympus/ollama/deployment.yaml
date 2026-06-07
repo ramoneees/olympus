@@ -30,7 +30,7 @@ spec:
           args:
             - |
               ollama serve &
-              until curl -sf http://localhost:11434/ > /dev/null; do sleep 2; done
+              until ollama list > /dev/null 2>&1; do sleep 2; done
               ollama pull gemma4:e4b-q4_K_M
               wait
           ports:
