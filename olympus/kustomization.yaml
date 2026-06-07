@@ -4,7 +4,7 @@ resources:
   - litellm/
   - n8n/
   - tei/
-  - vllm/
+  - ollama/
   - monitoring/
   - openclaude/
   - openwebui/
