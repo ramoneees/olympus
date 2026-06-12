@@ -43,7 +43,7 @@ spec:
                   find "$BACKUP_DIR" -name "*.sql.gz" -mtime +7 -delete
                   echo "Retention cleanup done."
 
-                  DATABASES="nextcloud firefly invoiceninja"
+                  DATABASES="nextcloud firefly invoiceninja ghost"
                   FAILED=0
                   for db in $DATABASES; do
                     echo "Backing up $db..."
