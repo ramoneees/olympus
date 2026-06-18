@@ -4,7 +4,7 @@ namespace: apps
 resources:
   - helmrelease.yaml
   - ingress.yaml
-  - secrets.yaml
+  # - secrets.yaml  # Managed manually — Flux must not overwrite real admin password with template placeholders
 configMapGenerator:
   - name: gitea-helm-values
     files:
