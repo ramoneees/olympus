@@ -13,6 +13,9 @@
 
 architecture: standalone
 
+image:
+  tag: latest
+
 auth:
   enabled: false  # LAN-only, no auth needed for internal services
 
