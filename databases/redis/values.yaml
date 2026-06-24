@@ -13,13 +13,13 @@
 
 architecture: standalone
 
-image:
-  tag: latest
-
 auth:
   enabled: false  # LAN-only, no auth needed for internal services
 
 master:
+  # TEMP: pinned to latest — Bitnami removed versioned tags from Docker Hub
+  image:
+    tag: latest
   configuration: |
     maxmemory 200mb
     maxmemory-policy allkeys-lru
@@ -44,7 +44,7 @@ master:
       redis: "30637"
 
 metrics:
-  enabled: true
+  enabled: false
   image:
     tag: latest
   resources:

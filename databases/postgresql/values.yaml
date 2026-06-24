@@ -13,6 +13,7 @@
 #   CREATE USER gitea WITH PASSWORD '...'; GRANT ALL ON DATABASE gitea TO gitea;
 #   (repeat per service)
 
+# TEMP: pinned to latest — Bitnami removed versioned tags from Docker Hub
 image:
   tag: latest
 
@@ -59,7 +60,7 @@ primary:
 architecture: standalone
 
 metrics:
-  enabled: true
+  enabled: false
   image:
     tag: latest
   resources:

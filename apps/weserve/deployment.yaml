@@ -20,6 +20,8 @@ spec:
       annotations:
         reloader.stakater.com/auto: "true"
     spec:
+      imagePullSecrets:
+        - name: tekton-registry
       containers:
         - name: weserve
           image: git.ramoneees.com/tekton/weserve:6d696efb72ac
