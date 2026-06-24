@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: weserve
-          image: git.ramoneees.com/ramoneees/weserve:latest
+          image: git.ramoneees.com/tekton/weserve:6d696efb72ac
           ports:
             - name: http
               containerPort: 8080
