@@ -13,9 +13,6 @@
 #   CREATE USER gitea WITH PASSWORD '...'; GRANT ALL ON DATABASE gitea TO gitea;
 #   (repeat per service)
 
-image:
-  tag: latest
-
 auth:
   existingSecret: postgresql-secret  # keys: postgres-password, replication-password
   database: postgres
@@ -35,11 +32,15 @@ primary:
     size: 20Gi
   resources:
     requests:
-      cpu: 100m
-      memory: 512Mi
-    limits:
-      cpu: 500m
+      cpu: 200m
       memory: 1Gi
+    limits:
+      cpu: "2"
+      memory: 4Gi
+  extendedConfiguration: |
+    shared_buffers = 1GB
+    work_mem = 64MB
+    effective_cache_size = 3GB
   livenessProbe:
     enabled: true
   readinessProbe:

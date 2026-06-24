@@ -11,15 +11,15 @@
 #   5  — Mnemosyne short-term memory
 #   6-15 — available
 
-image:
-  tag: latest
-
 architecture: standalone
 
 auth:
   enabled: false  # LAN-only, no auth needed for internal services
 
 master:
+  configuration: |
+    maxmemory 200mb
+    maxmemory-policy allkeys-lru
   nodeSelector:
     kubernetes.io/hostname: olympus
   persistence:

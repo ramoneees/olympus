@@ -32,7 +32,7 @@ spec:
       containers:
         - name: litellm
           image: ghcr.io/berriai/litellm:main-v1.83.3.rc.1
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           args:
             - "--config"
             - "/app/config.yaml"
@@ -88,6 +88,12 @@ spec:
             limits:
               cpu: "4"
               memory: 4Gi
+          startupProbe:
+            httpGet:
+              path: /health/liveliness
+              port: http
+            failureThreshold: 30
+            periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /health/liveliness

@@ -1,7 +1,7 @@
 -- Grant permissions for mnemosyne user and create external tool access
 -- Run this as postgres superuser in the mnemosyne database
 
--- 1. Grant full access to mnemosyne user (for OpenClaw agent)
+-- 1. Grant full access to mnemosyne user (for Hermes agent)
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO mnemosyne;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO mnemosyne;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO mnemosyne;

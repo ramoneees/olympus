@@ -20,6 +20,8 @@ spec:
       labels:
         app: tei
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
       containers:
         - name: tei
           image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.6

@@ -7,9 +7,6 @@
 #   CREATE DATABASE nextcloud; CREATE USER 'nextcloud'@'%' IDENTIFIED BY '...'; GRANT ALL ON nextcloud.* TO 'nextcloud'@'%';
 #   (repeat for firefly, invoiceninja)
 
-image:
-  tag: latest
-
 auth:
   existingSecret: mariadb-secret  # keys: mariadb-root-password
 
@@ -33,7 +30,7 @@ primary:
     enabled: true
 
 metrics:
-  enabled: false
+  enabled: true
   resources:
     requests:
       cpu: 25m

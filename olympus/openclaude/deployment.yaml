@@ -24,7 +24,7 @@ spec:
       containers:
         - name: openclaude
           image: git.ramoneees.com/ramoneees/openclaude:latest
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - name: grpc
               containerPort: 50051
@@ -84,7 +84,7 @@ spec:
 
         - name: http-adapter
           image: git.ramoneees.com/ramoneees/openclaude:latest
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           command: ["node", "http-adapter/index.js"]
           ports:
             - name: http

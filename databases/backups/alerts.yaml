@@ -74,3 +74,13 @@ spec:
           annotations:
             summary: "No successful restore verification in 10 days"
             description: "The weekly restore-verify CronJob has not succeeded in over 10 days."
+        - alert: BackupPVCNearlyFull
+          expr: |
+            kubelet_volume_stats_used_bytes{namespace="databases", persistentvolumeclaim="db-backups"}
+            / kubelet_volume_stats_capacity_bytes{namespace="databases", persistentvolumeclaim="db-backups"} > 0.80
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Backup PVC db-backups is more than 80% full"
+            description: "Current usage: {{ $value | humanizePercentage }}. Expand PVC or reduce retention in pg-backup-cronjob.yaml."
