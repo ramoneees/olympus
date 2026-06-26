@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: pack-website
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`packapp.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: pack-website
+          port: 80
+  tls:
+    secretName: wildcard-ramoneees-com-tls

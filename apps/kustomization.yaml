@@ -12,6 +12,7 @@ resources:
   - invoice-ninja/
   - ghost/
   - obsidian/
+  - pack-website/
   - paperclip/
   - toolbox/
   - weserve/

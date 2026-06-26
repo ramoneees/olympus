@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pack-website
+  namespace: apps
+  labels:
+    app: pack-website
+spec:
+  type: ClusterIP
+  selector:
+    app: pack-website
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

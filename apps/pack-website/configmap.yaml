@@ -1,0 +1,1150 @@
+# Pack website static content — served by nginx:alpine via ConfigMap mount.
+# Design source: Claude Design "Pack Website.dc.html" handoff (June 2026).
+# Update content here, commit, Flux syncs within ~10 min, Reloader restarts the pod.
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pack-website-content
+  namespace: apps
+  labels:
+    app: pack-website
+data:
+  nginx.conf: |
+    server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+        server_name _;
+
+        root /usr/share/nginx/html;
+        index index.html;
+
+        # gzip — small wins for text payloads
+        gzip on;
+        gzip_vary on;
+        gzip_min_length 256;
+        gzip_types
+            text/plain
+            text/css
+            text/xml
+            application/json
+            application/javascript
+            application/xml+rss
+            image/svg+xml;
+
+        # Extensionless URLs: /privacy -> /privacy.html, /support -> /support.html
+        try_files $uri $uri.html $uri/ =404;
+
+        # Apple AASA — must be served as application/json, no redirect, at exactly this path.
+        # https://developer.apple.com/documentation/bundleresources/apple-app-site-association
+        location = /.well-known/apple-app-site-association {
+            default_type application/json;
+            add_header Cache-Control "public, max-age=86400" always;
+        }
+
+        # Google Digital Asset Links — same content-type rule.
+        # https://developer.android.com/training/app-links/verify-android-links
+        location = /.well-known/assetlinks.json {
+            default_type application/json;
+            add_header Cache-Control "public, max-age=86400" always;
+        }
+
+        # Reasonable default cache for the rest
+        location ~* \.(html|css|js|svg|png|jpg|jpeg|gif|ico|woff2?)$ {
+            add_header Cache-Control "public, max-age=3600, must-revalidate";
+        }
+
+        # Security headers
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    }
+
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Pack — Shrink files. Share anywhere.</title>
+      <meta name="description" content="Pack makes your photos and videos smaller and easier to send — entirely on your iPhone. No cloud, no account, nothing uploaded.">
+      <meta name="theme-color" content="#ffffff">
+      <meta property="og:title" content="Pack — Shrink files. Share anywhere.">
+      <meta property="og:description" content="Compress and convert photos, videos, and audio — entirely on your device. Pack runs no servers and uploads nothing.">
+      <meta property="og:type" content="website">
+      <meta property="og:url" content="https://packapp.ramoneees.com/">
+      <link rel="canonical" href="https://packapp.ramoneees.com/">
+      <style>
+        :root {
+          --ink: #141A2A;
+          --ink-2: #565E74;
+          --ink-3: #8B92A6;
+          --accent: #3B5BF5;
+          --accent-press: #2E49CC;
+          --accent-soft: #ECEFFE;
+          --bg: #FFFFFF;
+          --panel: #F6F7FB;
+          --hairline: #E8EAF1;
+          --navy: #0C1120;
+          --success: #16A06A;
+          --success-soft: #E2F4EC;
+        }
+        html, body {
+          margin: 0; padding: 0;
+          background: var(--bg);
+          -webkit-font-smoothing: antialiased;
+        }
+        * { box-sizing: border-box; }
+        a { color: inherit; text-decoration: none; }
+        ::selection { background: var(--accent-soft); }
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+          color: var(--ink);
+          line-height: 1.5;
+        }
+        .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+
+        /* Nav */
+        .nav {
+          position: sticky; top: 0; z-index: 20;
+          background: rgba(255,255,255,0.82);
+          backdrop-filter: saturate(180%) blur(14px);
+          -webkit-backdrop-filter: saturate(180%) blur(14px);
+          border-bottom: 1px solid var(--hairline);
+        }
+        .nav-inner {
+          display: flex; align-items: center; justify-content: space-between;
+          gap: 20px; padding: 14px 0;
+        }
+        .brand { display: flex; align-items: center; gap: 11px; }
+        .brand-mark {
+          width: 32px; height: 32px; border-radius: 9px;
+          background: var(--accent);
+          display: flex; align-items: center; justify-content: center;
+          box-shadow: 0 4px 14px rgba(59,91,245,0.35);
+        }
+        .brand-name { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+        .nav-links {
+          display: flex; align-items: center; gap: 30px;
+          font-size: 15px; font-weight: 500; color: var(--ink-2);
+        }
+        .nav-links a:hover { color: var(--ink); }
+        .nav-cta {
+          display: inline-flex; align-items: center; gap: 7px;
+          background: var(--ink); color: #fff;
+          padding: 9px 16px; border-radius: 11px; font-weight: 600;
+        }
+        .nav-cta:hover { background: var(--navy); }
+
+        /* Hero */
+        .hero {
+          padding: 72px 0 40px;
+          display: grid;
+          grid-template-columns: 1.05fr 0.95fr;
+          gap: 48px;
+          align-items: center;
+        }
+        .pill {
+          display: inline-flex; align-items: center; gap: 8px;
+          background: var(--accent-soft); color: var(--accent);
+          padding: 7px 14px; border-radius: 999px;
+          font-size: 13px; font-weight: 600;
+          margin-bottom: 22px;
+        }
+        .pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+        .hero h1 {
+          margin: 0;
+          font-size: clamp(40px, 5vw, 60px);
+          line-height: 1.04;
+          font-weight: 800;
+          letter-spacing: -0.03em;
+        }
+        .hero p.lede {
+          margin: 22px 0 0;
+          font-size: 19px;
+          line-height: 1.5;
+          color: var(--ink-2);
+          max-width: 460px;
+        }
+        .hero-ctas {
+          margin-top: 34px;
+          display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+        }
+        .app-store-btn {
+          display: inline-flex; align-items: center; gap: 11px;
+          background: var(--ink); color: #fff;
+          padding: 14px 22px; border-radius: 14px;
+          font-size: 16px; font-weight: 600;
+        }
+        .app-store-btn:hover { background: var(--navy); }
+        .app-store-btn .stack {
+          display: flex; flex-direction: column;
+          line-height: 1.15; text-align: left;
+        }
+        .app-store-btn .stack .small { font-size: 11px; font-weight: 500; opacity: 0.8; }
+        .app-store-btn .stack .big { font-size: 18px; font-weight: 600; }
+        .hero-note { font-size: 14px; color: var(--ink-3); font-weight: 500; }
+
+        /* iPhone mockup */
+        .phone-wrap { display: flex; justify-content: center; }
+        .phone {
+          width: 300px; height: 610px;
+          background: #05060A;
+          border-radius: 46px;
+          padding: 9px;
+          box-shadow: 0 40px 80px rgba(20,26,42,0.22), 0 0 0 1px rgba(20,26,42,0.06);
+        }
+        .phone-inner {
+          width: 100%; height: 100%;
+          background: #fff;
+          border-radius: 38px;
+          overflow: hidden;
+          display: flex; flex-direction: column;
+          position: relative;
+        }
+        .phone-notch {
+          position: absolute; top: 9px; left: 50%;
+          transform: translateX(-50%);
+          width: 98px; height: 27px;
+          background: #000; border-radius: 16px;
+        }
+        .phone-status {
+          height: 46px; flex-shrink: 0;
+          display: flex; align-items: flex-end; justify-content: space-between;
+          padding: 0 24px 7px;
+          font-size: 13px; font-weight: 600; color: var(--ink);
+        }
+        .phone-screen {
+          flex: 1;
+          display: flex; flex-direction: column;
+          padding: 18px 22px 0;
+        }
+        .done-wrap {
+          display: flex; flex-direction: column; align-items: center; gap: 14px;
+          margin-top: 14px;
+        }
+        .done-check {
+          width: 60px; height: 60px; border-radius: 50%;
+          background: var(--success);
+          display: flex; align-items: center; justify-content: center;
+          color: #fff;
+        }
+        .done-title {
+          font-size: 27px; font-weight: 700; letter-spacing: -0.02em;
+        }
+        .size-card {
+          margin-top: 22px;
+          background: var(--panel);
+          border-radius: 18px;
+          padding: 20px;
+          display: flex; flex-direction: column; align-items: center; gap: 12px;
+        }
+        .size-row {
+          display: flex; align-items: center; gap: 10px;
+          font-size: 21px; font-weight: 700;
+          font-variant-numeric: tabular-nums;
+          letter-spacing: -0.01em;
+          white-space: nowrap;
+        }
+        .size-row .arrow { color: var(--ink-3); }
+        .smaller-pill {
+          display: inline-flex; align-items: center; gap: 6px;
+          background: var(--success-soft); color: var(--success);
+          padding: 6px 13px; border-radius: 999px;
+          font-size: 14px; font-weight: 700;
+        }
+        .device-note {
+          display: flex; align-items: center; gap: 7px;
+          padding-top: 12px;
+          border-top: 1px solid var(--hairline);
+          width: 100%; justify-content: center;
+          color: var(--ink-2);
+          font-size: 12px; font-weight: 500;
+        }
+        .phone-actions {
+          margin-top: 16px;
+          display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+        }
+        .phone-action {
+          height: 46px; border-radius: 13px;
+          display: flex; align-items: center; justify-content: center; gap: 7px;
+          font-size: 15px; font-weight: 600;
+        }
+        .phone-action.secondary { background: var(--panel); color: var(--accent); }
+        .phone-action.primary { background: var(--accent); color: #fff; }
+
+        /* Trust strip */
+        .trust {
+          margin-top: 24px;
+          padding: 22px 0;
+          border-top: 1px solid var(--hairline);
+          border-bottom: 1px solid var(--hairline);
+        }
+        .trust-inner {
+          display: flex; flex-wrap: wrap; gap: 14px 40px; justify-content: center;
+        }
+        .trust-item {
+          display: inline-flex; align-items: center; gap: 8px;
+          font-size: 14px; font-weight: 600; color: var(--ink-2);
+        }
+        .trust-item .check { color: var(--success); display: flex; }
+
+        /* Section heads */
+        .section { padding: 80px 0 20px; text-align: center; }
+        .section.tight { padding-top: 72px; }
+        .eyebrow {
+          font-size: 13px; font-weight: 700;
+          letter-spacing: 0.08em; text-transform: uppercase;
+          color: var(--accent);
+        }
+        .section h2 {
+          margin: 12px 0 0;
+          font-size: clamp(28px, 3.4vw, 40px);
+          font-weight: 800; letter-spacing: -0.025em;
+        }
+        .section h2.left { text-align: left; }
+        .section p.lede-center {
+          margin: 14px auto 0;
+          font-size: 17px;
+          color: var(--ink-2);
+          max-width: 520px;
+        }
+
+        /* Cards (How it works / Features) */
+        .grid-3 {
+          margin-top: 48px;
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+          text-align: left;
+        }
+        .card {
+          background: var(--panel);
+          border: 1px solid var(--hairline);
+          border-radius: 20px;
+          padding: 26px;
+        }
+        .card.outlined { background: var(--bg); }
+        .card .step {
+          font-size: 13px; font-weight: 700; color: var(--accent);
+        }
+        .card h3 {
+          margin: 12px 0 0;
+          font-size: 20px; font-weight: 700; letter-spacing: -0.01em;
+        }
+        .card h3.tight { font-size: 18px; }
+        .card p {
+          margin: 8px 0 0;
+          font-size: 15px; line-height: 1.5; color: var(--ink-2);
+        }
+        .card .icon-tile {
+          width: 48px; height: 48px; border-radius: 13px;
+          background: var(--accent-soft); color: var(--accent);
+          display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Privacy band (dark navy) */
+        .privacy-band {
+          margin-top: 80px;
+          background: var(--navy);
+          color: #fff;
+        }
+        .privacy-band-inner {
+          max-width: 1120px;
+          margin: 0 auto;
+          padding: 80px 28px;
+        }
+        .privacy-band .eyebrow { color: #8FA0FF; }
+        .privacy-band h2 {
+          margin: 14px 0 0;
+          font-size: clamp(28px, 3.6vw, 42px);
+          font-weight: 800; letter-spacing: -0.025em; line-height: 1.1;
+          text-align: left;
+        }
+        .privacy-band p {
+          margin: 18px 0 0;
+          font-size: 18px; line-height: 1.55; color: #B9C0D4;
+          max-width: 640px;
+        }
+        .privacy-grid {
+          margin-top: 44px;
+          display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+        }
+        .privacy-card {
+          background: rgba(255,255,255,0.05);
+          border: 1px solid rgba(255,255,255,0.10);
+          border-radius: 18px;
+          padding: 24px;
+        }
+        .privacy-card .icon-tile-dark {
+          width: 40px; height: 40px; border-radius: 11px;
+          background: rgba(143,160,255,0.18); color: #A7B4FF;
+          display: flex; align-items: center; justify-content: center;
+        }
+        .privacy-card h3 {
+          margin: 16px 0 0; font-size: 17px; font-weight: 700;
+        }
+        .privacy-card p {
+          margin: 7px 0 0; font-size: 14px; line-height: 1.5; color: #A6AEC4;
+        }
+
+        /* Pricing */
+        .pricing-grid {
+          margin-top: 46px;
+          display: grid;
+          grid-template-columns: 1.1fr 1fr 1fr;
+          gap: 20px;
+          text-align: left;
+          align-items: stretch;
+        }
+        .price-card {
+          border: 1px solid var(--hairline);
+          border-radius: 22px;
+          padding: 30px;
+          display: flex; flex-direction: column;
+        }
+        .price-card.featured {
+          border: 2px solid var(--accent);
+          position: relative;
+          box-shadow: 0 18px 50px rgba(59,91,245,0.16);
+        }
+        .price-card.featured .ribbon {
+          position: absolute; top: -12px; left: 30px;
+          background: var(--accent); color: #fff;
+          font-size: 12px; font-weight: 700;
+          padding: 5px 12px; border-radius: 999px;
+        }
+        .price-card .tier { font-size: 15px; font-weight: 700; }
+        .price-card .tier.muted { color: var(--ink-2); }
+        .price-card .tier.accent { color: var(--accent); }
+        .price-card .price {
+          margin-top: 10px;
+          font-size: 40px; font-weight: 800; letter-spacing: -0.02em;
+        }
+        .price-card .price .unit {
+          font-size: 16px; font-weight: 600; color: var(--ink-3);
+        }
+        .price-card .caption { font-size: 14px; color: var(--ink-3); }
+        .price-card hr {
+          border: 0; height: 1px; background: var(--hairline);
+          margin: 22px 0;
+        }
+        .price-card ul {
+          list-style: none; padding: 0; margin: 0;
+          display: flex; flex-direction: column; gap: 12px;
+          font-size: 15px; color: var(--ink-2);
+        }
+        .price-card ul li { display: flex; gap: 9px; }
+        .price-card ul li .tick { color: var(--success); flex-shrink: 0; }
+        .price-card ul li .dot { color: var(--ink-3); flex-shrink: 0; }
+        .price-card .cta-btn {
+          margin-top: 26px; text-align: center;
+          background: var(--panel); color: var(--ink);
+          padding: 13px; border-radius: 13px;
+          font-size: 15px; font-weight: 600;
+        }
+        .price-card.featured .cta-btn {
+          background: var(--accent); color: #fff;
+        }
+        .price-card .cta-btn:hover { background: var(--accent-soft); }
+        .price-card.featured .cta-btn:hover { background: var(--accent-press); }
+        .pricing-fineprint {
+          margin-top: 20px; font-size: 13px; color: var(--ink-3);
+        }
+
+        /* Big CTA */
+        .big-cta-wrap { padding: 64px 0 0; }
+        .big-cta {
+          background: var(--accent);
+          border-radius: 28px;
+          padding: 56px 40px;
+          text-align: center;
+          color: #fff;
+        }
+        .big-cta h2 {
+          margin: 0;
+          font-size: clamp(26px, 3.2vw, 38px);
+          font-weight: 800; letter-spacing: -0.02em;
+        }
+        .big-cta p {
+          margin: 14px auto 0;
+          font-size: 17px;
+          color: rgba(255,255,255,0.85);
+          max-width: 440px;
+        }
+        .big-cta .app-store-btn {
+          margin-top: 28px;
+          background: #fff; color: var(--ink);
+        }
+        .big-cta .app-store-btn:hover { background: #f6f7fb; }
+
+        /* Footer */
+        footer.footer {
+          padding: 56px 0 64px;
+        }
+        .footer-grid {
+          display: flex; flex-wrap: wrap; gap: 24px;
+          justify-content: space-between; align-items: flex-start;
+          border-top: 1px solid var(--hairline);
+          padding-top: 36px;
+        }
+        .footer-brand .brand-mark { width: 28px; height: 28px; border-radius: 8px; }
+        .footer-brand p {
+          margin: 14px 0 0;
+          font-size: 14px; color: var(--ink-3);
+          max-width: 280px; line-height: 1.5;
+        }
+        .footer-cols {
+          display: flex; gap: 64px; flex-wrap: wrap;
+        }
+        .footer-col {
+          display: flex; flex-direction: column; gap: 11px;
+          font-size: 14px; color: var(--ink-2);
+        }
+        .footer-col .h {
+          font-size: 12px; font-weight: 700;
+          text-transform: uppercase; letter-spacing: 0.06em;
+          color: var(--ink-3);
+        }
+        .footer-col a:hover { color: var(--ink); }
+        .copyright {
+          margin-top: 36px; font-size: 13px; color: var(--ink-3);
+        }
+
+        /* Responsive */
+        @media (max-width: 920px) {
+          .hero { grid-template-columns: 1fr; gap: 36px; padding: 48px 0 24px; }
+          .phone-wrap { order: -1; }
+          .grid-3 { grid-template-columns: 1fr; }
+          .privacy-grid { grid-template-columns: 1fr; }
+          .pricing-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+          .nav-links { gap: 14px; font-size: 14px; }
+          .nav-links .nav-cta { padding: 8px 12px; }
+          .nav-links .hide-sm { display: none; }
+          .section { padding: 56px 0 12px; }
+          .privacy-band-inner { padding: 56px 24px; }
+          .big-cta { padding: 40px 24px; }
+          .footer-cols { gap: 36px; }
+        }
+      </style>
+    </head>
+    <body>
+
+      <!-- NAV -->
+      <div class="nav">
+        <div class="wrap nav-inner">
+          <a href="/" class="brand">
+            <span class="brand-mark">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+            </span>
+            <span class="brand-name">Pack</span>
+          </a>
+          <nav class="nav-links">
+            <a href="#features" class="hide-sm">Features</a>
+            <a href="#privacy" class="hide-sm">Privacy</a>
+            <a href="#pricing" class="hide-sm">Pricing</a>
+            <a href="#hero-cta" class="nav-cta">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.7c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.8-.8-3-.8-1.5 0-2.9.9-3.7 2.3-1.6 2.7-.4 6.8 1.1 9 .7 1.1 1.6 2.3 2.8 2.3 1.1 0 1.5-.7 2.9-.7 1.3 0 1.7.7 2.9.7 1.2 0 2-1.1 2.7-2.2.9-1.3 1.2-2.5 1.2-2.6 0 0-2.3-.9-2.3-3.5zM14.1 5.9c.6-.8 1-1.8.9-2.9-.9 0-2 .6-2.6 1.3-.6.7-1.1 1.7-1 2.8 1 .1 2-.5 2.7-1.2z"/></svg>
+              App Store
+            </a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- HERO -->
+      <div class="wrap hero">
+        <div>
+          <span class="pill">
+            <span class="dot"></span>
+            Private by design · 100% on-device
+          </span>
+          <h1>Shrink files.<br>Share anywhere.</h1>
+          <p class="lede">Pack makes your photos and videos smaller and easier to send — entirely on your iPhone. No cloud, no account, nothing uploaded.</p>
+          <div class="hero-ctas" id="hero-cta">
+            <a href="#" class="app-store-btn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.7c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.8-.8-3-.8-1.5 0-2.9.9-3.7 2.3-1.6 2.7-.4 6.8 1.1 9 .7 1.1 1.6 2.3 2.8 2.3 1.1 0 1.5-.7 2.9-.7 1.3 0 1.7.7 2.9.7 1.2 0 2-1.1 2.7-2.2.9-1.3 1.2-2.5 1.2-2.6 0 0-2.3-.9-2.3-3.5zM14.1 5.9c.6-.8 1-1.8.9-2.9-.9 0-2 .6-2.6 1.3-.6.7-1.1 1.7-1 2.8 1 .1 2-.5 2.7-1.2z"/></svg>
+              <span class="stack">
+                <span class="small">Download on the</span>
+                <span class="big">App Store</span>
+              </span>
+            </a>
+            <span class="hero-note">Free · No account · No tracking</span>
+          </div>
+        </div>
+
+        <!-- iPhone mockup: success payoff -->
+        <div class="phone-wrap">
+          <div class="phone">
+            <div class="phone-inner">
+              <div class="phone-notch"></div>
+              <div class="phone-status">
+                <span>9:41</span>
+                <span style="display:flex;gap:5px;align-items:center;">
+                  <svg width="15" height="10" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="0.6" fill="currentColor"/><rect x="5" y="5" width="3" height="7" rx="0.6" fill="currentColor"/><rect x="10" y="3" width="3" height="9" rx="0.6" fill="currentColor"/><rect x="15" y="0.5" width="3" height="11.5" rx="0.6" fill="currentColor"/></svg>
+                  <svg width="20" height="11" viewBox="0 0 26 14"><rect x="0.5" y="0.5" width="22" height="13" rx="3.5" fill="none" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="19" height="10" rx="2" fill="currentColor"/></svg>
+                </span>
+              </div>
+              <div class="phone-screen">
+                <div class="done-wrap">
+                  <div class="done-check">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                  </div>
+                  <div class="done-title">All done.</div>
+                </div>
+                <div class="size-card">
+                  <div class="size-row">
+                    <span>42.7 MB</span>
+                    <span class="arrow">→</span>
+                    <span>11.0 MB</span>
+                  </div>
+                  <div class="smaller-pill">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg>
+                    74% smaller
+                  </div>
+                  <div class="device-note">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z"/></svg>
+                    Stays on your device.
+                  </div>
+                </div>
+                <div class="phone-actions">
+                  <div class="phone-action secondary">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><path d="M8 12l4 4 4-4"/><path d="M5 14v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/></svg>
+                    Save
+                  </div>
+                  <div class="phone-action primary">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><path d="M8 8l4-4 4 4"/><path d="M5 13v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
+                    Share
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRUST STRIP -->
+      <div class="wrap">
+        <div class="trust">
+          <div class="trust-inner">
+            <span class="trust-item">
+              <span class="check"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+              Runs fully on-device
+            </span>
+            <span class="trust-item">
+              <span class="check"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+              Nothing uploaded, ever
+            </span>
+            <span class="trust-item">
+              <span class="check"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+              No account needed
+            </span>
+            <span class="trust-item">
+              <span class="check"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+              Works in airplane mode
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- HOW IT WORKS -->
+      <div class="wrap section">
+        <div class="eyebrow">Three taps</div>
+        <h2>No codecs. No settings. No guesswork.</h2>
+        <div class="grid-3">
+          <div class="card">
+            <div class="step">01</div>
+            <h3>Pick a file</h3>
+            <p>Choose any photo, video, or audio file from your library or Files.</p>
+          </div>
+          <div class="card">
+            <div class="step">02</div>
+            <h3>Choose where it's going</h3>
+            <p>WhatsApp, email, Android, or smallest size. Pack picks the right settings — and shows the size before you commit.</p>
+          </div>
+          <div class="card">
+            <div class="step">03</div>
+            <h3>Save or share</h3>
+            <p>See exactly how much smaller it got, then send it on. Done in seconds.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FEATURES -->
+      <div id="features" class="wrap section tight">
+        <h2>Everything you need to make a file sendable.</h2>
+        <div class="grid-3">
+          <div class="card outlined">
+            <div class="icon-tile"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7H6a2 2 0 0 0-2 2v2"/><path d="M4 13v2a2 2 0 0 0 2 2h2"/><path d="M16 7h2a2 2 0 0 1 2 2v2"/><path d="M20 13v2a2 2 0 0 1-2 2h-2"/><path d="M9 12h6"/></svg></div>
+            <h3 class="tight">Compress photos &amp; videos</h3>
+            <p>Big files become small ones, with quality you control. Powered by your iPhone's own hardware.</p>
+          </div>
+          <div class="card outlined">
+            <div class="icon-tile"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8l4-4 4 4"/><path d="M8 4v9a3 3 0 0 0 3 3h2"/><path d="M20 16l-4 4-4-4"/></svg></div>
+            <h3 class="tight">Convert any format</h3>
+            <p>AVI, MKV, WMV, FLV and VP9 to MP4. M4A and WAV to MP3 or AAC. Plays everywhere.</p>
+          </div>
+          <div class="card outlined">
+            <div class="icon-tile"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z"/><path d="M9.5 12l1.8 1.8L15 10"/></svg></div>
+            <h3 class="tight">Strip private metadata</h3>
+            <p>Remove EXIF and GPS location data before you share, so a photo doesn't reveal where you were.</p>
+          </div>
+          <div class="card outlined">
+            <div class="icon-tile"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/><path d="M9 14h6M9 17h4"/></svg></div>
+            <h3 class="tight">Photos into a PDF</h3>
+            <p>Turn a stack of photos into a single clean PDF — perfect for receipts and documents.</p>
+          </div>
+          <div class="card outlined">
+            <div class="icon-tile"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7a8 8 0 0 1 16 0"/><path d="M4 13a8 8 0 0 0 16 0"/><circle cx="12" cy="10" r="1.4" fill="currentColor"/></svg></div>
+            <h3 class="tight">Send over local Wi-Fi</h3>
+            <p>Beam a file straight to a nearby device on the same network — no internet required.</p>
+          </div>
+          <div class="card outlined">
+            <div class="icon-tile"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M6 7v12a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M10 11v5M14 11v5"/></svg></div>
+            <h3 class="tight">Free up storage</h3>
+            <p>Find leftover temporary files quietly eating your space and clear them in one tap.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRIVACY BAND -->
+      <div id="privacy" class="privacy-band">
+        <div class="privacy-band-inner">
+          <div>
+            <div class="eyebrow">Privacy isn't a setting</div>
+            <h2>Your files never leave your phone.</h2>
+            <p>Most "compress online" tools upload your private photos to a server you've never heard of. Pack doesn't. There's no server to upload to — and you can prove it.</p>
+          </div>
+          <div class="privacy-grid">
+            <div class="privacy-card">
+              <div class="icon-tile-dark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
+              <h3>Processed on-device</h3>
+              <p>Every file is handled by your iPhone's own chip. Nothing is sent anywhere.</p>
+            </div>
+            <div class="privacy-card">
+              <div class="icon-tile-dark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12a10 10 0 0 1 20 0"/><line x1="4" y1="4" x2="20" y2="20"/></svg></div>
+              <h3>Works offline</h3>
+              <p>Turn on airplane mode and Pack keeps working — the simplest proof you're not connected.</p>
+            </div>
+            <div class="privacy-card">
+              <div class="icon-tile-dark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></div>
+              <h3>No account, no tracking</h3>
+              <p>No sign-up, no email, no analytics following you around. Just open and use.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRICING -->
+      <div id="pricing" class="wrap section">
+        <h2>Free to start. Pro when you need it.</h2>
+        <p class="lede-center">Compress and convert for free. Pack Pro removes the daily limit, ads, and unlocks batch, PDF, and nearby transfer.</p>
+        <div class="pricing-grid">
+          <div class="price-card">
+            <div class="tier muted">Free</div>
+            <div class="price">$0</div>
+            <div class="caption">Always free</div>
+            <hr>
+            <ul>
+              <li><span class="tick">&#10003;</span>Compress photos &amp; videos</li>
+              <li><span class="tick">&#10003;</span>Convert common formats</li>
+              <li><span class="tick">&#10003;</span>Destination presets</li>
+              <li><span class="tick">&#10003;</span>On-device privacy</li>
+            </ul>
+            <a href="#" class="cta-btn">Download free</a>
+          </div>
+          <div class="price-card featured">
+            <span class="ribbon">Most popular</span>
+            <div class="tier accent">Pack Pro · Yearly</div>
+            <div class="price">$9.99<span class="unit">/yr</span></div>
+            <div class="caption">Best for most people</div>
+            <hr>
+            <ul>
+              <li><span class="tick">&#10003;</span>Everything in Free</li>
+              <li><span class="tick">&#10003;</span>No daily limit, no ads</li>
+              <li><span class="tick">&#10003;</span>Batch processing &amp; PDF</li>
+              <li><span class="tick">&#10003;</span>Nearby transfer &amp; advanced presets</li>
+            </ul>
+            <a href="#" class="cta-btn">Get Pack Pro</a>
+          </div>
+          <div class="price-card">
+            <div class="tier muted">Pack Pro · Lifetime</div>
+            <div class="price">$29.99</div>
+            <div class="caption">One purchase, forever</div>
+            <hr>
+            <ul>
+              <li><span class="tick">&#10003;</span>All Pro features</li>
+              <li><span class="tick">&#10003;</span>No subscription</li>
+              <li><span class="tick">&#10003;</span>Future updates included</li>
+              <li><span class="dot">·</span>Also available weekly at $0.99</li>
+            </ul>
+            <a href="#" class="cta-btn">Buy lifetime</a>
+          </div>
+        </div>
+        <p class="pricing-fineprint">All purchases are handled by the App Store. We never see your card details.</p>
+      </div>
+
+      <!-- BIG CTA -->
+      <div class="wrap big-cta-wrap">
+        <div class="big-cta">
+          <h2>Make your next file sendable.</h2>
+          <p>Free to download. Nothing leaves your phone. No account required.</p>
+          <a href="#" class="app-store-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.7c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.8-.8-3-.8-1.5 0-2.9.9-3.7 2.3-1.6 2.7-.4 6.8 1.1 9 .7 1.1 1.6 2.3 2.8 2.3 1.1 0 1.5-.7 2.9-.7 1.3 0 1.7.7 2.9.7 1.2 0 2-1.1 2.7-2.2.9-1.3 1.2-2.5 1.2-2.6 0 0-2.3-.9-2.3-3.5zM14.1 5.9c.6-.8 1-1.8.9-2.9-.9 0-2 .6-2.6 1.3-.6.7-1.1 1.7-1 2.8 1 .1 2-.5 2.7-1.2z"/></svg>
+            <span class="stack">
+              <span class="small">Download on the</span>
+              <span class="big">App Store</span>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <footer class="footer">
+        <div class="wrap">
+          <div class="footer-grid">
+            <div class="footer-brand">
+              <div class="brand">
+                <span class="brand-mark">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+                </span>
+                <span class="brand-name" style="font-size:17px;">Pack</span>
+              </div>
+              <p>Privacy-first file compression and conversion for iPhone. Made by Ramón Pereira Río.</p>
+            </div>
+            <div class="footer-cols">
+              <div class="footer-col">
+                <span class="h">Product</span>
+                <a href="#features">Features</a>
+                <a href="#privacy">Privacy</a>
+                <a href="#pricing">Pricing</a>
+              </div>
+              <div class="footer-col">
+                <span class="h">Legal &amp; support</span>
+                <a href="/privacy.html">Privacy policy</a>
+                <a href="/support.html">Support</a>
+                <a href="mailto:ramon@pereirariosoftware.com">ramon@pereirariosoftware.com</a>
+              </div>
+            </div>
+          </div>
+          <div class="copyright">&copy; 2026 Ramón Pereira Río. Pack is not affiliated with WhatsApp, Apple, or Google.</div>
+        </div>
+      </footer>
+
+    </body>
+    </html>
+
+  privacy.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Privacy Policy — Pack</title>
+      <meta name="description" content="Pack does not collect, store, or transmit personal data. All file processing happens on your device.">
+      <link rel="canonical" href="https://packapp.ramoneees.com/privacy.html">
+      <style>
+        :root {
+          --ink: #141A2A; --ink-2: #565E74; --ink-3: #8B92A6;
+          --accent: #3B5BF5; --accent-soft: #ECEFFE;
+          --bg: #FFFFFF; --panel: #F6F7FB; --hairline: #E8EAF1;
+          --navy: #0C1120; --success: #16A06A;
+        }
+        html, body { margin: 0; padding: 0; background: var(--bg); -webkit-font-smoothing: antialiased; }
+        * { box-sizing: border-box; }
+        a { color: var(--accent); }
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+          color: var(--ink); line-height: 1.6;
+        }
+        .nav {
+          position: sticky; top: 0; z-index: 20;
+          background: rgba(255,255,255,0.82);
+          backdrop-filter: saturate(180%) blur(14px);
+          -webkit-backdrop-filter: saturate(180%) blur(14px);
+          border-bottom: 1px solid var(--hairline);
+        }
+        .nav-inner {
+          max-width: 1120px; margin: 0 auto;
+          padding: 14px 28px;
+          display: flex; align-items: center; justify-content: space-between;
+        }
+        .brand { display: flex; align-items: center; gap: 11px; color: inherit; text-decoration: none; }
+        .brand-mark {
+          width: 32px; height: 32px; border-radius: 9px;
+          background: var(--accent);
+          display: flex; align-items: center; justify-content: center;
+          box-shadow: 0 4px 14px rgba(59,91,245,0.35);
+        }
+        .brand-name { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
+        .nav-back {
+          font-size: 15px; font-weight: 500; color: var(--ink-2);
+        }
+        .container { max-width: 720px; margin: 0 auto; padding: 32px 28px 96px; }
+        h1 { font-size: clamp(28px, 4vw, 36px); font-weight: 800; letter-spacing: -0.02em; margin: 32px 0 8px; }
+        .updated { color: var(--ink-3); font-size: 14px; margin-bottom: 32px; }
+        h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin: 36px 0 12px; }
+        p { margin-bottom: 16px; }
+        ul { margin: 0 0 16px 22px; }
+        li { margin-bottom: 8px; }
+        .callout {
+          background: var(--accent-soft);
+          border-radius: 14px;
+          padding: 20px 22px;
+          margin: 24px 0;
+          border-left: 4px solid var(--accent);
+        }
+        .callout strong { color: var(--ink); }
+      </style>
+    </head>
+    <body>
+      <div class="nav">
+        <div class="nav-inner">
+          <a href="/" class="brand">
+            <span class="brand-mark">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+            </span>
+            <span class="brand-name">Pack</span>
+          </a>
+          <a href="/" class="nav-back">&larr; Back to site</a>
+        </div>
+      </div>
+      <div class="container">
+        <h1>Privacy Policy</h1>
+        <p class="updated">Last updated: June 2026</p>
+
+        <p>Pack is designed around a simple principle: <strong>your files never leave your device.</strong></p>
+
+        <div class="callout">
+          <strong>The short version:</strong> Pack does not collect, store, or transmit any personal data. All file processing happens entirely on your device. No analytics. No tracking. No account required.
+        </div>
+
+        <h2>Data collection</h2>
+        <p>Pack does not collect, store, or transmit any personal data.</p>
+        <ul>
+          <li>All file processing happens entirely on your device.</li>
+          <li>No data is sent to any servers or third parties.</li>
+          <li>No analytics, telemetry, or tracking of any kind.</li>
+          <li>No account or registration required.</li>
+        </ul>
+
+        <h2>Permissions</h2>
+        <p>Pack requests the following permissions to provide its core functionality:</p>
+        <ul>
+          <li><strong>Photo Library</strong> — to access the photos and videos you select for compression. You explicitly choose files via iOS's native picker; Pack only sees what you pick. Files are processed locally and never leave your device.</li>
+          <li><strong>Files (Documents)</strong> — to access files from the Files app. Same model: you explicitly pick, Pack processes locally.</li>
+          <li><strong>Local Network</strong> — for optional direct device-to-device transfer over Wi-Fi (MultipeerConnectivity). This is opt-in; nothing happens unless you start a transfer.</li>
+        </ul>
+
+        <h2>Third-party services</h2>
+        <ul>
+          <li><strong>Google AdMob</strong> — if you are shown an ad on the free tier, the Google Mobile Ads SDK may collect device identifiers for advertising purposes. You can control this through iOS Settings &gt; Privacy &amp; Security &gt; Tracking &gt; Pack.</li>
+          <li><strong>App Store &amp; StoreKit</strong> — if you purchase Pack Pro, Apple's standard App Store privacy practices apply. See <a href="https://www.apple.com/legal/privacy/en-ww/" target="_blank" rel="noopener">Apple's Privacy Policy</a>.</li>
+        </ul>
+
+        <h2>Children's privacy</h2>
+        <p>Pack is not intended for use by children under 13. We do not knowingly collect data from children.</p>
+
+        <h2>Your rights</h2>
+        <p>Because Pack stores no personal data, there is nothing to access, correct, export, or delete. iOS's standard permission controls (Settings &gt; Pack) let you revoke Photo or Local Network access at any time.</p>
+
+        <h2>Changes to this policy</h2>
+        <p>If this policy is updated, the "Last updated" date above will be revised.</p>
+
+        <h2>Contact</h2>
+        <p>For privacy questions, contact <a href="mailto:ramon@pereirariosoftware.com">ramon@pereirariosoftware.com</a>.</p>
+      </div>
+    </body>
+    </html>
+
+  support.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Support — Pack</title>
+      <meta name="description" content="Get help with Pack. Common questions, troubleshooting tips, and how to reach the developer.">
+      <link rel="canonical" href="https://packapp.ramoneees.com/support.html">
+      <style>
+        :root {
+          --ink: #141A2A; --ink-2: #565E74; --ink-3: #8B92A6;
+          --accent: #3B5BF5; --accent-soft: #ECEFFE;
+          --bg: #FFFFFF; --panel: #F6F7FB; --hairline: #E8EAF1;
+          --success: #16A06A;
+        }
+        html, body { margin: 0; padding: 0; background: var(--bg); -webkit-font-smoothing: antialiased; }
+        * { box-sizing: border-box; }
+        a { color: var(--accent); }
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+          color: var(--ink); line-height: 1.6;
+        }
+        .nav {
+          position: sticky; top: 0; z-index: 20;
+          background: rgba(255,255,255,0.82);
+          backdrop-filter: saturate(180%) blur(14px);
+          -webkit-backdrop-filter: saturate(180%) blur(14px);
+          border-bottom: 1px solid var(--hairline);
+        }
+        .nav-inner {
+          max-width: 1120px; margin: 0 auto;
+          padding: 14px 28px;
+          display: flex; align-items: center; justify-content: space-between;
+        }
+        .brand { display: flex; align-items: center; gap: 11px; color: inherit; text-decoration: none; }
+        .brand-mark {
+          width: 32px; height: 32px; border-radius: 9px;
+          background: var(--accent);
+          display: flex; align-items: center; justify-content: center;
+          box-shadow: 0 4px 14px rgba(59,91,245,0.35);
+        }
+        .brand-name { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
+        .nav-back { font-size: 15px; font-weight: 500; color: var(--ink-2); }
+        .container { max-width: 720px; margin: 0 auto; padding: 32px 28px 96px; }
+        h1 { font-size: clamp(28px, 4vw, 36px); font-weight: 800; letter-spacing: -0.02em; margin: 32px 0 8px; }
+        .lede { color: var(--ink-2); font-size: 18px; margin-bottom: 32px; }
+        h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin: 32px 0 12px; }
+        p { margin-bottom: 14px; }
+        details {
+          background: var(--panel);
+          border: 1px solid var(--hairline);
+          border-radius: 14px;
+          padding: 16px 18px;
+          margin: 10px 0;
+        }
+        details summary {
+          font-weight: 600;
+          cursor: pointer;
+          font-size: 16px;
+          list-style: none;
+        }
+        details summary::-webkit-details-marker { display: none; }
+        details summary::before {
+          content: "+";
+          display: inline-block;
+          width: 1em;
+          color: var(--accent);
+          font-weight: 700;
+          margin-right: 6px;
+        }
+        details[open] summary::before { content: "−"; }
+        details[open] summary { margin-bottom: 10px; }
+        details p { color: var(--ink-2); font-size: 15px; margin: 0; }
+        .contact {
+          background: var(--accent-soft);
+          border-radius: 18px;
+          padding: 26px;
+          margin: 32px 0;
+          border-left: 4px solid var(--accent);
+        }
+        .contact h2 { margin-top: 0; }
+        .contact a.button {
+          display: inline-block;
+          margin-top: 8px;
+          background: var(--accent);
+          color: #fff !important;
+          padding: 12px 20px;
+          border-radius: 11px;
+          font-weight: 600;
+          text-decoration: none !important;
+        }
+        .contact a.button:hover { background: var(--accent-press, #2E49CC); }
+      </style>
+    </head>
+    <body>
+      <div class="nav">
+        <div class="nav-inner">
+          <a href="/" class="brand">
+            <span class="brand-mark">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+            </span>
+            <span class="brand-name">Pack</span>
+          </a>
+          <a href="/" class="nav-back">&larr; Back to site</a>
+        </div>
+      </div>
+      <div class="container">
+        <h1>Support</h1>
+        <p class="lede">Quick answers and how to reach us.</p>
+
+        <div class="contact">
+          <h2>Email us</h2>
+          <p>Questions, bugs, feature ideas — we read everything.</p>
+          <a href="mailto:ramon@pereirariosoftware.com" class="button">ramon@pereirariosoftware.com</a>
+        </div>
+
+        <h2>Common questions</h2>
+
+        <details>
+          <summary>Do my files leave my device?</summary>
+          <p>No. Pack processes every photo, video, and audio file entirely on your device. Pack runs no servers and uploads nothing.</p>
+        </details>
+
+        <details>
+          <summary>Why is a file not getting smaller?</summary>
+          <p>Files that are already compressed (JPEGs at low quality, MP4s at low bitrate) have little headroom. Pack will show you the before/after size so you can decide whether to proceed. For photos, try a lower target quality; for video, try a lower resolution or higher compression preset.</p>
+        </details>
+
+        <details>
+          <summary>Can I convert AVI, MKV, or WMV to MP4?</summary>
+          <p>Yes. Pack supports AVI, MKV, WMV, FLV, and VP9 video to MP4, and M4A/WAV audio to MP3 or AAC.</p>
+        </details>
+
+        <details>
+          <summary>How do I remove EXIF / location metadata?</summary>
+          <p>Pack removes EXIF and location metadata automatically based on the destination preset. Choose "Send to Android" or "Archive" to strip metadata; choose "Save to Files" to keep it.</p>
+        </details>
+
+        <details>
+          <summary>What does Pack Pro include?</summary>
+          <p>Pack Pro removes the daily compression limit, adds batch processing, PDF generation, advanced presets, nearby transfer, and removes ads. Weekly ($0.99), yearly ($9.99), and lifetime ($29.99) tiers are available — pick whichever fits your use.</p>
+        </details>
+
+        <details>
+          <summary>How do I transfer files between two devices?</summary>
+          <p>Use "Nearby transfer" on both devices, on the same Wi-Fi network. Pack uses MultipeerConnectivity to send files directly — no internet required, no server in the middle.</p>
+        </details>
+
+        <h2>Privacy</h2>
+        <p>See the <a href="/privacy.html">Privacy Policy</a> for full details.</p>
+      </div>
+    </body>
+    </html>
+
+  # Apple App Site Association (Universal Links).
+  # Replace TEAMID once the Apple Developer account is created.
+  # Must be served at exactly /.well-known/apple-app-site-association with
+  # Content-Type: application/json (handled by nginx.conf above).
+  # Ref: https://developer.apple.com/documentation/bundleresources/apple-app-site-association
+  well-known-apple-app-site-association: |
+    {
+      "applinks": {
+        "details": [
+          {
+            "appIDs": ["TEAMID.com.pack.app"],
+            "components": [
+              { "/": "/*" }
+            ]
+          }
+        ]
+      }
+    }
+
+  # Google Digital Asset Links (Android App Links verification).
+  # Replace the SHA-256 fingerprint once the Android app is signed.
+  # Ref: https://developer.android.com/training/app-links/verify-android-links
+  well-known-assetlinks-json: |
+    [
+      {
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target": {
+          "namespace": "android_app",
+          "package_name": "com.pack.app",
+          "sha256_cert_fingerprints": [
+            "REPLACE_WITH_ANDROID_SIGNING_CERT_SHA256"
+          ]
+        }
+      }
+    ]
