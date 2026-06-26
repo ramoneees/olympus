@@ -74,6 +74,7 @@ data:
       <meta property="og:type" content="website">
       <meta property="og:url" content="https://packapp.ramoneees.com/">
       <link rel="canonical" href="https://packapp.ramoneees.com/">
+      <meta name="google-site-verification" content="OwvQ6K4BV6OZZyuK63r8vOq7ukE-sqOZfRqhGFDkwoY" />
       <style>
         :root {
           --ink: #141A2A;
