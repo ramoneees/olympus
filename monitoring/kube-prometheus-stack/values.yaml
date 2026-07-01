@@ -33,6 +33,7 @@ grafana:
 prometheus:
   prometheusSpec:
     retention: 15d
+    retentionSize: 16GB  # size cap — leaves ~4Gi headroom on 40Gi PVC; prevents PVC exhaustion
     resources:
       requests:
         cpu: 200m
@@ -48,7 +49,7 @@ prometheus:
             - ReadWriteOnce
           resources:
             requests:
-              storage: 20Gi
+              storage: 40Gi
     # Scrape all namespaces
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
