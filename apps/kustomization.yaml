@@ -17,4 +17,5 @@ resources:
   - toolbox/
   - weserve/
   - weserve-tunnel/
+  - cloudbeaver-tunnel/
   - zotero/

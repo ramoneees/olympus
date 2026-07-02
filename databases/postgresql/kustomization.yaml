@@ -5,6 +5,7 @@ resources:
   - helmrelease.yaml
   - secrets.yaml
   - pgvector-reindex-job.yaml
+  - friend-access-job.yaml
 configMapGenerator:
   - name: postgresql-helm-values
     files:

@@ -6,3 +6,4 @@ resources:
   - promtail/
   - alertmanager-config/
   - grafana-dashboards/
+  - grafana-tunnel/
