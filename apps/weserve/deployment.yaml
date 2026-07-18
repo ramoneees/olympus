@@ -24,7 +24,7 @@ spec:
         - name: tekton-registry
       containers:
         - name: weserve
-          image: git.ramoneees.com/tekton/weserve:6d696efb72ac
+          image: git.ramoneees.com/tekton/weserve:74e178e0ccdb
           ports:
             - name: http
               containerPort: 8080
