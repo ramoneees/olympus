@@ -39,7 +39,7 @@ spec:
         fsGroup: 1001
       initContainers:
         - name: db-migrate
-          image: ghcr.io/ramoneees/precisase:latest
+          image: git.ramoneees.com/ramoneees/precisase:latest
           imagePullPolicy: Always
           command: ["node_modules/.bin/prisma", "migrate", "deploy"]
           env:
@@ -57,7 +57,7 @@ spec:
               memory: 512Mi
       containers:
         - name: precisase
-          image: ghcr.io/ramoneees/precisase:latest
+          image: git.ramoneees.com/ramoneees/precisase:latest
           imagePullPolicy: Always
           ports:
             - name: http

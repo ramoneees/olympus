@@ -27,7 +27,7 @@ spec:
         - name: precisase-registry
       containers:
         - name: precisase-worker
-          image: ghcr.io/ramoneees/precisase:latest
+          image: git.ramoneees.com/ramoneees/precisase:latest
           imagePullPolicy: Always
           command: ["node_modules/.bin/tsx", "src/worker/notification-worker.ts"]
           env:
