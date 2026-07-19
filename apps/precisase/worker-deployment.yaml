@@ -1,0 +1,55 @@
+---
+# Notification worker — same image as precisase-web, different command.
+# Polls the Notification queue and dispatches emails via Resend. No PVC,
+# Service, or Ingress needed (it isn't an HTTP server).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: precisase-worker
+  namespace: apps
+  labels:
+    app: precisase-worker
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: precisase-worker
+  template:
+    metadata:
+      labels:
+        app: precisase-worker
+      annotations:
+        reloader.stakater.com/auto: "true"
+    spec:
+      imagePullSecrets:
+        - name: precisase-registry
+      containers:
+        - name: precisase-worker
+          image: ghcr.io/ramoneees/precisase:latest
+          imagePullPolicy: Always
+          command: ["node_modules/.bin/tsx", "src/worker/notification-worker.ts"]
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: precisase-secret
+                  key: database-url
+            - name: RESEND_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: precisase-secret
+                  key: resend-api-key
+            - name: RESEND_FROM_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: precisase-secret
+                  key: resend-from-email
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi

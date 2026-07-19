@@ -1,0 +1,138 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: precisase-uploads
+  namespace: apps
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: precisase-web
+  namespace: apps
+  labels:
+    app: precisase-web
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: precisase-web
+  template:
+    metadata:
+      labels:
+        app: precisase-web
+      annotations:
+        reloader.stakater.com/auto: "true"
+    spec:
+      imagePullSecrets:
+        - name: precisase-registry
+      securityContext:
+        fsGroup: 1001
+      initContainers:
+        - name: db-migrate
+          image: ghcr.io/ramoneees/precisase:latest
+          imagePullPolicy: Always
+          command: ["node_modules/.bin/prisma", "migrate", "deploy"]
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: precisase-secret
+                  key: database-url
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      containers:
+        - name: precisase
+          image: ghcr.io/ramoneees/precisase:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: precisase-secret
+                  key: database-url
+            - name: AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: precisase-secret
+                  key: auth-secret
+            - name: AUTH_URL
+              value: "https://precisase.ramoneees.com"
+            - name: APP_URL
+              value: "https://precisase.ramoneees.com"
+            - name: AUTH_TRUST_HOST
+              value: "true"
+            - name: CONTACT_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: precisase-secret
+                  key: contact-encryption-key
+            - name: RESEND_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: precisase-secret
+                  key: resend-api-key
+            - name: RESEND_FROM_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: precisase-secret
+                  key: resend-from-email
+          volumeMounts:
+            - name: uploads
+              mountPath: /app/public/uploads
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            timeoutSeconds: 3
+      volumes:
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: precisase-uploads
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: precisase-web
+  namespace: apps
+spec:
+  type: ClusterIP
+  selector:
+    app: precisase-web
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
