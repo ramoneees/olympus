@@ -60,3 +60,13 @@ CREATE DATABASE paperclip;
 CREATE USER paperclip WITH PASSWORD 'CHANGE_ME';
 GRANT ALL PRIVILEGES ON DATABASE paperclip TO paperclip;
 ALTER DATABASE paperclip OWNER TO paperclip;
+
+-- Precisa-se (schema.prisma requires pgcrypto, citext, pg_trgm)
+CREATE DATABASE precisase;
+CREATE USER precisase WITH PASSWORD '196d8361f029f54edcb5498db6650bba167f53f3871dcdff';
+GRANT ALL PRIVILEGES ON DATABASE precisase TO precisase;
+ALTER DATABASE precisase OWNER TO precisase;
+\c precisase
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS citext;
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
