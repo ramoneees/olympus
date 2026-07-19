@@ -33,8 +33,6 @@ spec:
       annotations:
         reloader.stakater.com/auto: "true"
     spec:
-      imagePullSecrets:
-        - name: precisase-registry
       securityContext:
         fsGroup: 1001
       initContainers:
