@@ -71,8 +71,16 @@ spec:
                 secretKeyRef:
                   name: precisase-secret
                   key: auth-secret
-            - name: AUTH_URL
-              value: "https://precisase.ramoneees.com"
+            # AUTH_URL intentionally omitted: when set together with the
+            # `auth()` middleware wrapper (next-auth v5 beta) + next-intl
+            # middleware, the next-intl rewrite target becomes an absolute
+            # URL with AUTH_URL's origin (e.g. `https://precisase.../pt-PT`)
+            # which the standalone Next.js server can't internally route,
+            # resulting in `no available server` 503 on every locale-aware
+            # route. With `AUTH_TRUST_HOST=true` below, next-auth derives
+            # the canonical URL from the actual incoming request at runtime
+            # (Traefik terminates TLS and forwards via HTTPS), so cookies
+            # stay `__Secure-` prefixed and correct.
             - name: APP_URL
               value: "https://precisase.ramoneees.com"
             - name: AUTH_TRUST_HOST
