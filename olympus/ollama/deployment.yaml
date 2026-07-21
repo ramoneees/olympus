@@ -1,5 +1,9 @@
 # Ollama — local LLM inference, GPU-accelerated
 # OpenAI-compatible API at :11434/v1. Model pulled on startup (idempotent).
+# Scaled to 0: not in use, and the single RTX 2080 is reserved for Jellyfin
+# hardware transcoding instead (see apps/jellyfin/deployment.yaml). Scale
+# back to 1 to resume local inference — LiteLLM's ollama routes will start
+# working again automatically once this pod is Running.
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -9,7 +13,7 @@ metadata:
   labels:
     app: ollama
 spec:
-  replicas: 1
+  replicas: 0
   strategy:
     type: Recreate
   selector:

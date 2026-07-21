@@ -35,6 +35,7 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
+      runtimeClassName: nvidia
       nodeSelector:
         kubernetes.io/hostname: olympus
       containers:
@@ -64,6 +65,7 @@ spec:
             limits:
               cpu: "4"
               memory: 4Gi
+              nvidia.com/gpu: "1"
           readinessProbe:
             httpGet:
               path: /health
