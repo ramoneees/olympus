@@ -47,6 +47,8 @@ spec:
                   key: elastic-password
             - name: ES_JAVA_OPTS
               value: "-Xms1g -Xmx1g"
+            - name: discovery.type
+              value: "single-node"
           ports:
             - name: http
               containerPort: 9200
