@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: gpu-operator
 resources:
   - helmrelease.yaml
+  - driver-ready-shim.yaml
 configMapGenerator:
   - name: gpu-operator-helm-values
     files:

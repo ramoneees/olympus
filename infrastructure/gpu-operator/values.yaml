@@ -11,15 +11,6 @@
 driver:
   enabled: false
 
-# driverInstallDir defaults to /run/nvidia/driver, which is only populated
-# when the operator manages its own driver container. With a pre-installed
-# host driver the files live at the normal system paths under /, so the
-# validator's driver-validation init container must look at host root
-# instead — otherwise it polls an empty path forever and every other
-# component (toolkit, device-plugin, dcgm-exporter, gfd) stays stuck in Init.
-hostPaths:
-  driverInstallDir: "/"
-
 toolkit:
   enabled: true
 

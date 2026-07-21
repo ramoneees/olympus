@@ -1,0 +1,45 @@
+# Pre-installed host driver has no driver DaemonSet of its own, so nothing
+# ever runs the "nvidia-smi && touch /run/nvidia/validations/.driver-ctr-ready"
+# startup probe that gpu-operator's driver-validation init containers wait on
+# (see toolkit/device-plugin/dcgm-exporter/gfd/validator pods, all stuck in
+# Init forever). This DaemonSet recreates that one marker file on the host so
+# validation can proceed. Self-healing across reboots since /run is tmpfs and
+# this DaemonSet's pod restarts whenever the node does.
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nvidia-driver-ready-shim
+  namespace: gpu-operator
+spec:
+  selector:
+    matchLabels:
+      app: nvidia-driver-ready-shim
+  template:
+    metadata:
+      labels:
+        app: nvidia-driver-ready-shim
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
+      containers:
+        - name: shim
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - mkdir -p /run/nvidia/validations && touch /run/nvidia/validations/.driver-ctr-ready && sleep infinity
+          volumeMounts:
+            - name: run-nvidia-validations
+              mountPath: /run/nvidia/validations
+          resources:
+            requests:
+              cpu: 5m
+              memory: 8Mi
+            limits:
+              cpu: 20m
+              memory: 32Mi
+      volumes:
+        - name: run-nvidia-validations
+          hostPath:
+            path: /run/nvidia/validations
+            type: DirectoryOrCreate
