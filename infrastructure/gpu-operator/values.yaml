@@ -2,9 +2,14 @@
 # Chart: https://nvidia.github.io/gpu-operator
 # Only the olympus node has a GPU; the operator auto-discovers it.
 
-# Use the pre-installed driver on the host (Ubuntu 24.04 ships nvidia drivers)
+# Use the pre-installed driver on the host (Ubuntu 24.04 ships nvidia drivers).
+# enabled: false tells the operator NOT to deploy its own driver DaemonSet —
+# left at true, the operator's driver daemonset never matches this node (NFD
+# labels it nvidia.com/gpu.deploy.driver=pre-installed, not "true"), so it
+# never runs, never writes the readiness marker every other GPU component
+# waits on, and the whole stack stays notReady forever.
 driver:
-  enabled: true           # Let the operator install/manage NVIDIA drivers
+  enabled: false
 
 toolkit:
   enabled: true
