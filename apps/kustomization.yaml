@@ -11,10 +11,16 @@ resources:
   - homebox/
   - invoice-ninja/
   - ghost/
+  - jellyfin/
+  - media-storage/
   - obsidian/
   - pack-website/
   - paperclip/
   - precisase/
+  - prowlarr/
+  - qbittorrent/
+  - radarr/
+  - sonarr/
   - toolbox/
   - weserve/
   - weserve-tunnel/
