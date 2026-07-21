@@ -35,6 +35,12 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
+        # runAsUser: 999 (the image's own "redis" UID) makes kubelet start
+        # the container directly as that user, skipping the entrypoint's
+        # internal root->redis gosu switch — that switch calls setgroups()
+        # and wipes the fsGroup-injected supplementary group, which is what
+        # caused "Permission denied" writing the RDB file to /data.
+        runAsUser: 999
       containers:
         - name: archivist-redis
           image: redis:latest
