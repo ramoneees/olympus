@@ -89,6 +89,12 @@ spec:
             httpGet:
               path: /api/health/
               port: http
+              # TA's Django backend validates the Host header against
+              # TA_HOST; without this the probe's raw pod-IP Host header
+              # gets rejected with a 400.
+              httpHeaders:
+                - name: Host
+                  value: tubearchivist.ramoneees.com
             initialDelaySeconds: 20
             periodSeconds: 10
             timeoutSeconds: 3
@@ -97,6 +103,9 @@ spec:
             httpGet:
               path: /api/health/
               port: http
+              httpHeaders:
+                - name: Host
+                  value: tubearchivist.ramoneees.com
             initialDelaySeconds: 40
             periodSeconds: 30
             timeoutSeconds: 3
