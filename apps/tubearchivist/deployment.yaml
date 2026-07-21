@@ -1,0 +1,123 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tubearchivist-cache
+  namespace: apps
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tubearchivist
+  namespace: apps
+  labels:
+    app: tubearchivist
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: tubearchivist
+  template:
+    metadata:
+      labels:
+        app: tubearchivist
+      annotations:
+        reloader.stakater.com/auto: "true"
+    spec:
+      securityContext:
+        fsGroup: 1000
+      nodeSelector:
+        kubernetes.io/hostname: olympus
+      containers:
+        - name: tubearchivist
+          image: bbilly1/tubearchivist:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: ES_URL
+              value: "http://archivist-es:9200"
+            - name: REDIS_CON
+              value: "redis://archivist-redis:6379"
+            - name: HOST_UID
+              value: "1000"
+            - name: HOST_GID
+              value: "1000"
+            - name: TA_HOST
+              value: "https://tubearchivist.ramoneees.com"
+            - name: TZ
+              value: "Europe/Lisbon"
+            - name: TA_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: tubearchivist-secret
+                  key: ta-username
+            - name: TA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tubearchivist-secret
+                  key: ta-password
+            - name: ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tubearchivist-secret
+                  key: elastic-password
+          ports:
+            - name: http
+              containerPort: 8000
+          volumeMounts:
+            - name: youtube
+              mountPath: /youtube
+              subPath: youtube
+            - name: cache
+              mountPath: /cache
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: "2"
+              memory: 1Gi
+          readinessProbe:
+            httpGet:
+              path: /api/health/
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /api/health/
+              port: http
+            initialDelaySeconds: 40
+            periodSeconds: 30
+            timeoutSeconds: 3
+      volumes:
+        - name: youtube
+          persistentVolumeClaim:
+            claimName: media-library
+        - name: cache
+          persistentVolumeClaim:
+            claimName: tubearchivist-cache
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tubearchivist
+  namespace: apps
+spec:
+  type: ClusterIP
+  selector:
+    app: tubearchivist
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
