@@ -64,6 +64,12 @@ spec:
             - name: media
               mountPath: /data
               readOnly: true
+            # Transcode HLS segments are pure throwaway I/O deleted right
+            # after each session — keep them off the Longhorn-replicated
+            # config PVC so every write isn't synced over the network to
+            # other nodes for durability it doesn't need.
+            - name: transcode-cache
+              mountPath: /config/cache
           resources:
             requests:
               cpu: 200m
@@ -93,6 +99,8 @@ spec:
         - name: media
           persistentVolumeClaim:
             claimName: media-library
+        - name: transcode-cache
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
