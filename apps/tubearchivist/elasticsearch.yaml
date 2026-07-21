@@ -49,6 +49,8 @@ spec:
               value: "-Xms1g -Xmx1g"
             - name: discovery.type
               value: "single-node"
+            - name: path.repo
+              value: "/usr/share/elasticsearch/data/snapshot"
           ports:
             - name: http
               containerPort: 9200
