@@ -35,7 +35,13 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
-      runtimeClassName: nvidia
+      # GPU (NVENC) transcoding disabled for now: nvidia.com/gpu capacity on
+      # olympus is stuck at 0 due to an unresolved upstream gpu-operator gap
+      # with pre-installed drivers (driver.enabled=false never satisfies its
+      # own driver-container validation check). CPU transcoding is plenty for
+      # this homelab's concurrency. To re-enable once fixed, restore:
+      #   runtimeClassName: nvidia
+      # and add `nvidia.com/gpu: "1"` under resources.limits below.
       nodeSelector:
         kubernetes.io/hostname: olympus
       containers:
@@ -65,7 +71,6 @@ spec:
             limits:
               cpu: "4"
               memory: 4Gi
-              nvidia.com/gpu: "1"
           readinessProbe:
             httpGet:
               path: /health
