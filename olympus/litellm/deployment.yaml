@@ -76,6 +76,11 @@ spec:
                 secretKeyRef:
                   name: litellm-secret
                   key: gemini-api-key
+            - name: ALIBABA_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: alibaba-token-api-key
           volumeMounts:
             - name: config
               mountPath: /app/config.yaml
@@ -388,6 +393,102 @@ data:
           max_input_tokens: 1048576
           max_tokens: 30000
           supports_vision: true
+      # ─────────────────────────────────────────────────────────────────────────
+      # Alibaba Cloud — Qwen Token Plan (Model Studio compatible-mode endpoint)
+      # Single OpenAI-compatible base_url serving Qwen, Wan, DeepSeek, GLM and misc models.
+      # Context/output token limits below are estimates — adjust once confirmed against
+      # Alibaba Model Studio docs.
+      # ─────────────────────────────────────────────────────────────────────────
+      - model_name: qwen-plan/qwen3.8-max-preview
+        litellm_params:
+          model: openai/qwen3.8-max-preview
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          max_input_tokens: 262144
+          max_tokens: 32768
+          supports_vision: true
+      - model_name: qwen-plan/qwen3.7-plus
+        litellm_params:
+          model: openai/qwen3.7-plus
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          max_input_tokens: 131072
+          max_tokens: 32768
+          supports_vision: true
+      - model_name: qwen-plan/qwen3.7-max
+        litellm_params:
+          model: openai/qwen3.7-max
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          max_input_tokens: 131072
+          max_tokens: 32768
+      - model_name: qwen-plan/qwen3.6-flash
+        litellm_params:
+          model: openai/qwen3.6-flash
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          max_input_tokens: 131072
+          max_tokens: 32768
+          supports_vision: true
+      # Wan — image generation
+      - model_name: qwen-plan/wan2.7-image
+        litellm_params:
+          model: openai/wan2.7-image
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          mode: image_generation
+      - model_name: qwen-plan/wan2.7-image-pro
+        litellm_params:
+          model: openai/wan2.7-image-pro
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          mode: image_generation
+      # DeepSeek — via Alibaba token plan (separate route from the OpenRouter deepseek entries above)
+      - model_name: qwen-plan/deepseek-v4-pro
+        litellm_params:
+          model: openai/deepseek-v4-pro
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          max_input_tokens: 1048576
+          max_tokens: 1048576
+      # Zhipu AI — via Alibaba token plan (separate route from the ZAI direct entries above)
+      - model_name: qwen-plan/glm-5.2
+        litellm_params:
+          model: openai/glm-5.2
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          max_input_tokens: 202752
+          max_tokens: 131072
+      # HappyHorse — video generation
+      - model_name: qwen-plan/happyhorse-1.1-i2v
+        litellm_params:
+          model: openai/happyhorse-1.1-i2v
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          mode: video_generation
+      - model_name: qwen-plan/happyhorse-1.1-t2v
+        litellm_params:
+          model: openai/happyhorse-1.1-t2v
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          mode: video_generation
+      - model_name: qwen-plan/happyhorse-1.1-r2v
+        litellm_params:
+          model: openai/happyhorse-1.1-r2v
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          mode: video_generation
       # ─────────────────────────────────────────────────────────────────────────
       # Anthropic model names — routing groups for Claude Code compatibility
       # Claude Code uses ANTHROPIC_BASE_URL=http://litellm... and standard model names.
