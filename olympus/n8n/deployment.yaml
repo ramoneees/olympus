@@ -27,7 +27,7 @@ spec:
       containers:
         - name: n8n
           image: n8nio/n8n:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 5678
