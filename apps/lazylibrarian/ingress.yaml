@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: lazylibrarian
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`lazylibrarian.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: lazylibrarian
+          port: 5299
+  tls:
+    secretName: wildcard-ramoneees-com-tls

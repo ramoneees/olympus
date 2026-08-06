@@ -12,6 +12,8 @@ resources:
   - invoice-ninja/
   - ghost/
   - jellyfin/
+  - lazylibrarian/
+  - lidarr/
   - media-storage/
   - obsidian/
   - pack-website/
