@@ -13,13 +13,17 @@
 
 architecture: standalone
 
+# TEMP: pinned to latest — Bitnami removed versioned tags from Docker Hub.
+# Must be top-level `image:` — this chart does NOT read master.image.tag,
+# so that key was previously silently ignored (main pod kept pulling the
+# removed 7.4.3-debian-12-r0 tag despite this being "set").
+image:
+  tag: latest
+
 auth:
   enabled: false  # LAN-only, no auth needed for internal services
 
 master:
-  # TEMP: pinned to latest — Bitnami removed versioned tags from Docker Hub
-  image:
-    tag: latest
   configuration: |
     maxmemory 200mb
     maxmemory-policy allkeys-lru
