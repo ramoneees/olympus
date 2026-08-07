@@ -1,0 +1,85 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ghostfolio
+  namespace: apps
+  labels:
+    app: ghostfolio
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: ghostfolio
+  template:
+    metadata:
+      labels:
+        app: ghostfolio
+    spec:
+      containers:
+        - name: ghostfolio
+          image: ghostfolio/ghostfolio:latest
+          ports:
+            - name: http
+              containerPort: 3333
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3333"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: ghostfolio-secret
+                  key: database-url
+            - name: REDIS_HOST
+              value: "redis-master.databases.svc.cluster.local"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_PASSWORD
+              value: ""
+            - name: ACCESS_TOKEN_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: ghostfolio-secret
+                  key: access-token-salt
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ghostfolio-secret
+                  key: jwt-secret-key
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 3
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 40
+            periodSeconds: 30
+            timeoutSeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ghostfolio
+  namespace: apps
+spec:
+  type: ClusterIP
+  selector:
+    app: ghostfolio
+  ports:
+    - name: http
+      port: 3333
+      targetPort: 3333

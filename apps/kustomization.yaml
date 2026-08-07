@@ -3,8 +3,11 @@ kind: Kustomization
 resources:
   - adguard/
   - ai-git-bot/
+  - audiobookshelf/
+  - bazarr/
   - cloudbeaver/
   - firefly-iii/
+  - ghostfolio/
   - gitea/
   - gitea-runner/
   - home-assistant/

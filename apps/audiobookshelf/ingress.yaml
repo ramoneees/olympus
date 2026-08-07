@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: audiobookshelf
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`audiobookshelf.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: audiobookshelf
+          port: 80
+  tls:
+    secretName: wildcard-ramoneees-com-tls
