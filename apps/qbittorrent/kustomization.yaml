@@ -3,3 +3,5 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - ingress.yaml
+# secrets.yaml is applied manually with `kubectl apply -f` — not tracked in
+# git (see comment at the top of secrets.yaml).

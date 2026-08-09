@@ -38,6 +38,64 @@ spec:
       nodeSelector:
         kubernetes.io/hostname: olympus
       containers:
+        - name: gluetun
+          image: qmcgaw/gluetun:latest
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          env:
+            - name: VPN_SERVICE_PROVIDER
+              value: "nordvpn"
+            - name: VPN_TYPE
+              value: "openvpn"
+            - name: OPENVPN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nordvpn-secret
+                  key: openvpn-user
+            - name: OPENVPN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nordvpn-secret
+                  key: openvpn-password
+            # Restricts exit servers to this country; gluetun still picks
+            # the specific server from its own maintained list, so it
+            # self-heals if a given server is retired.
+            - name: SERVER_COUNTRIES
+              value: "Portugal"
+            # Ports qBittorrent must accept on the pod's normal interface —
+            # this is what keeps the WebUI (and kubelet probes) reachable
+            # from the LAN while all other traffic is forced through the tunnel.
+            - name: FIREWALL_INPUT_PORTS
+              value: "8080"
+            - name: TZ
+              value: "Europe/Lisbon"
+          volumeMounts:
+            - name: dev-net-tun
+              mountPath: /dev/net/tun
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 128Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 9999
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 9999
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
         - name: qbittorrent
           image: lscr.io/linuxserver/qbittorrent:latest
           imagePullPolicy: IfNotPresent
@@ -92,6 +150,10 @@ spec:
         - name: media
           persistentVolumeClaim:
             claimName: media-library
+        - name: dev-net-tun
+          hostPath:
+            path: /dev/net/tun
+            type: CharDevice
 ---
 apiVersion: v1
 kind: Service
