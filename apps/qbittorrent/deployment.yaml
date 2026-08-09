@@ -70,6 +70,10 @@ spec:
             # from the LAN while all other traffic is forced through the tunnel.
             - name: FIREWALL_INPUT_PORTS
               value: "8080"
+            # Default health server only binds 127.0.0.1, which kubelet's
+            # probes (arriving via the pod IP, not loopback) can't reach.
+            - name: HEALTH_SERVER_ADDRESS
+              value: ":9999"
             - name: TZ
               value: "Europe/Lisbon"
           volumeMounts:
