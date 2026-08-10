@@ -32,6 +32,10 @@ spec:
             - name: http
               containerPort: 5678
           env:
+            - name: TZ
+              value: "Europe/Lisbon"
+            - name: GENERIC_TIMEZONE
+              value: "Europe/Lisbon"
             - name: N8N_HOST
               value: "n8n.ramoneees.com"
             - name: N8N_PROTOCOL
