@@ -1,0 +1,118 @@
+# Beancount + Fava — plain-text ledger trial, git-synced from
+# https://git.ramoneees.com/ramoneees/beancount-ledger
+# Fava image: grostim/fava-docker (community, actively maintained)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: beancount
+  namespace: apps
+  labels:
+    app: beancount
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: beancount
+  template:
+    metadata:
+      labels:
+        app: beancount
+    spec:
+      containers:
+        - name: git-sync
+          image: registry.k8s.io/git-sync/git-sync:v4.7.0
+          env:
+            - name: GITSYNC_REPO
+              value: "https://git.ramoneees.com/ramoneees/beancount-ledger.git"
+            - name: GITSYNC_REF
+              value: "main"
+            - name: GITSYNC_ROOT
+              value: "/git"
+            - name: GITSYNC_LINK
+              value: "repo"
+            - name: GITSYNC_PERIOD
+              value: "30s"
+            - name: GITSYNC_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: beancount-secret
+                  key: gitsync-username
+            - name: GITSYNC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: beancount-secret
+                  key: gitsync-token
+          volumeMounts:
+            - name: ledger-data
+              mountPath: /git
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 64Mi
+        - name: fava
+          image: grostim/fava-docker:latest
+          ports:
+            - name: http
+              containerPort: 5000
+          env:
+            - name: BEANCOUNT_FILE
+              value: "/bean/repo/main.beancount"
+          volumeMounts:
+            - name: ledger-data
+              mountPath: /bean
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: ledger-data
+          persistentVolumeClaim:
+            claimName: beancount-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: beancount-data
+  namespace: apps
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 500Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: beancount
+  namespace: apps
+spec:
+  type: ClusterIP
+  selector:
+    app: beancount
+  ports:
+    - name: http
+      port: 5000
+      targetPort: 5000

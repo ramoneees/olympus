@@ -5,6 +5,7 @@ resources:
   - ai-git-bot/
   - audiobookshelf/
   - bazarr/
+  - beancount/
   - cloudbeaver/
   - firefly-iii/
   - ghostfolio/
