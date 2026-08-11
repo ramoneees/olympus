@@ -21,6 +21,8 @@ spec:
       labels:
         app: beancount
     spec:
+      securityContext:
+        fsGroup: 65533
       containers:
         - name: git-sync
           image: registry.k8s.io/git-sync/git-sync:v4.7.0
