@@ -13,6 +13,14 @@ data:
   config.yml: |
     localCustomFormatsPath: /config/custom_formats
     telemetry: true
+    # Pinned to work around an open upstream configarr bug: the
+    # recyclarr/config-templates repo removed sonarr/includes and
+    # radarr/includes (converted to bundled templates) and configarr:latest
+    # crashes with ENOENT trying to scandir them. This is the last commit
+    # before that conversion. Remove once raydak-labs/configarr#505 merges
+    # and ships in a release.
+    # https://github.com/raydak-labs/configarr/issues/504
+    recyclarrRevision: 4dfd407f6f30
     whisparrEnabled: false
     readarrEnabled: false
     lidarrEnabled: false
