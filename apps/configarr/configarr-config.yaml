@@ -24,6 +24,24 @@ data:
     whisparrEnabled: false
     readarrEnabled: false
     lidarrEnabled: false
+    # Custom PT-PT (European Portuguese) dubbed detection -- not covered by
+    # the Brazilian-only trash-guides-ptbr custom formats. Uses Sonarr/
+    # Radarr's native Language detection (id 18 = "Portuguese", distinct
+    # from "Portuguese (Brazil)") instead of fragile release-title regex.
+    customFormatDefinitions:
+      - trash_id: custom-pt-pt-dubbed
+        trash_scores:
+          default: 24000
+        trash_description: "PT-PT (European Portuguese) dubbed audio present"
+        name: "PT-PT Dubbed"
+        includeCustomFormatWhenRenaming: false
+        specifications:
+          - name: Portuguese Language
+            implementation: LanguageSpecification
+            negate: false
+            required: true
+            fields:
+              value: 18
     # ======================================================================
     # RADARR
     # ======================================================================
@@ -411,8 +429,14 @@ data:
               - f537cf427b64c38c8e36298f657e4828 # Scene
             assign_scores_to:
               - name: HD
-                score: -100000   
-          ############################ Tier Premiere Portuguese-Brazilian ############################  
+                score: -100000
+          ############################ Tier PT-PT (European Portuguese) ############################
+          - trash_ids:
+              - custom-pt-pt-dubbed # PT-PT Dubbed (European Portuguese audio)
+            assign_scores_to:
+              - name: HD
+                score: 24000
+          ############################ Tier Premiere Portuguese-Brazilian ############################
           ############################ Tier DUAL Portuguese-Brazilian ############################      
           - trash_ids:
               - custom-brazilian-group-tier-dual-audio # Pt-BR Group Dual Language
@@ -920,12 +944,18 @@ data:
             assign_scores_to:
               - name: HD
                 score: -100000
-          - trash_ids:                
+          - trash_ids:
               - 06d66ab109d4d2eddb2794d21526d140 # Retags
             assign_scores_to:
               - name: HD
-                score: -100000  
-          ############################ Tier Premiere Portuguese-Brazilian ############################  
+                score: -100000
+          ############################ Tier PT-PT (European Portuguese) ############################
+          - trash_ids:
+              - custom-pt-pt-dubbed # PT-PT Dubbed (European Portuguese audio)
+            assign_scores_to:
+              - name: HD
+                score: 24000
+          ############################ Tier Premiere Portuguese-Brazilian ############################
           ############################ Tier DUAL Portuguese-Brazilian ############################      
           - trash_ids:
               - custom-brazilian-group-tier-dual-audio # Pt-BR Group Dual Language
