@@ -1,0 +1,134 @@
+# Configarr sync — daily job that downloads TRaSH-guides-ptbr custom format
+# JSON definitions and applies scores/custom formats to Sonarr/Radarr via
+# their APIs, driven by the config in configarr-config.yaml.
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: configarr-sync
+  namespace: apps
+spec:
+  schedule: "0 3 * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          initContainers:
+            - name: download-custom-formats
+              image: curlimages/curl:latest
+              command:
+                - sh
+                - -c
+                - |
+                  set -e
+                  mkdir -p /config/custom_formats
+                  CHANNEL="stable"
+                  BASE_URL="https://github.com/marcosviniciusi/trash-guides-ptbr/releases/download/${CHANNEL}"
+
+                  download_format() {
+                    curl -fsSL --retry 3 --retry-delay 2 "$BASE_URL/$1" -o "/config/custom_formats/$1"
+                  }
+
+                  # PT-BR language/group tiers
+                  download_format 'custom-brazilian-group-tier-dual-audio.json'
+                  download_format 'custom-brazilian-dual-language.json'
+                  download_format 'custom-brazilian-group-tier-subtitles.json'
+                  download_format 'custom-brazilian-subtitles.json'
+                  download_format 'custom-brazilian-group-tier-dubbed.json'
+                  download_format 'custom-brazilian-dubbed.json'
+                  download_format 'custom-brazilian-group-tier-bad.json'
+                  download_format 'custom-us-group-tier-premium.json'
+
+                  # Streaming platforms
+                  download_format 'sonarr-custom-pt-br-globoplay.json'
+                  download_format 'radarr-custom-pt-br-globoplay.json'
+
+                  # Codec
+                  download_format 'radarr-custom-pt-br-x264.json'
+                  download_format 'radarr-custom-pt-br-x265.json'
+                  download_format 'radarr-custom-pt-br-h264.json'
+                  download_format 'radarr-custom-pt-br-h265.json'
+                  download_format 'sonarr-custom-pt-br-x264.json'
+                  download_format 'sonarr-custom-pt-br-x265.json'
+                  download_format 'sonarr-custom-pt-br-h264.json'
+                  download_format 'sonarr-custom-pt-br-h265.json'
+
+                  # Season pack
+                  download_format 'sonarr-custom-season-pack.json'
+
+                  # Release quality — Radarr
+                  download_format 'radarr-uhd-remux-release.json'
+                  download_format 'radarr-fhd-remux-release.json'
+                  download_format 'radarr-hd-remux-release.json'
+                  download_format 'radarr-uhd-bluray-release.json'
+                  download_format 'radarr-fhd-bluray-release.json'
+                  download_format 'radarr-hd-bluray-release.json'
+                  download_format 'radarr-uhd-web-release.json'
+                  download_format 'radarr-fhd-web-release.json'
+                  download_format 'radarr-hd-web-release.json'
+                  download_format 'radarr-custom-brazilian-dual-language.json'
+                  download_format 'radarr-custom-original-language.json'
+
+                  # Release quality — Sonarr
+                  download_format 'sonarr-uhd-remux-release.json'
+                  download_format 'sonarr-fhd-remux-release.json'
+                  download_format 'sonarr-hd-remux-release.json'
+                  download_format 'sonarr-uhd-bluray-release.json'
+                  download_format 'sonarr-fhd-bluray-release.json'
+                  download_format 'sonarr-hd-bluray-release.json'
+                  download_format 'sonarr-uhd-web-release.json'
+                  download_format 'sonarr-fhd-web-release.json'
+                  download_format 'sonarr-hd-web-release.json'
+                  download_format 'sonarr-custom-brazilian-dual-language.json'
+                  download_format 'sonarr-custom-original-language.json'
+
+                  ls -lah /config/custom_formats/
+              volumeMounts:
+                - name: custom-formats-storage
+                  mountPath: /config
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  cpu: 100m
+                  memory: 64Mi
+          containers:
+            - name: configarr
+              image: ghcr.io/raydak-labs/configarr:latest
+              imagePullPolicy: Always
+              volumeMounts:
+                - name: app-data
+                  mountPath: /app/repos
+                  subPath: configarr-repos
+                - name: configarr-config
+                  mountPath: /app/config/config.yml
+                  subPath: config.yml
+                - name: secret-volume
+                  mountPath: /app/config/secrets.yml
+                  subPath: secrets_yml
+                - name: custom-formats-storage
+                  mountPath: /config
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 256Mi
+          restartPolicy: Never
+          volumes:
+            - name: custom-formats-storage
+              emptyDir: {}
+            - name: app-data
+              persistentVolumeClaim:
+                claimName: configarr-data
+            - name: configarr-config
+              configMap:
+                name: configarr-config
+            - name: secret-volume
+              secret:
+                secretName: configarr-secret
