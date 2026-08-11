@@ -51,6 +51,39 @@ data:
         base_url: !secret RADARR_URL
         api_key: !secret RADARR_API_KEY
 
+        # Keep auto-searching for upgrades until a PT-BR/PT-PT dubbed
+        # release (24000+) is found, instead of stopping at the first
+        # release with a non-negative score (e.g. English-only at 0).
+        # qualities list mirrors what's already on the "HD" profile
+        # (SD through 1080p/Remux, 2160p excluded -- base tier).
+        quality_profiles:
+          - name: HD
+            upgrade:
+              allowed: true
+              until_quality: Remux-1080p
+              until_score: 20000
+            qualities:
+              - name: Remux-1080p
+              - name: Bluray-1080p
+              - name: WEB 1080p
+                qualities:
+                  - WEBDL-1080p
+                  - WEBRip-1080p
+              - name: HDTV-1080p
+              - name: Bluray-720p
+              - name: WEB 720p
+                qualities:
+                  - WEBDL-720p
+                  - WEBRip-720p
+              - name: HDTV-720p
+              - name: Bluray-576p
+              - name: Bluray-480p
+              - name: WEB 480p
+                qualities:
+                  - WEBDL-480p
+                  - WEBRip-480p
+              - name: SDTV
+
         custom_formats:
           ############################ AUDIO QUALITY ############################
           - trash_ids:
@@ -614,6 +647,39 @@ data:
       series:
         base_url: !secret SONARR_URL
         api_key: !secret SONARR_API_KEY
+
+        # Keep auto-searching for upgrades until a PT-BR/PT-PT dubbed
+        # release (24000+) is found, instead of stopping at the first
+        # release with a non-negative score (e.g. English-only at 0).
+        # qualities list mirrors what's already on the "HD" profile
+        # (SD through 1080p/Remux, 2160p excluded -- base tier).
+        quality_profiles:
+          - name: HD
+            upgrade:
+              allowed: true
+              until_quality: Bluray-1080p Remux
+              until_score: 20000
+            qualities:
+              - name: Bluray-1080p Remux
+              - name: Bluray-1080p
+              - name: WEB 1080p
+                qualities:
+                  - WEBDL-1080p
+                  - WEBRip-1080p
+              - name: HDTV-1080p
+              - name: Bluray-720p
+              - name: WEB 720p
+                qualities:
+                  - WEBDL-720p
+                  - WEBRip-720p
+              - name: HDTV-720p
+              - name: Bluray-576p
+              - name: Bluray-480p
+              - name: WEB 480p
+                qualities:
+                  - WEBDL-480p
+                  - WEBRip-480p
+              - name: SDTV
 
         custom_formats:
           ############################ AUDIO QUALITY ############################
