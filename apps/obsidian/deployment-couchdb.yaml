@@ -29,7 +29,6 @@ spec:
               cpu: 10m
               memory: 16Mi
             limits:
-              cpu: 50m
               memory: 32Mi
       containers:
         - name: couchdb
@@ -62,7 +61,6 @@ spec:
               cpu: 50m
               memory: 256Mi
             limits:
-              cpu: 200m
               memory: 512Mi
           livenessProbe:
             exec:

@@ -51,7 +51,6 @@ spec:
               cpu: 50m
               memory: 128Mi
             limits:
-              cpu: 500m
               memory: 512Mi
       containers:
         - name: precisase
@@ -108,7 +107,6 @@ spec:
               cpu: 100m
               memory: 256Mi
             limits:
-              cpu: 500m
               memory: 512Mi
           readinessProbe:
             httpGet:
