@@ -50,6 +50,19 @@ gitea:
         secretKeyRef:
           name: gitea-db-secret
           key: password
+    # Override app.ini cache/session/queue to use shared redis (not valkey cluster)
+    - name: GITEA__cache__ADAPTER
+      value: redis
+    - name: GITEA__cache__HOST
+      value: redis://redis-master.databases.svc.cluster.local:6379/0
+    - name: GITEA__session__PROVIDER
+      value: redis
+    - name: GITEA__session__PROVIDER_CONFIG
+      value: redis://redis-master.databases.svc.cluster.local:6379/1
+    - name: GITEA__queue__TYPE
+      value: redis
+    - name: GITEA__queue__CONN_STR
+      value: redis://redis-master.databases.svc.cluster.local:6379/2
 
 # Disable built-in PostgreSQL and Redis — we use shared instances
 postgresql:
