@@ -7,6 +7,7 @@ grafana:
     existingSecret: grafana-admin
     userKey: admin-user
     passwordKey: admin-password
+  replicas: 1  # single replica — homelab doesn't need HA Grafana
   persistence:
     enabled: true
     storageClassName: longhorn
@@ -16,13 +17,20 @@ grafana:
       cpu: 100m
       memory: 256Mi
     limits:
-      cpu: 500m
       memory: 512Mi
   sidecar:
     datasources:
       enabled: true
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
     dashboards:
       enabled: true
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
   additionalDataSources:
     - name: Loki
       type: loki
@@ -33,13 +41,12 @@ grafana:
 prometheus:
   prometheusSpec:
     retention: 15d
-    retentionSize: 16GB  # size cap — leaves ~4Gi headroom on 40Gi PVC; prevents PVC exhaustion
+    retentionSize: 12GB  # reduced — 40Gi PVC, 12GB cap leaves plenty of headroom
     resources:
       requests:
         cpu: 200m
         memory: 512Mi
       limits:
-        cpu: "1"
         memory: 2Gi
     storageSpec:
       volumeClaimTemplate:
@@ -49,7 +56,7 @@ prometheus:
             - ReadWriteOnce
           resources:
             requests:
-              storage: 40Gi
+              storage: 20Gi  # reduced from 40Gi — 15d retention + 12GB cap fits in 20Gi
     # Scrape all namespaces
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
@@ -62,8 +69,7 @@ alertmanager:
         cpu: 50m
         memory: 64Mi
       limits:
-        cpu: 200m
-        memory: 256Mi
+        memory: 128Mi  # reduced — alertmanager uses <40Mi
     storage:
       volumeClaimTemplate:
         spec:

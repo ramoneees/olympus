@@ -21,6 +21,8 @@ loki:
   limits_config:
     retention_period: 168h  # 7 days
     max_query_series: 500
+    reject_old_samples: true
+    reject_old_samples_max_age: 168h
   compactor:
     retention_enabled: true
     delete_request_store: filesystem
@@ -33,7 +35,6 @@ singleBinary:
       cpu: 100m
       memory: 256Mi
     limits:
-      cpu: 500m
       memory: 1Gi
   persistence:
     enabled: true
@@ -54,4 +55,8 @@ backend:
 chunksCache:
   enabled: false
 resultsCache:
+  enabled: false
+
+# Disable canary — unnecessary for 2-node homelab
+lokiCanary:
   enabled: false
