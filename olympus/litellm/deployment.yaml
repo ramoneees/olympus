@@ -196,9 +196,9 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
-      - model_name: glm-5.2
+      - model_name: glm-5.3
         litellm_params:
-          model: openai/glm-5.2
+          model: openai/glm-5.3
           api_base: https://api.z.ai/api/coding/paas/v4
           api_key: os.environ/GLM_API_KEY
         model_info:
@@ -459,7 +459,7 @@ data:
           max_input_tokens: 1048576
           max_tokens: 1048576
       # Zhipu AI — via Alibaba token plan (separate route from the ZAI direct entries above)
-      - model_name: qwen-plan/glm-5.2
+      - model_name: glm-5.2
         litellm_params:
           model: openai/glm-5.2
           api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
