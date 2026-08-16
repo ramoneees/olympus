@@ -11,3 +11,9 @@ configMapGenerator:
       - values.yaml=values.yaml
     options:
       disableNameSuffixHash: true
+  # Required by pgvector-reindex-job.yaml (mounts /scripts/migrate-to-bge-m3.sql)
+  - name: pgvector-migration-scripts
+    files:
+      - migrate-to-bge-m3.sql=migrate-to-bge-m3.sql
+    options:
+      disableNameSuffixHash: true
