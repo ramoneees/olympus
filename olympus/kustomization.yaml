@@ -6,6 +6,5 @@ resources:
   - tei/
   - ollama/
   - monitoring/
-  - openclaude/
   - openwebui/
 
