@@ -23,8 +23,8 @@ spec:
           envFrom:
             - secretRef: {name: runner-registration}
           env:
-            - name: REPO_URL
-              value: "https://github.com/ramoneees/pack"
+            - name: RUNNER_REPO
+              value: "ramoneees/pack"
             - name: RUNNER_NAME
               value: "olympus-pack-1"
             - name: RUNNER_LABELS
