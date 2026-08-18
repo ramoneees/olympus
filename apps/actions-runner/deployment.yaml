@@ -19,7 +19,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: runner
-          image: summerwind/actions-runner:v2.327.1
+          image: summerwind/actions-runner:v2.336.0-ubuntu-24.04
           envFrom:
             - secretRef: {name: runner-registration}
           env:
