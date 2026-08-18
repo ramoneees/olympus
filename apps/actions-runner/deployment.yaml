@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pack-runner
+  namespace: actions-runner
+  labels: {app: pack-runner}
+spec:
+  replicas: 1
+  strategy: {type: Recreate}   # single identity; never two runners on one PVC
+  selector:
+    matchLabels: {app: pack-runner}
+  template:
+    metadata:
+      labels: {app: pack-runner}
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: runner
+          image: summerwind/actions-runner:v2.327.1
+          envFrom:
+            - secretRef: {name: runner-registration}
+          env:
+            - name: REPO_URL
+              value: "https://github.com/ramoneees/pack"
+            - name: RUNNER_NAME
+              value: "olympus-pack-1"
+            - name: RUNNER_LABELS
+              value: "self-hosted,linux,X64,pack-linux"
+            - name: RUNNER_WORKDIR
+              value: /home/runner/_work
+          resources:
+            requests: {cpu: 250m, memory: 1Gi}
+            limits: {cpu: "4", memory: 10Gi}
+          volumeMounts:
+            - {name: home, mountPath: /home/runner}
+            - {name: docker, mountPath: /var/run/docker.sock}
+      volumes:
+        - name: home
+          persistentVolumeClaim: {claimName: runner-home}
+        - name: docker
+          hostPath: {path: /var/run/docker.sock}
