@@ -36,9 +36,12 @@ spec:
             limits: {cpu: "4", memory: 10Gi}
           volumeMounts:
             - {name: home, mountPath: /home/runner}
+            - {name: runner, mountPath: /runner}
             - {name: docker, mountPath: /var/run/docker.sock}
       volumes:
         - name: home
           persistentVolumeClaim: {claimName: runner-home}
+        - name: runner
+          emptyDir: {}
         - name: docker
           hostPath: {path: /var/run/docker.sock}
