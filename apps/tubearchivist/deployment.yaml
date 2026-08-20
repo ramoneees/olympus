@@ -42,6 +42,8 @@ spec:
           image: bbilly1/tubearchivist:latest
           imagePullPolicy: IfNotPresent
           env:
+            - name: TA_AUTO_UPDATE_YTDLP
+              value: "release"
             - name: ES_URL
               value: "http://archivist-es:9200"
             - name: REDIS_CON
