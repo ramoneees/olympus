@@ -29,6 +29,7 @@ resources:
   - qbittorrent/
   - radarr/
   - sonarr/
+  - tend-website/
   - toolbox/
   - tubearchivist/
   - weserve/
