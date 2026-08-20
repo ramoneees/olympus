@@ -42,6 +42,10 @@ spec:
           image: bbilly1/tubearchivist:latest
           imagePullPolicy: IfNotPresent
           env:
+            # yt-dlp atualizado pelo run.sh cai em /root/.local/bin; sem isto
+            # o Python continua resolvendo o yt_dlp velho do user-site.
+            - name: PYTHONPATH
+              value: "/root/.local/bin"
             - name: TA_AUTO_UPDATE_YTDLP
               value: "release"
             - name: ES_URL
