@@ -196,6 +196,14 @@ data:
         model_info:
           max_input_tokens: 202752
           max_tokens: 131072
+      - model_name: glm-5.2
+        litellm_params:
+          model: openai/glm-5.2
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 1048576
+          max_tokens: 131072
       - model_name: glm-5.3
         litellm_params:
           model: openai/glm-5.3
@@ -408,6 +416,15 @@ data:
           max_input_tokens: 262144
           max_tokens: 32768
           supports_vision: true
+      - model_name: qwen-plan/qwen3.8-max
+        litellm_params:
+          model: openai/qwen3.8-max
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          max_input_tokens: 262144
+          max_tokens: 32768
+          supports_vision: true
       - model_name: qwen-plan/qwen3.7-plus
         litellm_params:
           model: openai/qwen3.7-plus
@@ -449,6 +466,14 @@ data:
           api_key: os.environ/ALIBABA_API_KEY
         model_info:
           mode: image_generation
+      # Qwen — image generation
+      - model_name: qwen-plan/qwen-image-3.0-pro
+        litellm_params:
+          model: openai/qwen-image-3.0-pro
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          mode: image_generation
       # DeepSeek — via Alibaba token plan (separate route from the OpenRouter deepseek entries above)
       - model_name: qwen-plan/deepseek-v4-pro
         litellm_params:
@@ -458,15 +483,24 @@ data:
         model_info:
           max_input_tokens: 1048576
           max_tokens: 1048576
-      # Zhipu AI — via Alibaba token plan (separate route from the ZAI direct entries above)
-      - model_name: glm-5.2
+      - model_name: qwen-plan/deepseek-v4-pro-0813
         litellm_params:
-          model: openai/glm-5.2
+          model: openai/deepseek-v4-pro-0813
           api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
           api_key: os.environ/ALIBABA_API_KEY
         model_info:
-          max_input_tokens: 202752
-          max_tokens: 131072
+          max_input_tokens: 1048576
+          max_tokens: 1048576
+      - model_name: qwen-plan/deepseek-v4-flash-0731
+        litellm_params:
+          model: openai/deepseek-v4-flash-0731
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          max_input_tokens: 1048576
+          max_tokens: 1048576
+      # NOTE: glm-5.2 via Alibaba token plan removed 2026-08-21 — GLM stays on the
+      # ZAI coding plan only (direct entries above); Qwen plan is for Qwen/Wan/DeepSeek.
       # HappyHorse — video generation
       - model_name: qwen-plan/happyhorse-1.1-i2v
         litellm_params:
@@ -489,6 +523,28 @@ data:
           api_key: os.environ/ALIBABA_API_KEY
         model_info:
           mode: video_generation
+      # Qwen — audio: ASR, TTS, realtime
+      - model_name: qwen-plan/qwen-audio-3.0-asr-flash
+        litellm_params:
+          model: openai/qwen-audio-3.0-asr-flash
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          mode: audio_transcription
+      - model_name: qwen-plan/qwen-audio-3.0-tts-plus
+        litellm_params:
+          model: openai/qwen-audio-3.0-tts-plus
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          mode: audio
+      - model_name: qwen-plan/qwen-audio-3.0-realtime-plus
+        litellm_params:
+          model: openai/qwen-audio-3.0-realtime-plus
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          mode: audio
       # ─────────────────────────────────────────────────────────────────────────
       # Anthropic model names — routing groups for Claude Code compatibility
       # Claude Code uses ANTHROPIC_BASE_URL=http://litellm... and standard model names.
