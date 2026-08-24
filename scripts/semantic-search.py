@@ -135,8 +135,6 @@ def main():
         print("ERROR: provide --query or --stats")
         sys.exit(1)
     
-    results = search(args.tei, args.tei, args.query, args.namespace, args.limit)
-    # Fix: call with correct args
     results = search(pg_url, args.tei, args.query, args.namespace, args.limit)
     
     if args.json:
