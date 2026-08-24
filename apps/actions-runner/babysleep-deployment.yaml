@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: babysleep-runner
+  namespace: actions-runner
+  labels: {app: babysleep-runner}
+spec:
+  replicas: 1
+  strategy: {type: Recreate}   # single identity; never two runners on one PVC
+  selector:
+    matchLabels: {app: babysleep-runner}
+  template:
+    metadata:
+      labels: {app: babysleep-runner}
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: runner
+          image: summerwind/actions-runner:v2.336.0-ubuntu-24.04
+          envFrom:
+            - secretRef: {name: babysleep-runner-registration}
+          env:
+            - name: RUNNER_REPO
+              value: "ramoneees/baby-sleep"
+            - name: RUNNER_NAME
+              value: "olympus-babysleep-1"
+            - name: RUNNER_LABELS
+              value: "self-hosted,linux,X64,babysleep-linux"
+            - name: RUNNER_WORKDIR
+              value: /home/runner/_work
+          resources:
+            requests: {cpu: 250m, memory: 1Gi}
+            limits: {cpu: "4", memory: 10Gi}
+          volumeMounts:
+            - {name: home, mountPath: /home/runner}
+            - {name: runner, mountPath: /runner}
+            - {name: docker, mountPath: /var/run/docker.sock}
+      volumes:
+        - name: home
+          persistentVolumeClaim: {claimName: babysleep-runner-home}
+        - name: runner
+          emptyDir: {}
+        - name: docker
+          hostPath: {path: /var/run/docker.sock}
