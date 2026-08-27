@@ -459,6 +459,15 @@ data:
           max_input_tokens: 131072
           max_tokens: 32768
           supports_vision: true
+      - model_name: qwen-plan/qwen3.8-flash
+        litellm_params:
+          model: openai/qwen3.8-flash
+          api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+          api_key: os.environ/ALIBABA_API_KEY
+        model_info:
+          max_input_tokens: 131072
+          max_tokens: 32768
+          supports_vision: true
       # Wan — image generation
       - model_name: qwen-plan/wan2.7-image
         litellm_params:
