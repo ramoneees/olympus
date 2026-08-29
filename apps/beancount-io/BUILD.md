@@ -67,6 +67,33 @@ Note the S3 config is **not optional**: `AssetStorageService` builds an
 `TEMP_ASSETS_*` / `PERM_ASSETS_*` variables unset kills the process at boot with
 `Error: Region is missing`.
 
+### 4. `src/foundation/sendgrid.ts` + `src/foundation/factory.ts` — SMTP transport
+
+Upstream only speaks SendGrid's HTTP API. `createSignUpSession` **rethrows**
+delivery failures, so without a valid `SG.` key `signUp` returns
+`INTERNAL_SERVER_ERROR` and account creation is impossible — it does not
+degrade to a silent no-op.
+
+`sendgrid.ts` gains an `SmtpMailer` implementing the same two-method
+`ISendGrid` interface on top of `nodemailer` (added to `package.json`), and
+`factory.ts` selects it whenever `SMTP_HOST` is set:
+
+```diff
+-    sendgrid:
+-      config.env === "production"
++    sendgrid: process.env.SMTP_HOST
++      ? new SmtpMailer({ host: ..., port: ... })
++      : config.env === "production"
+         ? new SendGrid(sendGridOpts)
+         : new ConsoleSendGrid(sendGridOpts),
+```
+
+Points at the in-cluster MailHog, so signup OTPs, password resets and email
+verification all stay on-network and are readable in MailHog's web UI. Leaving
+`SMTP_HOST` unset restores upstream behaviour exactly. `sendTemplate` has no
+local equivalent of SendGrid's server-side templates, so it delivers the
+template id and its dynamic data as readable text.
+
 ## Build and push
 
 Both cluster nodes are amd64; an Apple Silicon Mac must cross-build. OrbStack's

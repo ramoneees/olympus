@@ -30,7 +30,7 @@ spec:
         kubernetes.io/hostname: olympus
       initContainers:
         - name: migrate
-          image: git.ramoneees.com/ramoneees/beancount-io-backend:b127f3a-r3
+          image: git.ramoneees.com/ramoneees/beancount-io-backend:b127f3a-r4
           command: ["node", "scripts/migrate-deploy.js"]
           env:
             - name: NODE_ENV
@@ -48,7 +48,7 @@ spec:
               memory: 768Mi
       containers:
         - name: backend
-          image: git.ramoneees.com/ramoneees/beancount-io-backend:b127f3a-r3
+          image: git.ramoneees.com/ramoneees/beancount-io-backend:b127f3a-r4
           ports:
             - name: http
               containerPort: 4104
@@ -199,6 +199,17 @@ spec:
                 secretKeyRef:
                   name: beancount-io-secret
                   key: s3-secret-key
+
+            # --- Outgoing mail (MailHog, in-cluster) ---
+            # Required for signup: createSignUpSession rethrows delivery
+            # failures, so with no working mail transport `signUp` fails
+            # outright rather than degrading. Upstream only speaks SendGrid's
+            # HTTP API, so the image carries an SmtpMailer patch (see BUILD.md)
+            # selected by the presence of SMTP_HOST.
+            - name: SMTP_HOST
+              value: mailhog.apps.svc.cluster.local
+            - name: SMTP_PORT
+              value: "1025"
 
             - name: ASK_AI_MODE
               value: bql
