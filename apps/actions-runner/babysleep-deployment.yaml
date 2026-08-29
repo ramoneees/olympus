@@ -30,7 +30,9 @@ spec:
               # runner binaries MUST live on the PVC. Always overwrite with
               # the image's version (summerwind's old bin/ also existed, so
               # an existence check is useless).
-              cp -a /home/runner/. /pvc/
+              # cp -r not -a: preserving owner/timestamps on the PVC root
+              # fails with EPERM and aborts the init container.
+              cp -r /home/runner/. /pvc/
               rm -f /pvc/.runner /pvc/.credentials /pvc/.credentials_rsaparams
           volumeMounts:
             - {name: home, mountPath: /pvc}
