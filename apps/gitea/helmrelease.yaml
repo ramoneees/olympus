@@ -21,6 +21,7 @@ spec:
   upgrade:
     remediation:
       retries: 3
+    timeout: 10m
   valuesFrom:
     - kind: ConfigMap
       name: gitea-helm-values
