@@ -94,6 +94,27 @@ verification all stay on-network and are readable in MailHog's web UI. Leaving
 local equivalent of SendGrid's server-side templates, so it delivers the
 template id and its dynamic data as readable text.
 
+### 5. `src/shared/cookie-utils.ts` — auth cookie domain
+
+Upstream hardcodes the shared parent domain so the cookie can span
+`api.v3.beancount.io` / `dashboard.v3.beancount.io`:
+
+```diff
+-    domain: isProduction ? ".beancount.io" : undefined,
++    domain: process.env.AUTH_COOKIE_DOMAIN || undefined,
+```
+
+On any other host the browser **rejects** a cookie scoped to a domain it does
+not belong to. Login succeeds and issues a JWT, the cookie is silently dropped,
+and the next request is unauthenticated — the UI reports *"Your session has
+expired. Please log in again."* Symptom looks like a session/expiry bug; it is
+not.
+
+Leave `AUTH_COOKIE_DOMAIN` **unset** for a single-host install: that yields a
+host-only cookie, which is correct here because the dashboard and the API are
+already same-origin (see patch 1 / `ingress.yaml`). Set it only if you split
+them across subdomains.
+
 ## Build and push
 
 Both cluster nodes are amd64; an Apple Silicon Mac must cross-build. OrbStack's

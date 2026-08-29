@@ -30,7 +30,7 @@ spec:
         kubernetes.io/hostname: olympus
       initContainers:
         - name: migrate
-          image: git.ramoneees.com/ramoneees/beancount-io-backend:b127f3a-r4
+          image: git.ramoneees.com/ramoneees/beancount-io-backend:b127f3a-r5
           command: ["node", "scripts/migrate-deploy.js"]
           env:
             - name: NODE_ENV
@@ -48,7 +48,7 @@ spec:
               memory: 768Mi
       containers:
         - name: backend
-          image: git.ramoneees.com/ramoneees/beancount-io-backend:b127f3a-r4
+          image: git.ramoneees.com/ramoneees/beancount-io-backend:b127f3a-r5
           ports:
             - name: http
               containerPort: 4104
