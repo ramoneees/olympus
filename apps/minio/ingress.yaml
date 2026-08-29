@@ -1,0 +1,38 @@
+# s3.ramoneees.com  -> S3 API   (n8n, beancount-io, mc client)
+# minio.ramoneees.com -> web console
+#
+# Both single-level names, to stay inside the *.ramoneees.com wildcard cert.
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: minio-s3
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`s3.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: minio
+          port: 9000
+  tls:
+    secretName: wildcard-ramoneees-com-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: minio-console
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`minio.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: minio
+          port: 9001
+  tls:
+    secretName: wildcard-ramoneees-com-tls

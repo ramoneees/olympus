@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - ingress.yaml
   - mariadb-backup-recurring.yaml
+  - minio-backup-recurring.yaml
   - pg-backup-recurring.yaml
   - redis-backup-recurring.yaml
 # b2-credentials.yaml excluded — applied manually (contains secrets, not tracked in git)

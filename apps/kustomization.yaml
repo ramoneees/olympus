@@ -22,6 +22,7 @@ resources:
   - lazylibrarian/
   - lidarr/
   - media-storage/
+  - minio/
   - obsidian/
   - pack-website/
   - paperclip/
