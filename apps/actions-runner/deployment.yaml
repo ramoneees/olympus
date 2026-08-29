@@ -26,10 +26,11 @@ spec:
           command: ["bash", "-c"]
           args:
             - |
-              if [ ! -d /pvc/bin ]; then
-                echo "seeding runner binaries onto PVC"
-                cp -a /home/runner/. /pvc/
-              fi
+              # PVC mount at /home/runner shadows the image contents, so the
+              # runner binaries MUST live on the PVC. Always overwrite with
+              # the image's version (summerwind's old bin/ also existed, so
+              # an existence check is useless).
+              cp -a /home/runner/. /pvc/
               rm -f /pvc/.runner /pvc/.credentials /pvc/.credentials_rsaparams
           volumeMounts:
             - {name: home, mountPath: /pvc}
