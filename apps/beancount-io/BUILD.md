@@ -48,6 +48,25 @@ an export named 'createJsonLinesResponseHandler'
 On upgrade, re-check what the resolved `@ai-sdk/*` packages depend on rather
 than assuming 5.0.33 is still right.
 
+### 3. `src/features/s3/service/asset-storage-service.ts` — path-style S3
+
+```diff
+     this.s3Client = new S3Client({
+       region: config.region,
+       endpoint: config.endpoint,
++      forcePathStyle: Boolean(config.endpoint),
+```
+
+Upstream only ever targets real AWS, so it uses virtual-hosted addressing. With
+a custom endpoint that resolves `{bucket}.minio.apps.svc.cluster.local`, which
+does not exist in cluster DNS. Gating on `config.endpoint` keeps real AWS on its
+default behaviour.
+
+Note the S3 config is **not optional**: `AssetStorageService` builds an
+`S3Client` in its constructor during `buildServiceLayer`, so leaving the
+`TEMP_ASSETS_*` / `PERM_ASSETS_*` variables unset kills the process at boot with
+`Error: Region is missing`.
+
 ## Build and push
 
 Both cluster nodes are amd64; an Apple Silicon Mac must cross-build. OrbStack's
