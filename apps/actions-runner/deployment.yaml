@@ -17,9 +17,39 @@ spec:
         kubernetes.io/hostname: olympus
       securityContext:
         fsGroup: 1000
+      initContainers:
+        # Official image keeps its binaries in /home/runner (the PVC mount).
+        # Seed them onto the PVC once; wipe stale identity from the old
+        # summerwind registration (GitHub no longer knows that runner).
+        - name: bootstrap
+          image: ghcr.io/actions/actions-runner:2.337.0
+          command: ["bash", "-c"]
+          args:
+            - |
+              if [ ! -d /pvc/bin ]; then
+                echo "seeding runner binaries onto PVC"
+                cp -a /home/runner/. /pvc/
+              fi
+              rm -f /pvc/.runner /pvc/.credentials /pvc/.credentials_rsaparams
+          volumeMounts:
+            - {name: home, mountPath: /pvc}
       containers:
         - name: runner
-          image: summerwind/actions-runner:v2.336.0-ubuntu-24.04
+          image: ghcr.io/actions/actions-runner:2.337.0
+          command: ["bash", "-c"]
+          args:
+            - |
+              cd /home/runner
+              if [ ! -f .runner ]; then
+                echo "registering ${RUNNER_NAME} for ${RUNNER_REPO}"
+                ./config.sh --url "https://github.com/${RUNNER_REPO}" \
+                  --token "${RUNNER_TOKEN}" \
+                  --name "${RUNNER_NAME}" \
+                  --labels "${RUNNER_LABELS}" \
+                  --work /home/runner/_work \
+                  --unattended --disableupdate
+              fi
+              exec ./run.sh
           envFrom:
             - secretRef: {name: runner-registration}
           env:
@@ -36,12 +66,9 @@ spec:
             limits: {cpu: "4", memory: 10Gi}
           volumeMounts:
             - {name: home, mountPath: /home/runner}
-            - {name: runner, mountPath: /runner}
             - {name: docker, mountPath: /var/run/docker.sock}
       volumes:
         - name: home
           persistentVolumeClaim: {claimName: runner-home}
-        - name: runner
-          emptyDir: {}
         - name: docker
           hostPath: {path: /var/run/docker.sock}
