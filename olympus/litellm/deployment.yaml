@@ -692,6 +692,31 @@ data:
         rpm_limit: 30
         tpm_limit: 100000
         order: 2
+      # gpt-4o alias — beancount-io hardcodes the model id "gpt-4o" in
+      # createFallbackLanguageModel, so the name must exist here for its
+      # OPENAI_BASE_URL route to resolve. Mirrors the "smart" group's targets.
+      - model_name: gpt-4o
+        litellm_params:
+          model: openai/glm-5-turbo
+          api_base: https://api.z.ai/api/coding/paas/v4
+          api_key: os.environ/GLM_API_KEY
+        model_info:
+          max_input_tokens: 202752
+          max_tokens: 131072
+        rpm_limit: 60
+        tpm_limit: 200000
+        order: 1
+      - model_name: gpt-4o
+        litellm_params:
+          model: MiniMax-M2.5
+          api_base: https://api.minimax.io/v1
+          api_key: os.environ/MINIMAX_API_KEY
+        model_info:
+          max_input_tokens: 196608
+          max_tokens: 16384
+        rpm_limit: 30
+        tpm_limit: 100000
+        order: 2
       # Agent routing — high-throughput, short-to-medium requests (Hermes)
       - model_name: agents
         litellm_params:

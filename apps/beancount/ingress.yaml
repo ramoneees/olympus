@@ -8,7 +8,10 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`beancount.ramoneees.com`)
+    # Temporary during the beancount-io cutover: beancount.ramoneees.com now
+    # serves the beancount-io dashboard (apps/beancount-io/). Fava stays
+    # reachable here until the new stack is verified, then this app is removed.
+    - match: Host(`fava.ramoneees.com`)
       kind: Rule
       services:
         - name: beancount

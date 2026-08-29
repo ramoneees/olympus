@@ -1,0 +1,202 @@
+# beancount-io backend-v2 — GraphQL/REST gateway, auth, and the Gitea control
+# plane. Drizzle migrations run as an initContainer (idempotent, and re-runs on
+# every image bump; replicas=1 + Recreate means no concurrent migrator).
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: beancount-io-backend
+  namespace: apps
+  labels:
+    app: beancount-io
+    component: backend
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: beancount-io
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: beancount-io
+        component: backend
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
+      initContainers:
+        - name: migrate
+          image: git.ramoneees.com/ramoneees/beancount-io-backend:b127f3a
+          command: ["node", "scripts/migrate-deploy.js"]
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: POSTGRES_BACKEND_URI
+              valueFrom:
+                secretKeyRef:
+                  name: beancount-io-secret
+                  key: postgres-uri
+          resources:
+            requests:
+              cpu: 50m
+              memory: 256Mi
+            limits:
+              memory: 768Mi
+      containers:
+        - name: backend
+          image: git.ramoneees.com/ramoneees/beancount-io-backend:b127f3a
+          ports:
+            - name: http
+              containerPort: 4104
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "4104"
+            - name: SERVER_URL
+              value: https://beancount-api.ramoneees.com
+            - name: DASHBOARD_URL
+              value: https://beancount.ramoneees.com
+            - name: AUTH_JWT_EXP_MINUTES
+              value: "525600"
+
+            # --- Data stores ---
+            - name: POSTGRES_BACKEND_URI
+              valueFrom:
+                secretKeyRef:
+                  name: beancount-io-secret
+                  key: postgres-uri
+            - name: REDIS_URI
+              value: redis://beancount-io-redis.apps.svc.cluster.local:6379
+
+            # --- Ledger service ---
+            - name: FAVA_API_URL
+              value: http://beancount-io-ledger.apps.svc.cluster.local:8000
+
+            # --- Gitea (existing cluster instance, reused) ---
+            # backend-v2 authenticates as a sitewide Gitea admin and provisions
+            # a Gitea user per beancount-io account via the admin API.
+            - name: GITEA_HOST_NAME
+              value: gitea-web.apps.svc.cluster.local
+            - name: GITEA_HTTP_PORT
+              value: "3000"
+            - name: EXTERNAL_GITEA_HOST_NAME
+              value: git.ramoneees.com
+            - name: EXTERNAL_GITEA_HTTP_PORT
+              value: "443"
+            - name: GITEA_SSH_PORT
+              value: "2222"
+            - name: SSH_PROXY_ENABLED
+              value: "false"
+            - name: FAVA_API_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: beancount-io-secret
+                  key: gitea-admin-user
+            - name: FAVA_API_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: beancount-io-secret
+                  key: gitea-admin-password
+
+            # --- Secrets ---
+            - name: AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: beancount-io-secret
+                  key: auth-secret
+            - name: COOKIE_SECRETS
+              valueFrom:
+                secretKeyRef:
+                  name: beancount-io-secret
+                  key: cookie-secrets
+            - name: ADMIN_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: beancount-io-secret
+                  key: admin-token
+            - name: METRICS_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: beancount-io-secret
+                  key: metrics-api-token
+            # Private ES256 JWKS. Without it every OAuth route — including the
+            # discovery document the MCP endpoint's 401 points at — answers 503.
+            - name: OAUTH_JWKS
+              valueFrom:
+                secretKeyRef:
+                  name: beancount-io-secret
+                  key: oauth-jwks
+
+            # --- AI via LiteLLM ---
+            # @ai-sdk/openai v4 reads OPENAI_BASE_URL from the environment when
+            # no explicit baseURL is passed, and beancount-io passes none, so
+            # the OpenAI provider lands on LiteLLM instead of api.openai.com.
+            # The model id is hardcoded "gpt-4o" in createFallbackLanguageModel,
+            # hence the matching alias in the LiteLLM config.
+            #
+            # BLOCKEDEN_ACCESS_KEY MUST stay empty: it is only consulted when
+            # ANTHROPIC_API_KEY is unset, and any truthy value (including
+            # upstream's "local-dev-placeholder") registers BlockEden's hosted
+            # gateway as the PRIMARY provider — prompts would leave the network.
+            - name: BLOCKEDEN_ACCESS_KEY
+              value: ""
+            - name: OPENAI_BASE_URL
+              value: http://litellm.olympus.svc.cluster.local:4000/v1
+            - name: OPENAI_MODEL
+              value: gpt-4o
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: beancount-io-secret
+                  key: litellm-api-key
+            # ANTHROPIC_API_KEY / ANTHROPIC_BASE_URL are intentionally absent.
+            # An empty ANTHROPIC_BASE_URL crashes the Anthropic SDK at startup,
+            # and setting ANTHROPIC_API_KEY would preempt the LiteLLM route.
+
+            - name: ASK_AI_MODE
+              value: bql
+            - name: AGENT_MODE
+              value: self-hosted
+            - name: LOG_LEVEL
+              value: info
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              memory: 1536Mi
+          # /healthz is a deep readiness check that fails when a dependency is
+          # down — correct for readiness, wrong for liveness (a brief Postgres
+          # blip would otherwise restart-loop the pod), so liveness is TCP.
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 90
+            periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: beancount-io-backend
+  namespace: apps
+spec:
+  type: ClusterIP
+  selector:
+    app: beancount-io
+    component: backend
+  ports:
+    - name: http
+      port: 4104
+      targetPort: http

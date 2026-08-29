@@ -1,0 +1,88 @@
+# beancount-io ledger service — reads/writes the plain-text ledger in Gitea
+# and answers BQL queries for backend-v2. Stateless: all state lives in Gitea.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: beancount-io-ledger
+  namespace: apps
+  labels:
+    app: beancount-io
+    component: ledger
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: beancount-io
+      component: ledger
+  template:
+    metadata:
+      labels:
+        app: beancount-io
+        component: ledger
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
+      containers:
+        - name: ledger
+          image: git.ramoneees.com/ramoneees/beancount-io-ledger:b127f3a
+          ports:
+            - name: http
+              containerPort: 8000
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "8000"
+            # Existing cluster Gitea (reused, not a bundled instance).
+            - name: GITEA_HOST_NAME
+              value: gitea-web.apps.svc.cluster.local
+            - name: GITEA_HTTP_PORT
+              value: "3000"
+            - name: BACKEND_V2_HOST_NAME
+              value: beancount-io-backend.apps.svc.cluster.local
+            - name: BACKEND_V2_HTTP_PORT
+              value: "4104"
+            - name: BACKEND_V2_ADMIN_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: beancount-io-secret
+                  key: admin-token
+            - name: LOG_LEVEL
+              value: info
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 768Mi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: beancount-io-ledger
+  namespace: apps
+spec:
+  type: ClusterIP
+  selector:
+    app: beancount-io
+    component: ledger
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http

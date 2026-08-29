@@ -1,0 +1,58 @@
+# Both hostnames are single-level on purpose: wildcard-ramoneees-com-tls covers
+# *.ramoneees.com and ramoneees.com only, so a nested name like
+# api.books.ramoneees.com would not be matched by the certificate.
+#
+# WHY THE API IS ALSO MOUNTED UNDER THE DASHBOARD HOST:
+# backend-v2 hardcodes its CORS allowlist to beancount.io / *.beancount.io /
+# localhost (src/server/start-server.ts) — there is no env var to extend it.
+# Upstream's own Caddyfile puts the dashboard and API on separate hostnames,
+# so on any custom domain the browser gets no Access-Control-Allow-Origin and
+# every client-side API call fails. Routing /api-gateway on the dashboard host
+# to backend-v2 makes those calls same-origin, so CORS is never consulted and
+# the auth cookie stays first-party. The dashboard bundle is built with
+# VITE_API_URL=https://beancount.ramoneees.com/api-gateway/ to match.
+#
+# beancount-api.ramoneees.com stays as a direct entry point for non-browser
+# clients (MCP, CLI, mobile), which are not subject to CORS.
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: beancount-io-dashboard
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    # Higher priority than the catch-all below so the API prefix wins.
+    - match: Host(`beancount.ramoneees.com`) && PathPrefix(`/api-gateway`)
+      kind: Rule
+      priority: 100
+      services:
+        - name: beancount-io-backend
+          port: 4104
+    - match: Host(`beancount.ramoneees.com`)
+      kind: Rule
+      priority: 10
+      services:
+        - name: beancount-io-dashboard
+          port: 3000
+  tls:
+    secretName: wildcard-ramoneees-com-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: beancount-io-backend
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`beancount-api.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: beancount-io-backend
+          port: 4104
+  tls:
+    secretName: wildcard-ramoneees-com-tls
