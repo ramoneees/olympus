@@ -60,3 +60,8 @@ resultsCache:
 # Disable canary — unnecessary for 2-node homelab
 lokiCanary:
   enabled: false
+
+# Chart >=6.55 validate.yaml hard-fails when Helm tests are enabled
+# without the canary. Tests off, matching canary off.
+test:
+  enabled: false
