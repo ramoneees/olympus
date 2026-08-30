@@ -20,13 +20,15 @@ spec:
     spec:
       containers:
         - name: homebox
-          image: ghcr.io/sysadminsmedia/homebox:latest
+          image: ghcr.io/sysadminsmedia/homebox:v0.26.2
           ports:
             - name: http
               containerPort: 7745
           env:
             - name: HBOX_WEB_MAX_UPLOAD_SIZE
               value: "50"
+            - name: HBOX_OPTIONS_ALLOW_REGISTRATION
+              value: "false"
             - name: HBOX_AUTH_API_KEY_PEPPER
               valueFrom:
                 secretKeyRef:
@@ -38,9 +40,9 @@ spec:
           resources:
             requests:
               cpu: 25m
-              memory: 64Mi
-            limits:
               memory: 128Mi
+            limits:
+              memory: 512Mi
           livenessProbe:
             httpGet:
               path: /api/v1/status
