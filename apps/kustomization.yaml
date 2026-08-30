@@ -35,3 +35,4 @@ resources:
   - weserve/
   - weserve-tunnel/
   - zotero/
+  - bean-dashboard/

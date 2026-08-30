@@ -1,0 +1,89 @@
+# bean-dashboard — Fase 1 no ar (PLAN.md §5 F4 antecipada).
+# API lê o ledger de um clone mantido pelo próprio snapshot.py (pull por
+# request, ~15ms — arquitetura testada); initContainer faz o clone inicial.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bean-dashboard
+  namespace: apps
+  labels:
+    app: bean-dashboard
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: bean-dashboard
+  template:
+    metadata:
+      labels:
+        app: bean-dashboard
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: olympus
+      initContainers:
+        - name: clone-ledger
+          image: python:3.12-slim
+          command: ["sh", "-c"]
+          args:
+            - |
+              apt-get update -qq && apt-get install -y -qq git >/dev/null
+              git clone --depth 1 "$$GITEA_REPO_URL" /ledger
+          env:
+            - name: GITEA_REPO_URL
+              valueFrom:
+                secretKeyRef:
+                  name: bean-dashboard-secret
+                  key: gitea-repo-url
+          volumeMounts:
+            - name: ledger
+              mountPath: /ledger
+      containers:
+        - name: api
+          image: git.ramoneees.com/ramoneees/bean-dashboard:v0.1.0
+          ports:
+            - name: http
+              containerPort: 8787
+          env:
+            - name: BEAN_DASH_LEDGER_REPO
+              value: /ledger
+          readinessProbe:
+            httpGet:
+              path: /api/healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/healthz
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          volumeMounts:
+            - name: ledger
+              mountPath: /ledger
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 768Mi
+      volumes:
+        - name: ledger
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bean-dashboard
+  namespace: apps
+spec:
+  type: ClusterIP
+  selector:
+    app: bean-dashboard
+  ports:
+    - name: http
+      port: 8787
+      targetPort: http

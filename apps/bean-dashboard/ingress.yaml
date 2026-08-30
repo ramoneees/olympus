@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: bean-dashboard
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`beans.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: bean-dashboard
+          port: 8787
+  tls:
+    secretName: wildcard-ramoneees-com-tls
