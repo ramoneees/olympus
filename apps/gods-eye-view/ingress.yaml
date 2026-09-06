@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: gods-eye-view
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`gev.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: gods-eye-view
+          port: 4173
+  tls:
+    secretName: wildcard-ramoneees-com-tls

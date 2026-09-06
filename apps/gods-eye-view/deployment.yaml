@@ -1,0 +1,98 @@
+# God's Eye View — globo OSINT fotorealista (bilawalsidhu/gods-eye-view).
+# App keyless por padrão: voos (OpenSky anon), satélites (CelesTrak), sismos
+# (USGS), câmeras, rádio, foguetes. Keys opcionais via gev-keys secret
+# (CESIUM_ION_TOKEN / GOOGLE_MAPS_API_KEY / OPENAI_API_KEY / AISSTREAM /
+# FIRMS / TOMTOM) — descomentar envs quando o Boss criar as keys.
+# Server = `vite preview` (mantém todos os proxies server-side; POWER UP
+# desativado — keys só via env/secret).
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gods-eye-view
+  namespace: apps
+  labels:
+    app: gods-eye-view
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: gods-eye-view
+  template:
+    metadata:
+      labels:
+        app: gods-eye-view
+    spec:
+      containers:
+        - name: gev
+          image: git.ramoneees.com/ramoneees/gods-eye-view:v0.1.1
+          ports:
+            - name: http
+              containerPort: 4173
+          env:
+            # OpenSky sem conta = anon (default do app é oauth e falha sem creds)
+            - name: OPENSKY_AUTH_MODE
+              value: "anon"
+            # Servidor exposto na LAN → throttles per-IP nos endpoints que
+            # gastam dinheiro (OpenAI voice, Google Places)
+            - name: GEV_RATELIMIT_OPENAI_PER_MIN
+              value: "30"
+            - name: GEV_RATELIMIT_GOOGLE_PER_MIN
+              value: "60"
+            # Keys opcionais: criar secret gev-keys (chaves: cesium-ion-token,
+            # google-maps-api-key, openai-api-key, aisstream-api-key,
+            # firms-map-key, tomtom-api-key) e descomentar o que usar.
+            # - name: CESIUM_ION_TOKEN
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: gev-keys
+            #       key: cesium-ion-token
+            # - name: OPENAI_API_KEY
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: gev-keys
+            #       key: openai-api-key
+            # - name: AISSTREAM_API_KEY
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: gev-keys
+            #       key: aisstream-api-key
+            # - name: FIRMS_MAP_KEY
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: gev-keys
+            #       key: firms-map-key
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 768Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gods-eye-view
+  namespace: apps
+spec:
+  selector:
+    app: gods-eye-view
+  ports:
+    - name: http
+      port: 4173
+      targetPort: http
