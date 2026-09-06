@@ -66,11 +66,13 @@ spec:
             #       key: firms-map-key
           resources:
             requests:
-              cpu: 100m
-              memory: 256Mi
+              cpu: 200m
+              memory: 512Mi
+            # Vite dev server + caches em memória (TLEs, feeds) — 768Mi OOMou
+            # no boot (2 restarts, exit 137) em 2026-09-06.
             limits:
-              cpu: "1"
-              memory: 768Mi
+              cpu: "2"
+              memory: 2Gi
           readinessProbe:
             httpGet:
               path: /
