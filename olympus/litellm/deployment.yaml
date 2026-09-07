@@ -415,14 +415,17 @@ data:
       # Context/output token limits below are estimates — adjust once confirmed against
       # Alibaba Model Studio docs.
       # ─────────────────────────────────────────────────────────────────────────
+      # qwen3.8 family limits verified 2026-09-07: upstream enforces input
+      # range [1, 983616]; max output 65536 accepted on the wire (Qwen blog
+      # advertises contextWindow 1000000 / maxTokens 65536 for 3.8-max).
       - model_name: qwen-plan/qwen3.8-max-preview
         litellm_params:
           model: openai/qwen3.8-max-preview
           api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
           api_key: os.environ/ALIBABA_API_KEY
         model_info:
-          max_input_tokens: 262144
-          max_tokens: 32768
+          max_input_tokens: 983616
+          max_tokens: 65536
           supports_vision: true
       - model_name: qwen-plan/qwen3.8-max
         litellm_params:
@@ -430,8 +433,8 @@ data:
           api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
           api_key: os.environ/ALIBABA_API_KEY
         model_info:
-          max_input_tokens: 262144
-          max_tokens: 32768
+          max_input_tokens: 983616
+          max_tokens: 65536
           supports_vision: true
       - model_name: qwen-plan/qwen3.7-plus
         litellm_params:
@@ -465,8 +468,8 @@ data:
           api_base: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
           api_key: os.environ/ALIBABA_API_KEY
         model_info:
-          max_input_tokens: 131072
-          max_tokens: 32768
+          max_input_tokens: 983616
+          max_tokens: 131072
           supports_vision: true
       # Wan — image generation
       - model_name: qwen-plan/wan2.7-image
