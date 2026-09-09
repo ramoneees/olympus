@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: cockpit
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`cockpit.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: cockpit
+          port: 8787
+  tls:
+    secretName: wildcard-ramoneees-com-tls
