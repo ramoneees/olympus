@@ -41,7 +41,7 @@ spec:
               mountPath: /worklog
       containers:
         - name: api
-          image: git.ramoneees.com/ramoneees/cockpit:v0.0.0
+          image: git.ramoneees.com/ramoneees/cockpit:v0.1.0
           ports:
             - name: http
               containerPort: 8787
