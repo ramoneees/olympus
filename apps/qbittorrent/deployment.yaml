@@ -39,7 +39,9 @@ spec:
         kubernetes.io/hostname: olympus
       containers:
         - name: gluetun
-          image: qmcgaw/gluetun:latest
+          # Pinned by digest 2026-09-14: floating :latest is a time bomb
+          # (mariadb-backup lesson). This is the image bytes currently running.
+          image: qmcgaw/gluetun@sha256:e3272b29a4bc177b389fbdcb54cf9716ccbfc30f04d8b7a35b0a5be9cdb58461
           imagePullPolicy: IfNotPresent
           securityContext:
             capabilities:
@@ -84,7 +86,10 @@ spec:
               cpu: 50m
               memory: 128Mi
             limits:
-              memory: 512Mi
+              # 2026-09-14: 128Mi OOMKilled at boot (blocklist/hostname
+              # download storm); 512Mi also OOMed ~14s into each cycle.
+              # 1Gi per escalation plan.
+              memory: 1Gi
           readinessProbe:
             httpGet:
               path: /
