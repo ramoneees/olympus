@@ -72,11 +72,12 @@ spec:
             - name: WEBUI_AUTH
               value: "true"
             # Web search via in-cluster SearXNG (private, no external API keys)
-            - name: ENABLE_RAG_WEB_SEARCH
+            # NOTE: v0.9.6 env names — no RAG_ prefix (renamed in later releases)
+            - name: ENABLE_WEB_SEARCH
               value: "true"
-            - name: RAG_WEB_SEARCH_ENGINE
+            - name: WEB_SEARCH_ENGINE
               value: "searxng"
-            - name: RAG_WEB_SEARCH_RESULT_COUNT
+            - name: WEB_SEARCH_RESULT_COUNT
               value: "8"
             - name: SEARXNG_QUERY_URL
               value: "http://searxng.olympus.svc.cluster.local:8080/search?q=<query>"
