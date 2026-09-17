@@ -30,7 +30,7 @@ spec:
             - name: http
               containerPort: 8080
           env:
-            - name: WEBUI_SECRET
+            - name: WEBUI_SECRET_KEY # v0.11+ name (old WEBUI_SECRET is ignored); unset = ephemeral key file outside PVC = sessions die on every restart
               valueFrom:
                 secretKeyRef:
                   name: openwebui-secret
