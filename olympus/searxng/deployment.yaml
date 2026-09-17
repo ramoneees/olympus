@@ -1,0 +1,90 @@
+# SearXNG — private metasearch for OpenWebUI web search (no API keys, no rate limits)
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: searxng-settings
+  namespace: olympus
+data:
+  settings.yaml: |
+    use_default_settings: true
+    server:
+      limiter: false # internal-only service, no bot protection needed
+      image_proxy: false
+    search:
+      safe_search: 0
+      formats:
+        - html
+        - json # REQUIRED for OpenWebUI integration
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: searxng
+  namespace: olympus
+  labels:
+    app: searxng
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: searxng
+  template:
+    metadata:
+      labels:
+        app: searxng
+    spec:
+      containers:
+        - name: searxng
+          # Pinned by digest (cluster convention: floating tags are time bombs)
+          image: searxng/searxng:2026.9.17-274b63b67@sha256:ba0a344c566ecc6e4429e81d02d93a01fa05c80e9fb6d08f0a1e57a729aa6d87
+          env:
+            - name: SEARXNG_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: searxng-secret
+                  key: secret-key
+          ports:
+            - name: http
+              containerPort: 8080
+          volumeMounts:
+            - name: settings
+              mountPath: /etc/searxng/settings.yaml
+              subPath: settings.yaml
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 1Gi
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 60
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 10
+      volumes:
+        - name: settings
+          configMap:
+            name: searxng-settings
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: searxng
+  namespace: olympus
+spec:
+  type: ClusterIP # internal only — not exposed outside the cluster
+  selector:
+    app: searxng
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
