@@ -6,7 +6,7 @@ metadata:
   name: searxng-settings
   namespace: olympus
 data:
-  settings.yaml: |
+  settings.yml: |
     use_default_settings: true
     server:
       limiter: false # internal-only service, no bot protection needed
@@ -51,8 +51,8 @@ spec:
               containerPort: 8080
           volumeMounts:
             - name: settings
-              mountPath: /etc/searxng/settings.yaml
-              subPath: settings.yaml
+              mountPath: /etc/searxng/settings.yml
+              subPath: settings.yml # must be settings.yml (double-L) — entrypoint ignores .yaml
           resources:
             requests:
               cpu: 100m
