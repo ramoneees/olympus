@@ -39,7 +39,7 @@ spec:
         kubernetes.io/hostname: olympus
       containers:
         - name: radarr
-          image: lscr.io/linuxserver/radarr:latest
+          image: lscr.io/linuxserver/radarr:latest@sha256:8e5b2b7f406b36c5c0915e50884023cd461c53467210381a05f8105b572d8a32
           imagePullPolicy: IfNotPresent
           env:
             - name: PUID

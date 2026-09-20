@@ -39,7 +39,7 @@ spec:
         kubernetes.io/hostname: olympus
       containers:
         - name: bazarr
-          image: lscr.io/linuxserver/bazarr:latest
+          image: lscr.io/linuxserver/bazarr:latest@sha256:d424173fd1de6ecf15f4f8fcc39e6b70fd6610873e157d21e6662122981a7d30
           imagePullPolicy: IfNotPresent
           env:
             - name: PUID

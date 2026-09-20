@@ -21,7 +21,6 @@ resources:
   - lidarr/
   - media-storage/
   - minio/
-  - obsidian/
   - pack-website/
   - paperclip/
   - precisase/

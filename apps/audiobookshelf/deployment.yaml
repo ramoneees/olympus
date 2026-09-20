@@ -52,7 +52,7 @@ spec:
         kubernetes.io/hostname: olympus
       containers:
         - name: audiobookshelf
-          image: ghcr.io/advplyr/audiobookshelf:latest
+          image: ghcr.io/advplyr/audiobookshelf:latest@sha256:117b014d317634d66778d6da9174ce90d47449b252c9b7e8f3bce591502af6aa
           imagePullPolicy: IfNotPresent
           env:
             - name: PUID

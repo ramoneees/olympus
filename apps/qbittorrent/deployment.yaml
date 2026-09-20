@@ -105,7 +105,7 @@ spec:
             periodSeconds: 30
             timeoutSeconds: 5
         - name: qbittorrent
-          image: lscr.io/linuxserver/qbittorrent:latest
+          image: lscr.io/linuxserver/qbittorrent:latest@sha256:dc3132eb84414a2b38bcc29e96c32ef7c428ec40f73ad58e906649ea27b1eb4a
           imagePullPolicy: IfNotPresent
           env:
             - name: PUID

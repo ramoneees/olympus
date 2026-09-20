@@ -37,7 +37,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: archivist-es
-          image: bbilly1/tubearchivist-es:latest
+          image: bbilly1/tubearchivist-es:latest@sha256:9da63fb1973ec3d57daf6916be948eddd0d8a404cc8e447c938480c85fe2c554
           imagePullPolicy: IfNotPresent
           env:
             - name: ELASTIC_PASSWORD

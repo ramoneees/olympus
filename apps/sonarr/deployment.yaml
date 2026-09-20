@@ -39,7 +39,7 @@ spec:
         kubernetes.io/hostname: olympus
       containers:
         - name: sonarr
-          image: lscr.io/linuxserver/sonarr:latest
+          image: lscr.io/linuxserver/sonarr:latest@sha256:b19949ea2977d2f11ec955b3ce4dbba36cb5318c4a666caa6adfeca58f8a993f
           imagePullPolicy: IfNotPresent
           env:
             - name: PUID

@@ -43,7 +43,7 @@ spec:
         runAsUser: 999
       containers:
         - name: archivist-redis
-          image: redis:latest
+          image: redis:latest@sha256:5edb5f1591cd35076057573171f40e0439ec7fbbb38e04d56c0efae810d99d47
           imagePullPolicy: IfNotPresent
           ports:
             - name: redis

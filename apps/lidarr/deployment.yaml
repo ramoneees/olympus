@@ -39,7 +39,7 @@ spec:
         kubernetes.io/hostname: olympus
       containers:
         - name: lidarr
-          image: lscr.io/linuxserver/lidarr:latest
+          image: lscr.io/linuxserver/lidarr:latest@sha256:0694409e2293c59fdd2665f55cb67d0a8a9adf31a879b45e1ccb299f65f2037c
           imagePullPolicy: IfNotPresent
           env:
             - name: PUID

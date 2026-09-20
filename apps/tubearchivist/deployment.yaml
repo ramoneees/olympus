@@ -39,7 +39,7 @@ spec:
         kubernetes.io/hostname: olympus
       containers:
         - name: tubearchivist
-          image: bbilly1/tubearchivist:latest
+          image: bbilly1/tubearchivist:latest@sha256:27f3ac40a5de8dd3325fd344d4920e6515d3fbc158c17d9ba3f93afe8f871a4b
           imagePullPolicy: IfNotPresent
           env:
             # yt-dlp atualizado pelo run.sh cai em /root/.local/bin; sem isto

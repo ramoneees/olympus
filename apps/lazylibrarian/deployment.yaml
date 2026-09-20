@@ -39,7 +39,7 @@ spec:
         kubernetes.io/hostname: olympus
       containers:
         - name: lazylibrarian
-          image: lscr.io/linuxserver/lazylibrarian:latest
+          image: lscr.io/linuxserver/lazylibrarian:latest@sha256:8f78729ab1df9cfbb3984db012222c6aa3040f7e94d14b0bb7725dc95fc2544a
           imagePullPolicy: IfNotPresent
           env:
             - name: PUID
