@@ -1,0 +1,25 @@
+# hermes-mini — Traefik IngressRoute for the Mac mini's Hermes dashboard.
+# TLS via the shared wildcard cert (*.ramoneees.com), same as every other app.
+#
+# Security: the dashboard itself enforces basic auth (HERMES_DASHBOARD_BASIC_AUTH_*
+# in the mini's ~/.hermes/.env). This ingress only terminates TLS and forwards;
+# it does NOT add or remove authentication. Do not expose the api_server port
+# (8645) through here — that is the bot-to-bot / peer endpoint and is a separate
+# decision (use direct LAN IP or WireGuard for `hermes peer`).
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: hermes-mini
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`hermes-mini.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: hermes-mini
+          port: 9119
+  tls:
+    secretName: wildcard-ramoneees-com-tls
