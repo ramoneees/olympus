@@ -912,7 +912,7 @@ data:
         host: redis-master.databases.svc.cluster.local
         port: 6379
         ttl: 600
-      request_timeout: 60
+      request_timeout: 300
       timeout: 120
     general_settings:
       database_url: os.environ/DATABASE_URL
