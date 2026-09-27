@@ -1,0 +1,38 @@
+# ollama-mac — ollama running OUTSIDE the cluster, on the Mac mini
+# (192.168.50.12:11434, LaunchAgent com.reyamira.ollama, OLLAMA_HOST=0.0.0.0).
+#
+# Pattern (copied from apps/hermes-mini): Service WITHOUT a selector + a
+# hand-managed Endpoints object. No selector means Kubernetes leaves the
+# Endpoints exactly as written, pointing at the external LAN IP.
+# LiteLLM (olympus ns) reaches it at http://ollama-mac.olympus.svc:11434/v1.
+#
+# If the Mac mini's LAN IP changes (DHCP), update the address below.
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama-mac
+  namespace: olympus
+  labels:
+    app: ollama-mac
+spec:
+  # No selector on purpose — see header comment.
+  ports:
+    - name: http
+      port: 11434
+      targetPort: 11434
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: ollama-mac
+  namespace: olympus
+  labels:
+    app: ollama-mac
+subsets:
+  - addresses:
+      - ip: 192.168.50.12
+    ports:
+      - name: http
+        port: 11434
+        protocol: TCP
