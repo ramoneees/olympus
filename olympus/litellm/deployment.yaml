@@ -137,7 +137,7 @@ data:
           mode: embedding
       - model_name: gemma-4b
         litellm_params:
-          model: openai/gemma4:e4b-it-qat
+          model: openai/gemma4-e4b-nothink
           api_base: http://ollama-mac.olympus.svc.cluster.local:11434/v1
           api_key: "none"  # Ollama has no auth - required for openai/ backend
         model_info:
@@ -146,7 +146,7 @@ data:
       # gemma-4b-quick — direct Ollama route, no cloud fallback
       - model_name: gemma-4b-quick
         litellm_params:
-          model: openai/gemma4:e4b-it-qat
+          model: openai/gemma4-e4b-nothink
           api_base: http://ollama-mac.olympus.svc.cluster.local:11434/v1
           api_key: "none"
         model_info:
@@ -594,7 +594,7 @@ data:
         order: 1
       - model_name: claude-opus-4-7
         litellm_params:
-          model: openai/gemma4:e4b-it-qat
+          model: openai/gemma4-e4b-nothink
           api_base: http://ollama-mac.olympus.svc.cluster.local:11434/v1
         model_info:
           max_input_tokens: 128000
@@ -639,7 +639,7 @@ data:
         order: 1
       - model_name: claude-sonnet-4-6
         litellm_params:
-          model: openai/gemma4:e4b-it-qat
+          model: openai/gemma4-e4b-nothink
           api_base: http://ollama-mac.olympus.svc.cluster.local:11434/v1
         model_info:
           max_input_tokens: 128000
@@ -801,7 +801,7 @@ data:
         order: 1
       - model_name: coding
         litellm_params:
-          model: openai/gemma4:e4b-it-qat
+          model: openai/gemma4-e4b-nothink
           api_base: http://ollama-mac.olympus.svc.cluster.local:11434/v1
         model_info:
           max_input_tokens: 128000
@@ -835,7 +835,7 @@ data:
         order: 1
       - model_name: personal
         litellm_params:
-          model: openai/gemma4:e4b-it-qat
+          model: openai/gemma4-e4b-nothink
           api_base: http://ollama-mac.olympus.svc.cluster.local:11434/v1
         model_info:
           max_input_tokens: 128000
