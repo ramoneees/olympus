@@ -154,6 +154,16 @@ data:
           max_tokens: 4096
         rpm_limit: 80
         tpm_limit: 60000
+      # Ollama — Ramon's MacBook Pro (192.168.50.13), RTX-less, standalone (not wired into fallback groups)
+      - model_name: "qwen3.8:27b"
+        litellm_params:
+          model: openai/qwen3.8:27b-mxfp8
+          api_base: http://ollama-macbook.olympus.svc.cluster.local:11434/v1
+          api_key: "none"  # Ollama has no auth - required for openai/ backend
+        model_info:
+          max_input_tokens: 262144
+          max_tokens: 16384
+          supports_vision: true
       # Cloud — ZAI (ZhipuAI) Coding Plan
       - model_name: glm-4.5
         litellm_params:

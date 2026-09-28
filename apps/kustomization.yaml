@@ -39,3 +39,4 @@ resources:
   - cockpit/
   - hermes-mini/
   - ollama-mac/
+  - ollama-macbook/
