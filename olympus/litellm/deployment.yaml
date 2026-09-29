@@ -164,6 +164,17 @@ data:
           max_input_tokens: 262144
           max_tokens: 16384
           supports_vision: true
+      # gemma-4b-qat — stock QAT variant (no thinking-tune); factual formatting jobs
+      - model_name: gemma-4b-qat
+        litellm_params:
+          model: openai/gemma4:e4b-it-qat
+          api_base: http://ollama-mac.olympus.svc.cluster.local:11434/v1
+          api_key: "none"
+        model_info:
+          max_input_tokens: 16384
+          max_tokens: 4096
+        rpm_limit: 80
+        tpm_limit: 60000
       # Cloud — ZAI (ZhipuAI) Coding Plan
       - model_name: glm-4.5
         litellm_params:
