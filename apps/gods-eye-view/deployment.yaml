@@ -25,6 +25,11 @@ spec:
       labels:
         app: gods-eye-view
     spec:
+      # Fora do control plane: o homeserver (4 cores) ficou OutOfcpu no reboot de
+      # 2026-10-03 e o instance-manager do Longhorn foi rejeitado. Este pod
+      # reservava 200m lá.
+      nodeSelector:
+        kubernetes.io/hostname: olympus
       containers:
         - name: gev
           image: git.ramoneees.com/ramoneees/gods-eye-view:v0.1.1

@@ -7,9 +7,14 @@
 #   CREATE DATABASE nextcloud; CREATE USER 'nextcloud'@'%' IDENTIFIED BY '...'; GRANT ALL ON nextcloud.* TO 'nextcloud'@'%';
 #   (repeat for firefly, invoiceninja)
 
-# TEMP: pinned to latest — Bitnami removed versioned tags from Docker Hub
+# Pinned by digest (MariaDB 13.0.1) — Bitnami removed versioned tags from Docker Hub,
+# and `latest` silently moved 12.x → 13.0.1 during the 2026-10-03 reboot, breaking
+# the chart's default probes (TLS negotiated by default; see customProbes below).
+# Do NOT revert to a 12.x digest: the data dir has been through mariadb_upgrade to 13.0.1
+# and MariaDB does not support major-version downgrade.
+# Keep in sync with the client digest in databases/backups/mariadb-backup-cronjob.yaml.
 image:
-  tag: latest
+  digest: "sha256:90aa6d60cbbac29106705a225bc33de2e97b1946afcd14b29b28bb800367eeb9"
 
 auth:
   existingSecret: mariadb-secret  # keys: mariadb-root-password
@@ -28,10 +33,46 @@ primary:
     limits:
       cpu: 500m
       memory: 1Gi
+  # Chart defaults call `mariadb-admin` without --skip-ssl. In 13.0.1 the client
+  # negotiates TLS by default and dies with "TLS/SSL error: method not supported"
+  # before it ever authenticates, so the pod never goes Ready. These are the chart's
+  # own probe scripts with --skip-ssl added (and timeoutSeconds 1 → 5).
   livenessProbe:
-    enabled: true
+    enabled: false
   readinessProbe:
-    enabled: true
+    enabled: false
+  customLivenessProbe:
+    exec:
+      command:
+        - /bin/bash
+        - -ec
+        - |
+          password_aux="${MARIADB_ROOT_PASSWORD:-}"
+          if [[ -f "${MARIADB_ROOT_PASSWORD_FILE:-}" ]]; then
+              password_aux=$(cat "$MARIADB_ROOT_PASSWORD_FILE")
+          fi
+          mariadb-admin status -uroot -p"${password_aux}" --skip-ssl
+    initialDelaySeconds: 120
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+  customReadinessProbe:
+    exec:
+      command:
+        - /bin/bash
+        - -ec
+        - |
+          password_aux="${MARIADB_ROOT_PASSWORD:-}"
+          if [[ -f "${MARIADB_ROOT_PASSWORD_FILE:-}" ]]; then
+              password_aux=$(cat "$MARIADB_ROOT_PASSWORD_FILE")
+          fi
+          mariadb-admin ping -uroot -p"${password_aux}" --skip-ssl
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
 
 metrics:
   enabled: false
