@@ -1,12 +1,14 @@
-# ollama-macbook — ollama running OUTSIDE the cluster, on Ramon's MacBook Pro
-# (192.168.50.13:11434).
+# ollama-macbook — ollama running OUTSIDE the cluster, on Ramon's MacBook Pro.
+# Reached via the home-router WireGuard tunnel IP (10.6.0.2:11434) — stable
+# regardless of which physical network the MacBook sits on (LAN or remote+VPN).
 #
 # Pattern (copied from apps/ollama-mac): Service WITHOUT a selector + a
 # hand-managed Endpoints object. No selector means Kubernetes leaves the
-# Endpoints exactly as written, pointing at the external LAN IP.
+# Endpoints exactly as written, pointing at the tunnel IP.
 # LiteLLM (olympus ns) reaches it at http://ollama-macbook.olympus.svc:11434/v1.
 #
-# If the MacBook's LAN IP changes (DHCP), update the address below.
+# Requires: MacBook WireGuard peer UP (router-assigned 10.6.0.2) and
+# OLLAMA_HOST=0.0.0.0 on the MacBook.
 ---
 apiVersion: v1
 kind: Service
@@ -31,7 +33,7 @@ metadata:
     app: ollama-macbook
 subsets:
   - addresses:
-      - ip: 192.168.50.13
+      - ip: 10.6.0.2
     ports:
       - name: http
         port: 11434
