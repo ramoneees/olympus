@@ -1,0 +1,39 @@
+# ollama-lmstudio — LM Studio (MLX) running OUTSIDE the cluster, on Ramon's MacBook Pro.
+# Reached via the home-router WireGuard tunnel IP (10.6.0.2) through a socat forwarder
+# on port 1235 → LM Studio localhost:1234 (LM Studio binds localhost only).
+#
+# Same selector-less Service + hand-managed Endpoints pattern as ollama-macbook.
+# LiteLLM (olympus ns) reaches it at http://ollama-lmstudio.olympus.svc:11434/v1 — port 1235.
+#
+# Requires: MacBook WireGuard peer UP (router-assigned 10.6.0.2),
+# LM Studio server running, and socat forwarder:
+#   socat TCP-LISTEN:1235,fork,reuseaddr TCP:127.0.0.1:1234 &
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama-lmstudio
+  namespace: olympus
+  labels:
+    app: ollama-lmstudio
+spec:
+  # No selector on purpose — see header comment.
+  ports:
+    - name: http
+      port: 1235
+      targetPort: 1235
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: ollama-lmstudio
+  namespace: olympus
+  labels:
+    app: ollama-lmstudio
+subsets:
+  - addresses:
+      - ip: 10.6.0.2
+    ports:
+      - name: http
+        port: 1235
+        protocol: TCP

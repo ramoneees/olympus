@@ -149,12 +149,22 @@ data:
           max_tokens: 4096
         rpm_limit: 80
         tpm_limit: 60000
-      # Ollama — Ramon's MacBook Pro (192.168.50.13), RTX-less, standalone (not wired into fallback groups)
+      # Ollama — Ramon's MacBook Pro via router WireGuard tunnel (10.6.0.2), standalone (not wired into fallback groups)
       - model_name: "qwen3.8:27b"
         litellm_params:
           model: openai/qwen3.8:27b-mxfp8
           api_base: http://ollama-macbook.olympus.svc.cluster.local:11434/v1
           api_key: "none"  # Ollama has no auth - required for openai/ backend
+        model_info:
+          max_input_tokens: 262144
+          max_tokens: 16384
+
+      # LM Studio (MLX) — MacBook Pro via tunnel+socat (:1235). Faster engine, same qwen3.8 27B.
+      - model_name: "qwen3.8:27b-mlx"
+        litellm_params:
+          model: openai/qwen/qwen3.8-27b
+          api_base: http://ollama-lmstudio.olympus.svc.cluster.local:1235/v1
+          api_key: "none"  # LM Studio has no auth - required for openai/ backend
         model_info:
           max_input_tokens: 262144
           max_tokens: 16384
