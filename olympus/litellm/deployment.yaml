@@ -168,7 +168,16 @@ data:
         model_info:
           max_input_tokens: 262144
           max_tokens: 16384
-          supports_vision: true
+
+      # MTPLX — MacBook Pro via tunnel (:8001), qwen3.8 27B optimized build, OpenAI-compat.
+      - model_name: "qwen3.8:27b-mtplx"
+        litellm_params:
+          model: openai/mtplx-qwen38-27b-optimized-quality
+          api_base: http://mtplx.olympus.svc.cluster.local:8001/v1
+          api_key: "none"  # MTPLX has no auth - required for openai/ backend
+        model_info:
+          max_input_tokens: 262144
+          max_tokens: 16384
       # gemma-4b-qat — stock QAT variant (no thinking-tune); factual formatting jobs
       - model_name: gemma-4b-qat
         litellm_params:

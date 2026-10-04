@@ -1,0 +1,37 @@
+# mtplx — MTPLX inference server running OUTSIDE the cluster, on Ramon's MacBook Pro.
+# Reached via the home-router WireGuard tunnel IP (10.6.0.2:8001) — OpenAI-compatible
+# API, binds 0.0.0.0 natively (no socat needed).
+#
+# Same selector-less Service + hand-managed Endpoints pattern as ollama-macbook.
+# LiteLLM (olympus ns) reaches it at http://mtplx.olympus.svc.cluster.local:8001/v1.
+#
+# Requires: MacBook WireGuard peer UP (router-assigned 10.6.0.2), MTPLX server running.
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mtplx
+  namespace: olympus
+  labels:
+    app: mtplx
+spec:
+  # No selector on purpose — see header comment.
+  ports:
+    - name: http
+      port: 8001
+      targetPort: 8001
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: mtplx
+  namespace: olympus
+  labels:
+    app: mtplx
+subsets:
+  - addresses:
+      - ip: 10.6.0.2
+    ports:
+      - name: http
+        port: 8001
+        protocol: TCP
