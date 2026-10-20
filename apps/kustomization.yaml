@@ -29,6 +29,7 @@ resources:
   - sonarr/
   - tend-website/
   - toolbox/
+  - cloudflared-general/
   - tubearchivist/
   - weserve/
   - weserve-tunnel/
