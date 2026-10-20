@@ -12,7 +12,7 @@ spec:
     - match: Host(`git.ramoneees.com`)
       kind: Rule
       services:
-        - name: gitea-web
+        - name: gitea-http
           port: 3000
   tls:
     secretName: wildcard-ramoneees-com-tls
