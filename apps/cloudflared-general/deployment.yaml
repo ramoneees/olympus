@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflared-general
+  namespace: apps
+  labels:
+    app: cloudflared-general
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudflared-general
+  template:
+    metadata:
+      labels:
+        app: cloudflared-general
+    spec:
+      containers:
+        - name: cloudflared
+          image: cloudflare/cloudflared:latest
+          args:
+            - tunnel
+            - --no-autoupdate
+            - run
+            - --token
+            - $(TUNNEL_TOKEN)
+          env:
+            - name: TUNNEL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflared-general-secret
+                  key: tunnel-token
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              memory: 128Mi
+
