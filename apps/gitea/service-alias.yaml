@@ -1,0 +1,11 @@
+---
+# DNS alias for the restored Gitea chart service: Cloudflare tunnel ingress rules
+# and GitRepository URLs still reference the pre-restore name "gitea-web".
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitea-web
+  namespace: apps
+spec:
+  type: ExternalName
+  externalName: gitea-http.apps.svc.cluster.local
