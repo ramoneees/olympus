@@ -6,7 +6,6 @@ resources:
   - bazarr/
   - cloudbeaver/
   - configarr/
-  - firefly-iii/
   - ghostfolio/
   - gitea/
   - gitea-runner/
