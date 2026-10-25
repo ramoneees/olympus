@@ -30,3 +30,8 @@ cainjector:
     limits:
       cpu: 100m
       memory: 256Mi
+
+# Self-check de DNS-01 via recursivos v4 — os nodes nao tem rota IPv6 e o
+# conjunto default inclui resolvedores v6 (check trava "not yet propagated")
+extraArgs:
+  dns01-recursive-nameservers: "1.1.1.1:53,8.8.8.8:53"
