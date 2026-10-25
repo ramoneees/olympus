@@ -32,6 +32,8 @@ spec:
               apt-get update -qq && apt-get install -y -qq git >/dev/null
               git clone --depth 1 "$GITEA_REPO_URL" /ledger
           env:
+            - name: GIT_SSL_NO_VERIFY
+              value: "true"
             - name: GITEA_REPO_URL
               valueFrom:
                 secretKeyRef:
