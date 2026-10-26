@@ -20,7 +20,10 @@ metadata:
   labels:
     app: qbittorrent
 spec:
-  replicas: 1
+  # replicas 0 (2026-10-26): aguardando nordvpn-secret (credenciais de servico NordVPN
+  # no vault-queue). Container qbittorrent rodava SEM a VPN (gluetun bloqueado).
+  # Voltar a 1 junto com a criacao do secret.
+  replicas: 0
   strategy:
     type: Recreate
   selector:
