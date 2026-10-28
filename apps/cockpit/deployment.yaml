@@ -1,6 +1,7 @@
-# cockpit — API FastAPI + UI React. O initContainer clona o repo do worklog
-# (URL via secret cockpit-secret) para um emptyDir que a API lê via
-# COCKPIT_WORKLOG_REPO.
+# cockpit — API FastAPI + UI React. Os initContainers clonam worklog, lifefeed
+# e tenders (URLs via secret cockpit-secret; mesmo token read:repository) para
+# emptyDirs que a API lê via COCKPIT_*_REPO. GIT_SSL_NO_VERIFY: o wildcard TLS
+# é interino auto-assinado até o cert LE real voltar (cloudflare-api-token).
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -21,33 +22,57 @@ spec:
       labels:
         app: cockpit
     spec:
+      serviceAccountName: cockpit
       nodeSelector:
         kubernetes.io/hostname: olympus
       initContainers:
-        - name: clone-worklog
+        - name: clone-repos
           image: python:3.12-slim
           command: ["sh", "-c"]
           args:
             - |
-              apt-get update -qq && apt-get install -y -qq git >/dev/null && git clone --depth 1 "$GITEA_REPO_URL" /worklog
+              apt-get update -qq && apt-get install -y -qq git >/dev/null
+              git -c http.sslVerify=false clone --depth 1 "$GITEA_REPO_URL" /worklog
+              git -c http.sslVerify=false clone --depth 1 "$GITEA_LIFEFEEED_URL" /lifefeed
+              git -c http.sslVerify=false clone --depth 1 "$GITEA_TENDERS_URL" /tenders
           env:
             - name: GITEA_REPO_URL
               valueFrom:
                 secretKeyRef:
                   name: cockpit-secret
                   key: gitea-repo-url
+            - name: GITEA_LIFEFEEED_URL
+              valueFrom:
+                secretKeyRef:
+                  name: cockpit-secret
+                  key: gitea-lifefeed-url
+            - name: GITEA_TENDERS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: cockpit-secret
+                  key: gitea-tenders-url
           volumeMounts:
             - name: worklog
               mountPath: /worklog
+            - name: lifefeed
+              mountPath: /lifefeed
+            - name: tenders
+              mountPath: /tenders
       containers:
         - name: api
-          image: git.ramoneees.com/ramoneees/cockpit:v0.5.2
+          image: git.ramoneees.com/ramoneees/cockpit:v0.6.1
           ports:
             - name: http
               containerPort: 8787
           env:
             - name: COCKPIT_WORKLOG_REPO
               value: /worklog
+            - name: COCKPIT_LIFEFEEED_REPO
+              value: /lifefeed
+            - name: COCKPIT_TENDERS_REPO
+              value: /tenders
+            - name: GIT_SSL_NO_VERIFY
+              value: "1"
           readinessProbe:
             httpGet:
               path: /api/healthz
@@ -63,6 +88,10 @@ spec:
           volumeMounts:
             - name: worklog
               mountPath: /worklog
+            - name: lifefeed
+              mountPath: /lifefeed
+            - name: tenders
+              mountPath: /tenders
           resources:
             requests:
               cpu: 100m
@@ -71,6 +100,10 @@ spec:
               memory: 768Mi
       volumes:
         - name: worklog
+          emptyDir: {}
+        - name: lifefeed
+          emptyDir: {}
+        - name: tenders
           emptyDir: {}
 ---
 apiVersion: v1

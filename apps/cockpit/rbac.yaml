@@ -1,0 +1,70 @@
+# Read-only RBAC for cockpit's Homelab tab (k8s reads behind GET /api/homelab).
+#
+# Applies ONCE, by hand — the same manual exception as the bean secret
+# (deploy/secrets-template.yaml). The pod must then mount this identity via
+# `serviceAccountName: cockpit` in olympus `apps/cockpit/deployment.yaml`
+# (Boss/Jarvis at release):
+#   kubectl apply -f deploy/rbac.yaml
+#
+# Namespaced reads (apps) + cluster-wide reads the Homelab card needs:
+# nodes are cluster-scoped and Flux Kustomizations span all namespaces.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cockpit
+  namespace: apps
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cockpit-homelab
+  namespace: apps
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["kustomizations.toolkit.fluxcd.io"]
+    resources: ["kustomizations"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cockpit-homelab
+  namespace: apps
+subjects:
+  - kind: ServiceAccount
+    name: cockpit
+    namespace: apps
+roleRef:
+  kind: Role
+  name: cockpit-homelab
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cockpit-homelab-cluster
+rules:
+  - apiGroups: [""]  # nodes are cluster-scoped
+    resources: ["nodes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["kustomizations.toolkit.fluxcd.io"]  # Flux lists across all ns
+    resources: ["kustomizations"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cockpit-homelab-cluster
+subjects:
+  - kind: ServiceAccount
+    name: cockpit
+    namespace: apps
+roleRef:
+  kind: ClusterRole
+  name: cockpit-homelab-cluster
+  apiGroup: rbac.authorization.k8s.io
