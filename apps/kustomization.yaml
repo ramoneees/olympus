@@ -9,7 +9,6 @@ resources:
   - ghostfolio/
   - gitea/
   - gitea-runner/
-  - actions-runner/
   - home-assistant/
   - homebox/
   - invoice-ninja/
