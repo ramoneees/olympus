@@ -60,7 +60,7 @@ spec:
               mountPath: /tenders
       containers:
         - name: api
-          image: git.ramoneees.com/ramoneees/cockpit:v0.6.1
+          image: git.ramoneees.com/ramoneees/cockpit:v0.6.0
           ports:
             - name: http
               containerPort: 8787
