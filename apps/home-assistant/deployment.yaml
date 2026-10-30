@@ -30,6 +30,8 @@ spec:
     metadata:
       labels:
         app: home-assistant
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/home-assistant: unconfined
     spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
