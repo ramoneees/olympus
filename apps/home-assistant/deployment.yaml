@@ -135,6 +135,8 @@ spec:
           env:
             - name: TZ
               value: "Europe/Lisbon"
+            - name: DBUS_SYSTEM_BUS_ADDRESS
+              value: "unix:path=/run/dbus/system_bus_socket"
           securityContext:
             capabilities:
               add:
@@ -143,6 +145,8 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
+            - name: dbus
+              mountPath: /run/dbus
           resources:
             requests:
               cpu: 100m
@@ -167,6 +171,10 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: home-assistant-config
+        - name: dbus
+          hostPath:
+            path: /run/dbus
+            type: Directory
 ---
 apiVersion: v1
 kind: Service
