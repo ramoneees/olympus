@@ -116,14 +116,18 @@ spec:
               memory: 512Mi
           readinessProbe:
             httpGet:
-              path: /
+              # Deep health (db + worker heartbeat). NOT `/`: with AUTH_URL
+              # pinned, page requests with a non-matching Host (kubelet probes
+              # use the pod IP) 503 inside the auth middleware and would
+              # crash-loop the pod (2026-10-31).
+              path: /api/health
               port: http
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 3
           livenessProbe:
             httpGet:
-              path: /
+              path: /api/health
               port: http
             initialDelaySeconds: 20
             periodSeconds: 30
