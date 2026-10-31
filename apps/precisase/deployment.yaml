@@ -82,6 +82,12 @@ spec:
             # stay `__Secure-` prefixed and correct.
             - name: APP_URL
               value: "https://precisase.ramoneees.com"
+            # Auth.js v5 derives its base URL from request headers; behind
+            # Traefik the fallback resolved to the container's own listen
+            # address (https://0.0.0.0:3000/) and post-login redirects left
+            # the site (2026-10-31). AUTH_URL pins it explicitly.
+            - name: AUTH_URL
+              value: https://precisase.ramoneees.com
             - name: AUTH_TRUST_HOST
               value: "true"
             - name: CONTACT_ENCRYPTION_KEY
