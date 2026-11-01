@@ -8,6 +8,7 @@ metadata:
   name: configarr-sync
   namespace: apps
 spec:
+  suspend: true # configarr-secret lost in rebuild — stuck Init pods were burning node pod-slots
   schedule: "0 3 * * *"
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
