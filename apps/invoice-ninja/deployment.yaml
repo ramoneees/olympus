@@ -7,7 +7,7 @@ metadata:
   labels:
     app: invoice-ninja
 spec:
-  replicas: 1
+  replicas: 0
   strategy:
     type: Recreate
   selector:
