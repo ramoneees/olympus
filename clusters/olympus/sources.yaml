@@ -7,7 +7,9 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1m
-  url: http://gitea-http.apps.svc.cluster.local:3000/ramoneees/olympus.git
+  url: https://git.ramoneees.com/ramoneees/olympus.git
+  secretRef:
+    name: cluster-git-auth
   ref:
     branch: main
 ---

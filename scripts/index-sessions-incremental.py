@@ -23,7 +23,7 @@ r = subprocess.run(
     ["kubectl", "get", "secret", "-n", "databases", "postgresql-secret",
      "-o", "jsonpath={.data.postgres-password}"], capture_output=True, text=True)
 PG_PASSWORD = base64.b64decode(r.stdout.strip()).decode()
-PG = f"postgresql://postgres:{PG_PASSWORD}@localhost:5432/mnemosyne"
+PG = f"postgresql://postgres:{PG_PASSWORD}@localhost:15432/mnemosyne"
 TEI = "http://localhost:8080"
 NS = "/memory/sessions"
 
