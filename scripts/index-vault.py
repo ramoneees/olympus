@@ -36,6 +36,9 @@ SKIP_PATTERNS = [
     "skills-references/llms-full.md",
     "skills-references/README.md",
     "README.md",
+    ".obsidian/",
+    ".trash/",
+    "attachments/",
 ]
 
 
@@ -50,6 +53,16 @@ def chunk_text(text: str, max_tokens: int = 512, overlap: int = 64) -> list[str]
 
     # Split by double newline (paragraphs)
     paragraphs = re.split(r'\n\n+', text.strip())
+
+    # Hard-split oversized paragraphs: a single-paragraph dump (link lists etc.)
+    # would otherwise produce a chunk larger than TEI's payload limit (HTTP 413).
+    hard_split = []
+    for para in paragraphs:
+        while len(para) > max_chars:
+            hard_split.append(para[:max_chars])
+            para = para[max_chars - overlap_chars:] if overlap_chars else para[max_chars:]
+        hard_split.append(para)
+    paragraphs = hard_split
     
     chunks = []
     current_chunk = ""
@@ -98,6 +111,11 @@ def file_to_chunks(file_path: Path, vault_root: Path) -> list[dict]:
     rel_path = str(file_path.relative_to(vault_root))
     
     content = file_path.read_text(encoding="utf-8")
+
+    # Empty/whitespace-only files: TEI rejects zero-length inputs (HTTP 413,
+    # misleadingly) — skip them entirely instead of embedding "".
+    if not content.strip():
+        return []
     
     # Extract title from first heading or filename
     title_match = re.match(r'^#\s+(.+)$', content, re.MULTILINE)
@@ -187,12 +205,25 @@ def main():
     # Index
     total_indexed = 0
     total_files = 0
+    skipped_files = 0
     errors = 0
     
     for f in to_index:
         rel = str(f.relative_to(vault_root))
         chunks = file_to_chunks(f, vault_root)
-        
+
+        # Resume support: skip file when identical (namespace, file_path, file_hash)
+        # is already indexed. Makes interrupted runs cheap to restart.
+        if chunks:
+            cur.execute(
+                "SELECT 1 FROM memory_entries WHERE namespace=%s "
+                "AND metadata->>'file_path'=%s AND metadata->>'file_hash'=%s LIMIT 1",
+                (args.namespace, rel, chunks[0]["metadata"]["file_hash"]),
+            )
+            if cur.fetchone():
+                skipped_files += 1
+                continue
+
         print(f"\n  Indexing: {rel} ({len(chunks)} chunks)")
         
         for chunk in chunks:

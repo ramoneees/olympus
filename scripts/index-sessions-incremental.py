@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Incremental session indexer: only sessions newer than the newest indexed timestamp."""
+"""Incremental session indexer: only sessions newer than the newest indexed timestamp.
+
+2026-11-06: --db/--profile args so every Hermes profile's state.db can be
+indexed into the same /memory/sessions namespace. Watermark is per-profile:
+'default' also matches legacy rows with no profile field (pre-2026-11-06).
+"""
 import sys, sqlite3, json, base64, subprocess, time, datetime, argparse
 import importlib.util
 from pathlib import Path
@@ -17,6 +22,10 @@ import psycopg2
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--dry-run", action="store_true")
+ap.add_argument("--db", default="/Users/ramoneees/.hermes/state.db",
+                help="Hermes state.db to read (any profile)")
+ap.add_argument("--profile", default="default",
+                help="profile name stamped into chunk metadata")
 args = ap.parse_args()
 
 r = subprocess.run(
@@ -29,11 +38,20 @@ NS = "/memory/sessions"
 
 conn = psycopg2.connect(PG)
 cur = conn.cursor()
-cur.execute("SELECT max((metadata->>'started_at')::timestamptz) FROM memory_entries WHERE namespace=%s", (NS,))
+if args.profile == "default":
+    cur.execute(
+        "SELECT max((metadata->>'started_at')::timestamptz) FROM memory_entries "
+        "WHERE namespace=%s AND (metadata->>'profile'='default' OR metadata->>'profile' IS NULL)",
+        (NS,))
+else:
+    cur.execute(
+        "SELECT max((metadata->>'started_at')::timestamptz) FROM memory_entries "
+        "WHERE namespace=%s AND metadata->>'profile'=%s",
+        (NS, args.profile))
 last = cur.fetchone()[0]
-print(f"last indexed started_at: {last}")
+print(f"[{args.profile}] last indexed started_at: {last}")
 
-sconn = sqlite3.connect("/Users/ramoneees/.hermes/state.db")
+sconn = sqlite3.connect(args.db)
 sconn.row_factory = sqlite3.Row
 scur = sconn.cursor()
 
@@ -42,8 +60,8 @@ SELECT id, title, source, started_at FROM sessions
 WHERE message_count > 2 AND started_at > ?
 ORDER BY started_at ASC
 """
-sessions = scur.execute(q, (last.timestamp(),)).fetchall()
-print(f"sessions to index: {len(sessions)}")
+sessions = scur.execute(q, (last.timestamp() if last else 0,)).fetchall()
+print(f"[{args.profile}] sessions to index: {len(sessions)}")
 
 total_chunks = 0
 plan = []
@@ -56,7 +74,7 @@ for s in sessions:
         plan.append((s, chunks))
         total_chunks += len(chunks)
 
-print(f"chunks to embed: {total_chunks}")
+print(f"[{args.profile}] chunks to embed: {total_chunks}")
 if args.dry_run:
     for s, chunks in plan:
         print(f"  {datetime.datetime.fromtimestamp(s['started_at']).isoformat()} | {(s['title'] or s['id'])[:60]} | {len(chunks)} chunks")
@@ -77,15 +95,16 @@ for n, (s, chunks) in enumerate(plan, 1):
                 "VALUES (%s,%s,%s,%s,%s,%s)",
                 (NS, chunk, str(emb), "hermes-sessions", 0.90,
                  json.dumps({"session_id": sid, "title": title, "source": source,
+                             "profile": args.profile,
                              "chunk_index": ci, "total_chunks": len(chunks), "started_at": dt})))
             indexed += 1
         except Exception as e:
             errors += 1
             print(f"\nERR {sid} chunk {ci}: {e}")
     conn.commit()
-    print(f"[{n}/{len(plan)}] {title[:55]} (+{len(chunks)}) elapsed {time.time()-t0:.0f}s", flush=True)
+    print(f"[{args.profile}] [{n}/{len(plan)}] {title[:55]} (+{len(chunks)}) elapsed {time.time()-t0:.0f}s", flush=True)
 
-print(f"\nDONE: {indexed} chunks inserted, {errors} errors, {time.time()-t0:.0f}s")
+print(f"\n[{args.profile}] DONE: {indexed} chunks inserted, {errors} errors, {time.time()-t0:.0f}s")
 cur.execute("SELECT count(*), count(DISTINCT metadata->>'session_id') FROM memory_entries WHERE namespace=%s", (NS,))
 print("DB now:", cur.fetchone())
 cur.close(); conn.close(); sconn.close()
