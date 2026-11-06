@@ -1,0 +1,23 @@
+# mnemosyne-api — Traefik IngressRoute, wildcard cert like every other app.
+#
+# Security: /search and /stats require the X-API-Token header (checked in-app,
+# value from mnemosyne-api-secret). /health is open — it exposes nothing and is
+# used by k8s probes. Exposure is LAN-only (wildcard *.ramoneees.com resolves
+# via AdGuard to Traefik .200; not reachable from outside).
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: mnemosyne-api
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`mnemosyne.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: mnemosyne-api
+          port: 8000
+  tls:
+    secretName: wildcard-ramoneees-com-tls

@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mnemosyne-api
+  namespace: apps
+  labels:
+    app: mnemosyne-api
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mnemosyne-api
+  template:
+    metadata:
+      labels:
+        app: mnemosyne-api
+    spec:
+      containers:
+        - name: api
+          image: git.ramoneees.com/ramoneees/mnemosyne-api:v0.1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            # ORDER MATTERS: $(PG_PASSWORD_RO) is expanded from the var above.
+            - name: TEI_URL
+              value: http://tei.olympus.svc.cluster.local:80
+            - name: PG_PASSWORD_RO
+              valueFrom:
+                secretKeyRef:
+                  name: mnemosyne-api-secret
+                  key: pg-password
+            - name: MNEMOSYNE_PG_DSN
+              value: "host=postgresql.databases.svc.cluster.local port=5432 dbname=mnemosyne user=mnemosyne_readonly password=$(PG_PASSWORD_RO)"
+            - name: MNEMOSYNE_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: mnemosyne-api-secret
+                  key: api-token
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: "1"
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 3
+            periodSeconds: 10

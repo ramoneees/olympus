@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mnemosyne-api
+  namespace: apps
+  labels:
+    app: mnemosyne-api
+spec:
+  selector:
+    app: mnemosyne-api
+  ports:
+    - port: 8000
+      targetPort: 8000

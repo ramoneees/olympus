@@ -38,3 +38,4 @@ resources:
   - hermes-mini/
   - ollama-mac/
   - ollama-macbook/
+  - mnemosyne-api/
