@@ -44,10 +44,10 @@ spec:
           resources:
             requests:
               cpu: 200m
-              memory: 1Gi
+              memory: 2Gi
             limits:
               cpu: "4"
-              memory: 4Gi
+              memory: 8Gi
           startupProbe:
             httpGet:
               path: /health
