@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: git.ramoneees.com/ramoneees/mnemosyne-api:v0.1.0
+          image: git.ramoneees.com/ramoneees/mnemosyne-api:v0.2.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
@@ -34,6 +34,14 @@ spec:
                   key: pg-password
             - name: MNEMOSYNE_PG_DSN
               value: "host=postgresql.databases.svc.cluster.local port=5432 dbname=mnemosyne user=mnemosyne_readonly password=$(PG_PASSWORD_RO)"
+            # Writer role (INSERT/DELETE on memory_entries) — POST /upsert only; 503 if unset.
+            - name: PG_PASSWORD_WR
+              valueFrom:
+                secretKeyRef:
+                  name: mnemosyne-api-secret
+                  key: pg-password-wr
+            - name: MNEMOSYNE_PG_WRITE_DSN
+              value: "host=postgresql.databases.svc.cluster.local port=5432 dbname=mnemosyne user=mnemosyne_writer password=$(PG_PASSWORD_WR)"
             - name: MNEMOSYNE_API_TOKEN
               valueFrom:
                 secretKeyRef:
