@@ -31,10 +31,12 @@ spec:
           command: ["sh", "-c"]
           args:
             - |
-              apt-get update -qq && apt-get install -y -qq git >/dev/null
-              git -c http.sslVerify=false clone --depth 1 "$GITEA_REPO_URL" /worklog
-              git -c http.sslVerify=false clone --depth 1 "$GITEA_LIFEFEEED_URL" /lifefeed
-              git -c http.sslVerify=false clone --depth 1 "$GITEA_TENDERS_URL" /tenders
+              if [ ! -d /worklog/.git ] || [ ! -d /lifefeed/.git ] || [ ! -d /tenders/.git ]; then
+                apt-get update -qq && apt-get install -y -qq git >/dev/null
+              fi
+              if [ ! -d /worklog/.git ]; then git -c http.sslVerify=false clone --depth 1 "$GITEA_REPO_URL" /worklog; fi
+              if [ ! -d /lifefeed/.git ]; then git -c http.sslVerify=false clone --depth 1 "$GITEA_LIFEFEEED_URL" /lifefeed; fi
+              if [ ! -d /tenders/.git ]; then git -c http.sslVerify=false clone --depth 1 "$GITEA_TENDERS_URL" /tenders; fi
           env:
             - name: GITEA_REPO_URL
               valueFrom:

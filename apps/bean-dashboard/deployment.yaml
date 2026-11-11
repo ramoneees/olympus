@@ -29,8 +29,10 @@ spec:
           command: ["sh", "-c"]
           args:
             - |
-              apt-get update -qq && apt-get install -y -qq git >/dev/null
-              git clone --depth 1 "$GITEA_REPO_URL" /ledger
+              if [ ! -d /ledger/.git ]; then
+                apt-get update -qq && apt-get install -y -qq git >/dev/null
+                git clone --depth 1 "$GITEA_REPO_URL" /ledger
+              fi
           env:
             - name: GITEA_REPO_URL
               valueFrom:
