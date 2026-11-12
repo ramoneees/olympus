@@ -6,7 +6,6 @@ resources:
   - bazarr/
   - cloudbeaver/
   - configarr/
-  - ghostfolio/
   - gitea/
   - gitea-runner/
   - home-assistant/
