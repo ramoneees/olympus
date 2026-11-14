@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - worker-deployment.yaml
-  - ingress.yaml
+  - vps-route.yaml
 # secrets.yaml and the precisase-registry pull secret are applied manually
 # with `kubectl apply` / `kubectl create secret` — not tracked in git
 # (see comments at the top of secrets.yaml).

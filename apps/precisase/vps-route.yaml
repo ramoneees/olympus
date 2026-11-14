@@ -1,0 +1,45 @@
+# precisase saiu do cluster local -> vive na vps-uk (olympus-vps GitOps).
+# DNS interno (wildcard *.ramoneees.com -> LB .200) continua apontando pro
+# Traefik local; este IngressRouteTCP faz SNI passthrough direto pra VPS.
+# (Rewrite especifico no AdGuard seria o caminho canonico, mas a credencial
+# do painel nao esta no vault — passthrough e declarativo e nao precisa dela.)
+apiVersion: v1
+kind: Service
+metadata:
+  name: precisase-vps
+  namespace: apps
+spec:
+  # sem selector: endpoints manuais abaixo
+  ports:
+    - name: https
+      port: 443
+      protocol: TCP
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: precisase-vps
+  namespace: apps
+subsets:
+  - addresses:
+      - ip: 187.77.178.219
+    ports:
+      - name: https
+        port: 443
+        protocol: TCP
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: precisase-sni-passthrough
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  tls:
+    passthrough: true
+  routes:
+    - match: HostSNI(`precisase.ramoneees.com`)
+      services:
+        - name: precisase-vps
+          port: 443
