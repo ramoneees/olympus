@@ -44,7 +44,7 @@ spec:
               mountPath: /ledger
       containers:
         - name: api
-          image: git.ramoneees.com/ramoneees/bean-dashboard:v0.5.2
+          image: git.ramoneees.com/ramoneees/bean-dashboard:v0.6.0
           ports:
             - name: http
               containerPort: 8787
