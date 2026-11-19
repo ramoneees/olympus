@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: hermes-api
+  namespace: apps
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`hermes-api.ramoneees.com`)
+      kind: Rule
+      services:
+        - name: hermes-api
+          port: 8645
+  tls:
+    secretName: wildcard-ramoneees-com-tls

@@ -35,6 +35,7 @@ resources:
   - gods-eye-view/
   - cockpit/
   - hermes-mini/
+  - hermes-api/
   - ollama-mac/
   - ollama-macbook/
   - mnemosyne-api/
