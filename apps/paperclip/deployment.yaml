@@ -22,7 +22,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: paperclip
-          image: ghcr.io/paperclipai/paperclip:latest
+          image: ghcr.io/paperclipai/paperclip:latest@sha256:b2784df63b428a3de231039f03c2a78f582dcf5e35e840685685c8cef28814e2
           ports:
             - name: http
               containerPort: 3100
@@ -49,6 +49,11 @@ spec:
                 secretKeyRef:
                   name: paperclip-secret
                   key: better-auth-secret
+            - name: PAPERCLIP_TOOL_ACTION_SIGNING_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: paperclip-secret
+                  key: tool-action-signing-secret
             - name: ANTHROPIC_BASE_URL
               value: "http://litellm.olympus.svc.cluster.local:4000"
             - name: ANTHROPIC_API_KEY
@@ -66,12 +71,14 @@ spec:
             limits:
               memory: 2Gi
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: /api/health
               port: http
             initialDelaySeconds: 30
             periodSeconds: 30
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /api/health
               port: http
             initialDelaySeconds: 10
             periodSeconds: 10
